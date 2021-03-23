@@ -1,0 +1,27 @@
+{% extends 'almaher/base.html'%}
+
+{% block body%}
+
+<!-- Begin Page Content -->
+<div class="container-fluid">
+
+    <!-- Page Heading -->
+    <h1 class="h3 mb-4 text-gray-800">Edit Teacher</h1>
+
+    <div class="card">
+        {{teacher.person_id}}<br>
+        {{teacher.first_name}}<br>
+        {{teacher.last_name}}<br>
+        {{teacher.father_name}}<br>
+        {{teacher.bdate}}<br>
+        {{teacher.home_number}}<br>
+        {{teacher.phone_number}}<br>
+        {{teacher.address}}<br>
+        {{teacher.job}}
+    </div>
+    
+
+</div>
+<!-- /.container-fluid -->  
+
+{% endblock %}
