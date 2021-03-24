@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.urls import reverse
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .models import *
 
@@ -35,7 +36,7 @@ def teacher(request):
     return render(request, 'almaher/teacher.html', context)
 
 
-def add_teacher(request):
+def add_teacher(request):    
     if request.method == 'POST':
         fname = request.POST['fname']
         lname = request.POST['lname']
@@ -50,9 +51,8 @@ def add_teacher(request):
                             father_name=father_n, home_number=hn, phone_number=pn,
                             job=j, address=ad, bdate=bd)
         new_teacher.save()
-        message = 'Add success!'
-        #return HttpResponseRedirect(reverse('teacher'))
-        return render(request, 'almaher/add_teacher.html',{'message': message})
+        messages.success(request, 'Add success!')
+        return HttpResponseRedirect(reverse('add_teacher'))
     
     return render(request, 'almaher/add_teacher.html')
 
