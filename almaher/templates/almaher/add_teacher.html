@@ -5,58 +5,68 @@
 <!-- Begin Page Content -->
 <div class="container-fluid">
 
+    {% if message %}
+    <div class="d-flex justify-content-center">
+        <div class="alert alert-success my-4 text-center w-50" role="alert">
+            {{message}}
+        </div>
+    </div>
+    {% endif %}
+
     <!-- Page Heading -->
     <h1 class="h3 mb-4 text-gray-800">Add Teacher</h1>
 
-    <form class="user">
+    <form class="user" action="{% url 'add_teacher' %}" method="post">
+        {% csrf_token %}
         <div class="form-group row">
             <div class="col-sm-6 mb-3 mb-sm-0">
-                <input type="text" class="form-control form-control-user" id="FirstName"
+                <input type="text" class="form-control form-control-user" id="fname" name="fname"
                     placeholder="First Name">
             </div>
             <div class="col-sm-6">
-                <input type="text" class="form-control form-control-user" id="LastName"
+                <input type="text" class="form-control form-control-user" id="lname" name="lname"
                     placeholder="Last Name">
             </div>
         </div>
 
         <div class="form-group row">
             <div class="col-sm-6 mb-3 mb-sm-0">
-                <input type="text" class="form-control form-control-user" id="Father"
+                <input type="text" class="form-control form-control-user" id="father_name" name="father_name"
                     placeholder="Father">
             </div>
             <div class="col-sm-6">
-                <input type="text" class="form-control form-control-user" id="Job"
+                <input type="text" class="form-control form-control-user" id="job" name="job"
                     placeholder="Job">
             </div>
         </div>
         
         <div class="form-group row">
             <div class="col-sm-6 mb-3 mb-sm-0">
-                <input type="text" class="form-control form-control-user" id="PhoneNumber"
+                <input type="text" class="form-control form-control-user" id="pnumber" name="pnumber"
                     placeholder="Phone Number">
             </div>
             <div class="col-sm-6">
-                <input type="text" class="form-control form-control-user" id="HomeNumber"
+                <input type="text" class="form-control form-control-user" id="hnumber" name="hnumber"
                     placeholder="Home Number">
             </div>
         </div>
 
         <div class="form-group row">
             <div class="col-sm-6 mb-3 mb-sm-0">
-                <input type="text" class="form-control form-control-user" id="Address"
+                <input type="text" class="form-control form-control-user" id="address" name="address"
                     placeholder="Address">
             </div>
             <div class="col-sm-6">
-                <input type="date" class="form-control rounded-pill" id="date">
+                <input type="date" class="form-control rounded-pill" id="bdate" name="bdate">
             </div>
         </div>
 
         <div class="d-flex justify-content-center">
-            <button type="submit" class="btn btn-primary btn-user w-25">Add</button>
+            <button type="submit" value="submit" class="btn btn-primary btn-user w-25">Add</button>
         </div>
-    </form>    
-
+    </form>   
+    
+    
 </div>
 <!-- /.container-fluid -->  
 

@@ -1,4 +1,6 @@
 from django.shortcuts import render
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from .models import *
 
@@ -34,6 +36,24 @@ def teacher(request):
 
 
 def add_teacher(request):
+    if request.method == 'POST':
+        fname = request.POST['fname']
+        lname = request.POST['lname']
+        father_n = request.POST['father_name']
+        j = request.POST['job']
+        pn = request.POST['pnumber']
+        hn = request.POST['hnumber']
+        ad = request.POST['address']
+        bd = request.POST['bdate']
+        p_type = Person_Type.objects.get(pk=1)
+        new_teacher = Person(type_id=p_type, first_name=fname, last_name=lname,
+                            father_name=father_n, home_number=hn, phone_number=pn,
+                            job=j, address=ad, bdate=bd)
+        new_teacher.save()
+        message = 'Add success!'
+        #return HttpResponseRedirect(reverse('teacher'))
+        return render(request, 'almaher/add_teacher.html',{'message': message})
+    
     return render(request, 'almaher/add_teacher.html')
 
 
