@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.contrib import messages
@@ -59,7 +59,35 @@ def add_teacher(request):
 
 def edit_teacher(request, pk):
     teacher = Person.objects.get(person_id=pk)
+    if request.method =='POST':
+        fname = request.POST['fname']
+        lname = request.POST['lname']
+        father_n = request.POST['father_name']
+        j = request.POST['job']
+        pn = request.POST['pnumber']
+        hn = request.POST['hnumber']
+        ad = request.POST['address']
+        bd = request.POST['bdate']
+        teacher.first_name = fname
+        teacher.last_name = lname
+        teacher.father_name = father_n
+        teacher.job = j
+        teacher.phone_number = pn
+        teacher.home_number = hn
+        teacher.address = ad
+        teacher.bdate = bd
+        teacher.save()
+        return redirect('teacher')
     return render(request, 'almaher/edit_teacher.html', {'teacher': teacher})
+
+
+def del_teacher(request, pk):
+    teacher = Person.objects.get(person_id=pk)
+    if request.method =='POST':
+        teacher.delete()
+        return redirect('teacher')
+    return render(request, 'almaher/del_teacher.html', {'teacher': teacher})
+    
 
 
 def student(request):
@@ -71,12 +99,52 @@ def student(request):
 
 
 def add_student(request):
+    if request.method == 'POST':
+        fname = request.POST['fname']
+        lname = request.POST['lname']
+        father_n = request.POST['father_name']
+        j = request.POST['job']
+        pn = request.POST['pnumber']
+        hn = request.POST['hnumber']
+        ad = request.POST['address']
+        bd = request.POST['bdate']
+        p_type = Person_Type.objects.get(pk=2)
+        new_teacher = Person(type_id=p_type, first_name=fname, last_name=lname,
+                            father_name=father_n, home_number=hn, phone_number=pn,
+                            job=j, address=ad, bdate=bd)
+        new_teacher.save()
+        messages.success(request, 'Add success!')
+        return HttpResponseRedirect(reverse('add_student'))
+
     return render(request, 'almaher/add_student.html')
 
 
 def edit_student(request, pk):
     student = Person.objects.get(person_id=pk)
+    if request.method =='POST':
+        fname = request.POST['fname']
+        lname = request.POST['lname']
+        father_n = request.POST['father_name']
+        j = request.POST['job']
+        pn = request.POST['pnumber']
+        hn = request.POST['hnumber']
+        ad = request.POST['address']
+        bd = request.POST['bdate']
+        student.first_name = fname
+        student.last_name = lname
+        student.father_name = father_n
+        student.job = j
+        student.phone_number = pn
+        student.home_number = hn
+        student.address = ad
+        student.bdate = bd
+        student.save()
+        return redirect('student')
     return render(request, 'almaher/edit_student.html', {'student': student})
 
 def del_student(request, pk):
-    pass
+    student = Person.objects.get(person_id=pk)
+    if request.method =='POST':
+        student.delete()
+        return redirect('student')
+    return render(request, 'almaher/del_student.html', {'student': student})

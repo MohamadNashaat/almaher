@@ -59,10 +59,45 @@
 
             <!-- Heading -->
             <div class="sidebar-heading">
-                Interface
+                Person
             </div>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'teacher'%}">
+                    <i class="fas fa-fw fa-users"></i>
+                    <span>Manage Teachers</span></a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'student'%}">
+                    <i class="fas fa-fw fa-users"></i>
+                    <span>Manage Students</span></a>
+            </li>
+            <!-- Divider -->
+            <hr class="sidebar-divider">
+
+
+            <!-- Heading -->
+            <div class="sidebar-heading">
+                Classes
+            </div>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'blank'%}">
+                    <i class="fas fa-fw fa-university"></i>
+                    <span>Manage Classes</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'blank'%}">
+                    <i class="fas fa-fw fa-plus-circle"></i>
+                    <span>Add Class</span></a>
+            </li>
+            <!-- Divider -->
+            <hr class="sidebar-divider">
+
+            
+
 
             <!-- Nav Item - Utilities Collapse Menu -->
+            <!--
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#teacher"
                     aria-expanded="true" aria-controls="teacher">
@@ -76,9 +111,11 @@
                         <a class="collapse-item" href="{% url 'add_teacher'%}">Add teacher</a>
                     </div>
                 </div>
-            </li>
+            </li>-->
+
 
             <!-- Nav Item - Utilities Collapse Menu -->
+            <!--
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#student"
                     aria-expanded="true" aria-controls="student">
@@ -92,9 +129,10 @@
                         <a class="collapse-item" href="{% url 'add_student'%}">Add student</a>
                     </div>
                 </div>
-            </li>
+            </li>-->
 
             <!-- Nav Item - Pages Collapse Menu -->
+            <!--
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
                     aria-expanded="true" aria-controls="collapseTwo">
@@ -107,10 +145,7 @@
                         <a class="collapse-item" href="{% url 'blank'%}">Others</a>
                     </div>
                 </div>
-            </li>
-
-            <!-- Divider -->
-            <hr class="sidebar-divider">
+            </li>-->
 
             <!-- Heading -->
             <div class="sidebar-heading">

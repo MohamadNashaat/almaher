@@ -5,14 +5,17 @@
 <!-- Begin Page Content -->
 <div class="container-fluid">
 
-    <!-- Page Heading 
-    <h1 class="h3 mb-4 text-gray-800">Teacher</h1>
-    -->
+    <!-- Page Heading -->
+    <h1 class="h3 mb-4 text-gray-800">Teachers</h1>
+    
     
     <!-- DataTales Example -->
     <div class="card shadow mb-4">
         <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">Teachers</h6>
+            <a type="button" class="m-0  btn btn-success" href="{% url 'add_teacher'%}">
+                <i class="fas fa-fw fa-user-plus"></i>
+                <span>Add Teacher</span>
+            </a>            
         </div>
         <div class="card-body">
             <div class="table-responsive">
@@ -50,8 +53,8 @@
                                 </a>
                             </td>
                             <td>
-                                <a href="#" class="btn btn-danger btn-circle btn-sm">
-                                    <i class="fas fa-trash"></i>
+                                <a href="{% url 'del_teacher' item.person_id %}" class="btn btn-danger btn-circle btn-sm">
+                                    <i class="fas fa-user-times"></i>
                                 </a>
                             </td>
                         </tr>
