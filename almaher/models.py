@@ -6,7 +6,6 @@ class Person_Type(models.Model):
     def __str__(self):
         return self.type_name
 
-
 class Person(models.Model):
     person_id = models.AutoField(primary_key=True)
     type_id = models.ForeignKey(Person_Type, on_delete=models.CASCADE)
@@ -18,8 +17,54 @@ class Person(models.Model):
     job = models.CharField(max_length=120)
     address = models.CharField(max_length=120)
     bdate = models.DateField()
-
+    create_date = models.DateField(auto_now_add=True, null=True)
+    level_id = models.ForeignKey('Level', on_delete=models.CASCADE, null=True)
     def __str__(self):
         return f'{self.first_name} {self.last_name}'
 
+class Course(models.Model):
+    course_id = models.AutoField(primary_key=True)
+    course_name = models.CharField(max_length=120)
+    create_date = models.DateField(auto_now_add=True, null=True)
+    def __str__(self):
+        return self.course_name
 
+class Level(models.Model):
+    level_id = models.AutoField(primary_key=True)
+    level_name = models.CharField(max_length=120)
+    def __str__(self):
+        return self.level_name
+
+class Position(models.Model):
+    position_id = models.AutoField(primary_key=True)
+    position_name = models.CharField(max_length=120)
+    def __str__(self):
+        return self.position_name
+
+class Time(models.Model):
+    time_id = models.AutoField(primary_key=True)
+    time_name = models.CharField(max_length=120)
+    def __str__(self):
+        return self.time_name
+
+class Class(models.Model):
+    class_id = models.AutoField(primary_key=True)
+    class_number = models.IntegerField()
+    course_id = models.ForeignKey(Course, on_delete=models.CASCADE)
+    level_id = models.ForeignKey(Level, on_delete=models.CASCADE)
+    position_id = models.ForeignKey(Position, on_delete=models.CASCADE)
+    time_id = models.ForeignKey(Time, on_delete=models.CASCADE)
+    student_id = models.ManyToManyField(Person, related_name='student_id')
+    teacher_id = models.OneToOneField(Person, null=True, on_delete=models.SET_NULL, related_name='teacher_id')
+    create_date = models.DateField(auto_now_add=True, null=True)
+    def __str__(self):
+        return f'{self.class_number}'
+
+class Attendance(models.Model):
+    attendance_id = models.AutoField(primary_key=True)
+    person_id = models.ForeignKey(Person, on_delete=models.CASCADE)
+    class_id = models.ForeignKey(Class, on_delete=models.CASCADE)
+    day = models.DateField()
+    status = models.BooleanField(default=False)
+    def __str__(self):
+        return f'{self.day}'
