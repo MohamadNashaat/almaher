@@ -11,8 +11,12 @@ from .models import *
 def index(request):
     c_teacher = Person.objects.all().filter(type_id=1).count()
     c_student = Person.objects.all().filter(type_id=2).count()
+    c_course = Course.objects.all().count()
+    c_session = Session.objects.all().count()
     context = {'c_teacher': c_teacher, 
-                'c_student': c_student}
+                'c_student': c_student,
+                'c_session': c_session,
+                'c_course': c_course}
     return render(request, 'almaher/index.html', context)
 
 
