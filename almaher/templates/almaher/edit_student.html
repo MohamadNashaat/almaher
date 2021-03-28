@@ -51,6 +51,24 @@
                 <input type="text" class="form-control" value="{{student.job}}" name="job" id="exampleInputEmail1" aria-describedby="emailHelp" >
             </div>
         </div>
+        <div class="form-group row">
+            <div class="col-sm-6  mb-3">
+                <label for="exampleInputEmail1" class="form-label">Level</label>
+                <select class="form-control form-select rounded-pill" aria-label="Default select example" name="level" id="level">
+                    {% if student.level_id %}
+                        <option value="{{student.level_id}}" selected>{{student.level_id.level_name}}</option>
+                    {% else %}
+                        <option value="0" selected>Select Level</option>
+                    {% endif %}
+                    <option value="1">مبتدأ أ</option>
+                    <option value="2">مبتدأ ب</option>
+                    <option value="3">متوسط أ</option>
+                    <option value="4">متوسط ب</option>
+                    <option value="5">متقدم أ</option>
+                    <option value="6">متقدم ب</option>
+                </select>
+            </div>
+        </div>
         <a type="button" class="m-0  btn btn-secondary" href="{% url 'student'%}">
             <span>Cancel</span>
         </a>

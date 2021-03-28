@@ -109,13 +109,19 @@ def add_student(request):
         ad = request.POST['address']
         bd = request.POST['bdate']
         p_type = Person_Type.objects.get(pk=2)
-        new_teacher = Person(type_id=p_type, first_name=fname, last_name=lname,
+        level_id = request.POST['level']
+        if level_id != 0:
+            level = Level.objects.get(pk=level_id)
+            new_teacher = Person(type_id=p_type, first_name=fname, last_name=lname,
                             father_name=father_n, home_number=hn, phone_number=pn,
-                            job=j, address=ad, bdate=bd)
+                            job=j, address=ad, bdate=bd, level_id=level)
+        else:
+            new_teacher = Person(type_id=p_type, first_name=fname, last_name=lname,
+                            father_name=father_n, home_number=hn, phone_number=pn,
+                            job=j, address=ad, bdate=bd)              
         new_teacher.save()
         messages.success(request, 'Add success!')
         return HttpResponseRedirect(reverse('add_student'))
-
     return render(request, 'almaher/add_student.html')
 
 
@@ -138,6 +144,10 @@ def edit_student(request, pk):
         student.home_number = hn
         student.address = ad
         student.bdate = bd
+        level_id = request.POST['level']
+        if level_id != 0:
+            level = Level.objects.get(pk=level_id)
+            student.level_id = level
         student.save()
         return redirect('student')
     return render(request, 'almaher/edit_student.html', {'student': student})

@@ -65,7 +65,25 @@
             </div>
         </div>
 
+        <div class="form-group row">
+            <div class="col-sm-6 mb-3 mb-sm-0">
+                <select class="form-control form-select rounded-pill" aria-label="Default select example" name="level" id="level">
+                    <option value="0" selected>Select Level</option>
+                    <option value="1">مبتدأ أ</option>
+                    <option value="2">مبتدأ ب</option>
+                    <option value="3">متوسط أ</option>
+                    <option value="4">متوسط ب</option>
+                    <option value="5">متقدم أ</option>
+                    <option value="6">متقدم ب</option>
+                </select>
+            </div>
+        </div>
+
+        
         <div class="d-flex justify-content-center">
+            <a type="button" class="btn btn-secondary btn-user w-25 mr-4" href="{% url 'student'%}">
+                <span>Cancel</span>
+            </a>
             <input type="submit" value="Add" class="btn btn-primary btn-user w-25">
         </div>
     </form>     
