@@ -158,3 +158,7 @@ def del_student(request, pk):
         student.delete()
         return redirect('student')
     return render(request, 'almaher/del_student.html', {'student': student})
+
+def session(request):
+    return render(request, 'almaher/session.html')
+

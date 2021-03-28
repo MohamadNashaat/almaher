@@ -75,89 +75,45 @@
             <!-- Divider -->
             <hr class="sidebar-divider">
 
-
             <!-- Heading -->
             <div class="sidebar-heading">
-                Classes
+                Courses
             </div>
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'blank'%}">
-                    <i class="fas fa-fw fa-university"></i>
-                    <span>Manage Classes</span></a>
-            </li>
-            <li class="nav-item">
+                    <i class="fas fa-fw fa-book"></i>
+                    <span>Manage Courses</span></a>
                 <a class="nav-link" href="{% url 'blank'%}">
-                    <i class="fas fa-fw fa-plus-circle"></i>
-                    <span>Add Class</span></a>
+                    <i class="fas fa-fw fa-graduation-cap"></i>
+                    <span>Manage Levels</span></a> 
+                <a class="nav-link" href="{% url 'blank'%}">
+                    <i class="fas fa-fw fa-location-arrow"></i>
+                    <span>Manage Position</span></a>
+                <a class="nav-link" href="{% url 'blank'%}">
+                    <i class="fas fa-fw fa-clock"></i>
+                    <span>Manage Time</span></a>  
             </li>
             <!-- Divider -->
             <hr class="sidebar-divider">
 
-            
-
-
-            <!-- Nav Item - Utilities Collapse Menu -->
-            <!--
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#teacher"
-                    aria-expanded="true" aria-controls="teacher">
-                    <i class="fas fa-fw fa-wrench"></i>
-                    <span>Teachers</span>
-                </a>
-                <div id="teacher" class="collapse" aria-labelledby="headingUtilities"
-                    data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <a class="collapse-item" href="{% url 'teacher'%}">Manage teachers</a>
-                        <a class="collapse-item" href="{% url 'add_teacher'%}">Add teacher</a>
-                    </div>
-                </div>
-            </li>-->
-
-
-            <!-- Nav Item - Utilities Collapse Menu -->
-            <!--
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#student"
-                    aria-expanded="true" aria-controls="student">
-                    <i class="fas fa-fw fa-wrench"></i>
-                    <span>Students</span>
-                </a>
-                <div id="student" class="collapse" aria-labelledby="headingUtilities"
-                    data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <a class="collapse-item" href="{% url 'student'%}">Manage students</a>
-                        <a class="collapse-item" href="{% url 'add_student'%}">Add student</a>
-                    </div>
-                </div>
-            </li>-->
-
-            <!-- Nav Item - Pages Collapse Menu -->
-            <!--
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
-                    aria-expanded="true" aria-controls="collapseTwo">
-                    <i class="fas fa-fw fa-cog"></i>
-                    <span>Classes</span>
-                </a>
-                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <a class="collapse-item" href="{% url 'blank'%}">Manage classes</a>
-                        <a class="collapse-item" href="{% url 'blank'%}">Others</a>
-                    </div>
-                </div>
-            </li>-->
 
             <!-- Heading -->
             <div class="sidebar-heading">
-                Others
+                Session
             </div>
-
-            <!-- Nav Item - Charts -->
             <li class="nav-item">
+                <a class="nav-link" href="{% url 'session'%}">
+                    <i class="fas fa-fw fa-chalkboard-teacher"></i>
+                    <span>Manage Session</span></a>
+                <a class="nav-link" href="{% url 'blank'%}">
+                    <i class="fas fa-fw fa-calendar"></i>
+                    <span>Attendance</span></a>
                 <a class="nav-link" href="{% url 'blank'%}">
                     <i class="fas fa-fw fa-chart-area"></i>
                     <span>Results</span></a>
             </li>
+            <!-- Divider -->
+            <hr class="sidebar-divider">
 
             <!-- Sidebar Toggler (Sidebar) -->
             <div class="text-center d-none d-md-inline">

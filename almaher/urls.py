@@ -17,4 +17,6 @@ urlpatterns = [
     path('student/edit/<int:pk>', views.edit_student, name='edit_student'),
     path('student/del/<int:pk>', views.del_student, name='del_student'),
 
+    path('session', views.session, name='session'),
+
 ]
