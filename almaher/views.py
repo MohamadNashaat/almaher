@@ -31,7 +31,7 @@ def blank(request):
 def pg_404(request):
     return render(request, 'almaher/404.html')
 
-
+# Views Teachers
 def teacher(request):
     teacher = Person.objects.all().filter(type_id=1)
     c_teacher = teacher.count()
@@ -40,7 +40,7 @@ def teacher(request):
     return render(request, 'almaher/teacher.html', context)
 
 
-def add_teacher(request):    
+def add_teacher(request):
     if request.method == 'POST':
         fname = request.POST['fname']
         lname = request.POST['lname']
@@ -56,7 +56,7 @@ def add_teacher(request):
                             job=j, address=ad, bdate=bd)
         new_teacher.save()
         messages.success(request, 'Add success!')
-        return HttpResponseRedirect(reverse('add_teacher'))
+        return HttpResponseRedirect(reverse('teacher'))
     
     return render(request, 'almaher/add_teacher.html')
 
@@ -93,7 +93,7 @@ def del_teacher(request, pk):
     return render(request, 'almaher/del_teacher.html', {'teacher': teacher})
     
 
-
+# Views Students
 def student(request):
     student = Person.objects.all().filter(type_id=2)
     c_student = student.count()
@@ -103,6 +103,7 @@ def student(request):
 
 
 def add_student(request):
+    level = Level.objects.all()
     if request.method == 'POST':
         fname = request.POST['fname']
         lname = request.POST['lname']
@@ -115,22 +116,24 @@ def add_student(request):
         p_type = Person_Type.objects.get(pk=2)
         level_id = request.POST['level']
         if level_id != 0:
-            level = Level.objects.get(pk=level_id)
+            get_level = Level.objects.get(pk=level_id)
             new_teacher = Person(type_id=p_type, first_name=fname, last_name=lname,
                             father_name=father_n, home_number=hn, phone_number=pn,
-                            job=j, address=ad, bdate=bd, level_id=level)
+                            job=j, address=ad, bdate=bd, level_id=get_level)
         else:
             new_teacher = Person(type_id=p_type, first_name=fname, last_name=lname,
                             father_name=father_n, home_number=hn, phone_number=pn,
                             job=j, address=ad, bdate=bd)              
         new_teacher.save()
         messages.success(request, 'Add success!')
-        return HttpResponseRedirect(reverse('add_student'))
-    return render(request, 'almaher/add_student.html')
+        return HttpResponseRedirect(reverse('student'))
+    context = {'level': level}
+    return render(request, 'almaher/add_student.html', context)
 
 
 def edit_student(request, pk):
     student = Person.objects.get(person_id=pk)
+    level = Level.objects.all()
     if request.method =='POST':
         fname = request.POST['fname']
         lname = request.POST['lname']
@@ -154,7 +157,9 @@ def edit_student(request, pk):
             student.level_id = level
         student.save()
         return redirect('student')
-    return render(request, 'almaher/edit_student.html', {'student': student})
+    context = {'student': student,
+                'level': level}
+    return render(request, 'almaher/edit_student.html', context)
 
 
 def del_student(request, pk):
@@ -172,7 +177,13 @@ def course(request):
     return render(request, 'almaher/course.html', context)
 
 def add_course(request):
-    pass
+    if request.method == 'POST':
+        ncourse = request.POST['ncourse']
+        new_ncourse = Course(course_name=ncourse)
+        new_ncourse.save()
+        messages.success(request, 'Add success!')
+        return HttpResponseRedirect(reverse('course'))
+    return render(request, 'almaher/add_course.html')
 
 def edit_course(request):
     pass
@@ -187,7 +198,13 @@ def level(request):
     return render(request, 'almaher/level.html', context)
 
 def add_level(request):
-    pass
+    if request.method == 'POST':
+        nlevel = request.POST['nlevel']
+        new_level = Level(level_name=nlevel)            
+        new_level.save()
+        messages.success(request, 'Add success!')
+        return HttpResponseRedirect(reverse('level'))
+    return render(request, 'almaher/add_level.html')
 
 def edit_level(request):
     pass
@@ -202,7 +219,14 @@ def position(request):
     return render(request, 'almaher/position.html', context)
 
 def add_position(request):
-    pass
+    if request.method == 'POST':
+        nposition = request.POST['nposition']
+        new_position = Position(position_name=nposition)            
+        new_position.save()
+        messages.success(request, 'Add success!')
+        return HttpResponseRedirect(reverse('position'))
+    return render(request, 'almaher/add_position.html')
+
 
 def edit_position(request):
     pass
@@ -217,7 +241,13 @@ def time(request):
     return render(request, 'almaher/time.html', context)
 
 def add_time(request):
-    pass
+    if request.method == 'POST':
+        ntime = request.POST['ntime']
+        new_time = Time(time_name=ntime)            
+        new_time.save()
+        messages.success(request, 'Add success!')
+        return HttpResponseRedirect(reverse('time'))
+    return render(request, 'almaher/add_time.html')
 
 def edit_time(request):
     pass
@@ -232,7 +262,33 @@ def session(request):
     return render(request, 'almaher/session.html', context)
 
 def add_session(request):
-    pass
+    course = Course.objects.all()
+    level = Level.objects.all()
+    position = Position.objects.all()
+    time = Time.objects.all()
+    teacher = Person.objects.all().filter(type_id=1)
+    student = Person.objects.all().filter(type_id=2)
+    if request.method == 'POST':
+        snumber = request.POST['snumber']
+        course = Course.objects.get(pk=request.POST['course'])
+        teacher = Person.objects.get(pk=request.POST['teacher'])
+        level = Level.objects.get(pk=request.POST['level'])
+        position = Position.objects.get(pk=request.POST['position'])
+        time = Time.objects.get(pk=request.POST['time'])
+        create_date = request.POST['create_date']
+        new_session = Session(create_date=create_date, level_id=level, course_id=course,
+                             position_id=position, time_id=time, session_number=snumber, teacher_id=teacher)
+        new_session.save()
+        messages.success(request, 'Add success!')
+        return HttpResponseRedirect(reverse('session'))
+    context = {'course': course,
+                'level': level,
+                'position': position,
+                'time': time,
+                'teacher': teacher,
+                'student': student,
+                }
+    return render(request, 'almaher/add_session.html', context)
 
 def edit_session(request):
     pass

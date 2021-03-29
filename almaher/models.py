@@ -54,11 +54,16 @@ class Session(models.Model):
     level_id = models.ForeignKey(Level, on_delete=models.CASCADE)
     position_id = models.ForeignKey(Position, on_delete=models.CASCADE)
     time_id = models.ForeignKey(Time, on_delete=models.CASCADE)
-    student_id = models.ManyToManyField(Person, related_name='student_id')
+    #student_id = models.ManyToManyField(Person, related_name='student_id')
     teacher_id = models.OneToOneField(Person, null=True, on_delete=models.SET_NULL, related_name='teacher_id')
     create_date = models.DateField(auto_now_add=True, null=True)
     def __str__(self):
         return f'{self.session_number}'
+
+class Session_Student(models.Model):
+    id = models.AutoField(primary_key=True)
+    session_id = models.ForeignKey(Session, on_delete=models.CASCADE)
+    student_id = models.ForeignKey(Person, on_delete=models.CASCADE)
 
 class Attendance(models.Model):
     attendance_id = models.AutoField(primary_key=True)

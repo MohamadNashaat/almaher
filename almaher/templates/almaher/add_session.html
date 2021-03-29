@@ -1,0 +1,91 @@
+{% extends 'almaher/base.html'%}
+
+{% block body%}
+
+<!-- Begin Page Content -->
+<div class="container-fluid">
+
+    {% if messages %}
+    {% for message in messages %}
+    {% if message.tags %}
+    <div class="d-flex justify-content-center">
+        <div class="alert alert-success my-4 text-center w-50" role="alert">
+            {{message}}
+        </div>
+    </div>
+    {% endif %}
+    {% endfor %}
+    {% endif %}
+
+    <!-- Page Heading -->
+    <h1 class="h3 mb-4 text-gray-800">Add Session</h1>
+
+    <form class="user" action="{% url 'add_session' %}" method="post">
+        {% csrf_token %}
+        <div class="form-group row">
+            <div class="col-sm-6 mb-3 mb-sm-0">
+                <input type="text" class="form-control form-control-user" id="snumber" name="snumber"
+                    placeholder="Session Number" required>
+            </div>
+            <div class="col-sm-6">
+                <select class="form-control form-select rounded-pill" aria-label="Default select example" name="course" id="course">
+                    {% for item in course%}
+                    <option value="{{item.course_id}}">{{item.course_name}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <div class="col-sm-6 mb-3 mb-sm-0">
+                <select class="form-control form-select rounded-pill" aria-label="Default select example" name="teacher" id="teacher">
+                    {% for item in teacher%}
+                    <option value="{{item.person_id}}">{{item.first_name}} {{item.last_name}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-sm-6">
+                <select class="form-control form-select rounded-pill" aria-label="Default select example" name="level" id="level">
+                    {% for item in level%}
+                    <option value="{{item.level_id}}">{{item.level_name}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        
+        <div class="form-group row">
+            <div class="col-sm-6 mb-3 mb-sm-0">
+                <select class="form-control form-select rounded-pill" aria-label="Default select example" name="position" id="position">
+                    {% for item in position%}
+                    <option value="{{item.position_id}}">{{item.position_name}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-sm-6">
+                <select class="form-control form-select rounded-pill" aria-label="Default select example" name="time" id="time">
+                    {% for item in time%}
+                    <option value="{{item.time_id}}">{{item.time_name}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <div class="col-sm-6 mb-3 mb-sm-0">
+                <input type="date" class="form-control rounded-pill" id="create_date" name="create_date" required>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-center">
+            <a type="button" class="btn btn-secondary btn-user w-25 mr-4" href="{% url 'session'%}">
+                <span>Cancel</span>
+            </a>
+            <input type="submit" value="Add" class="btn btn-primary btn-user w-25">
+        </div>
+    </form>   
+    
+    
+</div>
+<!-- /.container-fluid -->  
+
+{% endblock %}

@@ -5,7 +5,7 @@
 <!-- Begin Page Content -->
 <div class="container-fluid">
 
-{% if messages %}
+    {% if messages %}
     {% for message in messages %}
     {% if message.tags %}
     <div class="d-flex justify-content-center">
@@ -69,12 +69,9 @@
             <div class="col-sm-6 mb-3 mb-sm-0">
                 <select class="form-control form-select rounded-pill" aria-label="Default select example" name="level" id="level">
                     <option value="0" selected>Select Level</option>
-                    <option value="1">مبتدأ أ</option>
-                    <option value="2">مبتدأ ب</option>
-                    <option value="3">متوسط أ</option>
-                    <option value="4">متوسط ب</option>
-                    <option value="5">متقدم أ</option>
-                    <option value="6">متقدم ب</option>
+                    {% for item in level%}
+                    <option value="{{item.level_id}}">{{item.level_name}}</option>
+                    {% endfor %}
                 </select>
             </div>
         </div>

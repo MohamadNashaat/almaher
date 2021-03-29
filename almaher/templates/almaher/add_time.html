@@ -1,0 +1,32 @@
+{% extends 'almaher/base.html'%}
+
+{% block body%}
+
+<!-- Begin Page Content -->
+<div class="container-fluid">
+
+    <!-- Page Heading -->
+    <h1 class="h3 mb-4 text-gray-800">Add Time</h1>
+
+    <form class="user" action="{% url 'add_time' %}" method="post">
+        {% csrf_token %}
+        <div class="form-group row">
+            <div class="col-sm-6 mb-4 mb-sm-0">
+                <input type="text" class="form-control form-control-user" id="time" name="ntime"
+                    placeholder="Time Name" required >
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-center">
+            <a type="button" class="btn btn-secondary btn-user w-25 mr-4" href="{% url 'position'%}">
+                <span>Cancel</span>
+            </a>
+            <input type="submit" value="Add" class="btn btn-primary btn-user w-25">
+        </div>
+    </form>   
+    
+    
+</div>
+<!-- /.container-fluid -->  
+
+{% endblock %}
