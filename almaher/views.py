@@ -156,6 +156,7 @@ def edit_student(request, pk):
         return redirect('student')
     return render(request, 'almaher/edit_student.html', {'student': student})
 
+
 def del_student(request, pk):
     student = Person.objects.get(person_id=pk)
     if request.method =='POST':
@@ -163,6 +164,78 @@ def del_student(request, pk):
         return redirect('student')
     return render(request, 'almaher/del_student.html', {'student': student})
 
-def session(request):
-    return render(request, 'almaher/session.html')
 
+# Views Course
+def course(request):
+    course = Course.objects.all()
+    context = {'course': course}
+    return render(request, 'almaher/course.html', context)
+
+def add_course(request):
+    pass
+
+def edit_course(request):
+    pass
+
+def del_course(request):
+    pass
+
+# Views Level
+def level(request):
+    level = Level.objects.all()
+    context = {'level': level}
+    return render(request, 'almaher/level.html', context)
+
+def add_level(request):
+    pass
+
+def edit_level(request):
+    pass
+
+def del_level(request):
+    pass
+
+# Views Position
+def position(request):
+    position = Position.objects.all()
+    context = {'position': position}
+    return render(request, 'almaher/position.html', context)
+
+def add_position(request):
+    pass
+
+def edit_position(request):
+    pass
+
+def del_position(request):
+    pass
+
+# Views Time
+def time(request):
+    time = Time.objects.all()
+    context = {'time': time}
+    return render(request, 'almaher/time.html', context)
+
+def add_time(request):
+    pass
+
+def edit_time(request):
+    pass
+
+def del_time(request):
+    pass
+
+# Views Session
+def session(request):
+    session = Session.objects.all()
+    context = {'session': session}
+    return render(request, 'almaher/session.html', context)
+
+def add_session(request):
+    pass
+
+def edit_session(request):
+    pass
+
+def del_session(request):
+    pass

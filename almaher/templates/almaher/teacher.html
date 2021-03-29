@@ -1,71 +1,52 @@
-{% extends 'almaher/base.html'%}
+{% extends 'almaher/base_datatables.html'%}
 
-{% block body%}
+{% block pg_head %}
+    Teachers
+{% endblock %}
 
-<!-- Begin Page Content -->
-<div class="container-fluid">
+{% block add_url %}
+    {% url 'add_teacher'%}
+{% endblock %}
 
-    <!-- Page Heading -->
-    <h1 class="h3 mb-4 text-gray-800">Teachers</h1>
-    
-    
-    <!-- DataTales Example -->
-    <div class="card shadow mb-4">
-        <div class="card-header py-3">
-            <a type="button" class="m-0  btn btn-success" href="{% url 'add_teacher'%}">
-                <i class="fas fa-fw fa-user-plus"></i>
-                <span>Add Teacher</span>
-            </a>            
-        </div>
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>First Name</th>
-                            <th>Last Name</th>
-                            <th>Father</th>
-                            <th>BDate</th>
-                            <th>Home Number</th>
-                            <th>Phone Number</th>
-                            <th>Address</th>
-                            <th>Job</th>
-                            <th></th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for item in teacher%}
-                        <tr>
-                            <td>{{item.person_id}}</td>
-                            <td>{{item.first_name}}</td>
-                            <td>{{item.last_name}}</td>
-                            <td>{{item.father_name}}</td>
-                            <td>{{item.bdate}}</td>
-                            <td>{{item.home_number}}</td>
-                            <td>{{item.phone_number}}</td>
-                            <td>{{item.address}}</td>
-                            <td>{{item.job}}</td>
-                            <td>
-                                <a href="{% url 'edit_teacher' item.person_id %}" class="btn btn-info btn-circle btn-sm">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                            </td>
-                            <td>
-                                <a href="{% url 'del_teacher' item.person_id %}" class="btn btn-danger btn-circle btn-sm">
-                                    <i class="fas fa-user-times"></i>
-                                </a>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>   
+{% block url_name %}
+    Add Teacher
+{% endblock %}
 
-</div>
-<!-- /.container-fluid -->  
+{% block th_table %}
+    <th>First Name</th>
+    <th>Last Name</th>
+    <th>Father</th>
+    <th>BDate</th>
+    <th>Home Number</th>
+    <th>Phone Number</th>
+    <th>Address</th>
+    <th>Job</th>
+    <th></th>
+    <th></th>
+{% endblock %}
 
+{% block tr_table%}
+    {% for item in teacher%}
+    <tr>
+        <td>{{item.person_id}}</td>
+        <td>{{item.first_name}}</td>
+        <td>{{item.last_name}}</td>
+        <td>{{item.father_name}}</td>
+        <td>{{item.bdate}}</td>
+        <td>{{item.home_number}}</td>
+        <td>{{item.phone_number}}</td>
+        <td>{{item.address}}</td>
+        <td>{{item.job}}</td>
+        <td>
+            <a href="{% url 'edit_teacher' item.person_id %}" class="btn btn-info btn-circle btn-sm">
+                <i class="fas fa-edit"></i>
+            </a>
+        </td>
+        <td>
+            <a href="{% url 'del_teacher' item.person_id %}" class="btn btn-danger btn-circle btn-sm">
+                <i class="fas fa-user-times"></i>
+            </a>
+        </td>
+    </tr>
+    {% endfor %}
 {% endblock %}

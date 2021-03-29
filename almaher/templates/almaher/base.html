@@ -77,12 +77,9 @@
 
             <!-- Heading -->
             <div class="sidebar-heading">
-                Courses
+                Session
             </div>
             <li class="nav-item">
-                <a class="nav-link" href="{% url 'blank'%}">
-                    <i class="fas fa-fw fa-book"></i>
-                    <span>Manage Courses</span></a>
                 <a class="nav-link" href="{% url 'session'%}">
                     <i class="fas fa-fw fa-users"></i>
                     <span>Manage Session</span></a>
@@ -98,10 +95,13 @@
 
             <!-- Heading -->
             <div class="sidebar-heading">
-                Others
+                Course
             </div>
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'blank'%}">
+                    <i class="fas fa-fw fa-book"></i>
+                    <span>Manage Courses</span></a>
+                <a class="nav-link" href="{% url 'level'%}">
                     <i class="fas fa-fw fa-graduation-cap"></i>
                     <span>Manage Levels</span></a> 
                 <a class="nav-link" href="{% url 'blank'%}">
