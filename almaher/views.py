@@ -295,3 +295,34 @@ def edit_session(request):
 
 def del_session(request):
     pass
+
+
+# Views Session_Student
+def session_student(request):
+    session = Session.objects.all()
+    session_student = Session_Student.objects.all()
+    context = {'session': session,
+                'session_student': session_student}
+    return render(request, 'almaher/session_student.html', context)
+
+def add_session_student(request):
+    if request.method == 'POST':
+        messages.success(request, 'Add success!')
+        return HttpResponseRedirect(reverse('session_student'))
+    context = {'course': course,}
+    return render(request, 'almaher/add_session_student.html', context)
+
+def edit_session_student(request):
+    session = Session.objects.all()
+    session_student = Session_Student.objects.all()
+    if request.method == 'POST':
+        new_session_student = Session_Student()
+        new_session_student.save()
+        messages.success(request, 'Add success!')
+        return HttpResponseRedirect(reverse('edit_session_student'))
+    context = {'session': session,
+                'session_student': session_student}
+    return render(request, 'almaher/session_student.html', context)
+
+def del_session_student(request):
+    pass

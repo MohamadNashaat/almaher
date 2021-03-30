@@ -1,0 +1,77 @@
+{% extends 'almaher/base.html'%}
+
+{% block body%}
+<!-- Begin Page Content -->
+<div class="container-fluid">
+
+    {% if messages %}
+    {% for message in messages %}
+    {% if message.tags %}
+    <div class="d-flex justify-content-center">
+        <div class="alert alert-success my-2 text-center w-25" role="alert">
+            {{message}}
+        </div>
+    </div>
+    {% endif %}
+    {% endfor %}
+    {% endif %}
+
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Session Students</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Session Number</th>
+                            <th>Student</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in session%}
+                        <tr>
+                            <td>{{item.session_id}}</td>
+                            <td>{{item.session_number}}</td>
+                            <td>
+                                <ul class="list-group list-group-flush">
+                                    {% for stud in session_student %}
+                                        {% if item.session_id == stud.session_id %}
+                                            <li class="list-group-item">{{stud.student_id}}</li>
+                                        {% endif %}
+                                    {% endfor %}
+                                </ul>
+                            </td>
+                            <td>
+                                <a href="{% url 'edit_session' item.session_id %}" class="btn btn-info btn-circle btn-sm">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+
+
+<div class="input-group">
+    <select class="form-select" id="inputGroupSelect04" aria-label="Example select with button addon">
+        <option selected>Choose...</option>
+        <option value="1">One</option>
+        <option value="2">Two</option>
+        <option value="3">Three</option>
+    </select>
+    <button class="btn btn-outline-secondary" type="button">Button</button>
+</div>
+    
+    
