@@ -33,7 +33,6 @@
     <th>Level</th>
     <th>Position</th>
     <th>Time</th>
-    <th>Start Date</th>
     <th></th>
     <th></th>
 {% endblock %}
@@ -48,7 +47,6 @@
         <td>{{item.level_id}}</td>
         <td>{{item.position_id}}</td>
         <td>{{item.time_id}}</td>
-        <td>{{item.create_date}}</td>
         <td>
             <a href="{% url 'edit_session' item.session_id %}" class="btn btn-info btn-circle btn-sm">
                 <i class="fas fa-edit"></i>

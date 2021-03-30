@@ -24,10 +24,12 @@
         {% csrf_token %}
         <div class="form-group row">
             <div class="col-sm-6 mb-3 mb-sm-0">
+                <label for="exampleInputEmail1" class="form-label">Session Number</label>
                 <input type="text" class="form-control form-control-user" id="snumber" name="snumber"
                     placeholder="Session Number" required>
             </div>
             <div class="col-sm-6">
+                <label for="exampleInputEmail1" class="form-label">Course</label>
                 <select class="form-control form-select rounded-pill" aria-label="Default select example" name="course" id="course">
                     {% for item in course%}
                     <option value="{{item.course_id}}">{{item.course_name}}</option>
@@ -38,6 +40,7 @@
 
         <div class="form-group row">
             <div class="col-sm-6 mb-3 mb-sm-0">
+                <label for="exampleInputEmail1" class="form-label">Teacher</label>
                 <select class="form-control form-select rounded-pill" aria-label="Default select example" name="teacher" id="teacher">
                     {% for item in teacher%}
                     <option value="{{item.person_id}}">{{item.first_name}} {{item.last_name}}</option>
@@ -45,6 +48,7 @@
                 </select>
             </div>
             <div class="col-sm-6">
+                <label for="exampleInputEmail1" class="form-label">Level</label>
                 <select class="form-control form-select rounded-pill" aria-label="Default select example" name="level" id="level">
                     {% for item in level%}
                     <option value="{{item.level_id}}">{{item.level_name}}</option>
@@ -55,6 +59,7 @@
         
         <div class="form-group row">
             <div class="col-sm-6 mb-3 mb-sm-0">
+                <label for="exampleInputEmail1" class="form-label">Position</label>
                 <select class="form-control form-select rounded-pill" aria-label="Default select example" name="position" id="position">
                     {% for item in position%}
                     <option value="{{item.position_id}}">{{item.position_name}}</option>
@@ -62,17 +67,12 @@
                 </select>
             </div>
             <div class="col-sm-6">
+                <labelclass="form-label">Time</label>
                 <select class="form-control form-select rounded-pill" aria-label="Default select example" name="time" id="time">
                     {% for item in time%}
                     <option value="{{item.time_id}}">{{item.time_name}}</option>
                     {% endfor %}
                 </select>
-            </div>
-        </div>
-
-        <div class="form-group row">
-            <div class="col-sm-6 mb-3 mb-sm-0">
-                <input type="date" class="form-control rounded-pill" id="create_date" name="create_date" required>
             </div>
         </div>
 

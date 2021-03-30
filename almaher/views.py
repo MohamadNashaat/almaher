@@ -179,7 +179,9 @@ def course(request):
 def add_course(request):
     if request.method == 'POST':
         ncourse = request.POST['ncourse']
-        new_ncourse = Course(course_name=ncourse)
+        sdate = request.POST['sdate']
+        edate = request.POST['edate']
+        new_ncourse = Course(course_name=ncourse, start_date=sdate, end_date=edate)
         new_ncourse.save()
         messages.success(request, 'Add success!')
         return HttpResponseRedirect(reverse('course'))
@@ -275,8 +277,7 @@ def add_session(request):
         level = Level.objects.get(pk=request.POST['level'])
         position = Position.objects.get(pk=request.POST['position'])
         time = Time.objects.get(pk=request.POST['time'])
-        create_date = request.POST['create_date']
-        new_session = Session(create_date=create_date, level_id=level, course_id=course,
+        new_session = Session(level_id=level, course_id=course,
                              position_id=position, time_id=time, session_number=snumber, teacher_id=teacher)
         new_session.save()
         messages.success(request, 'Add success!')
@@ -298,9 +299,9 @@ def del_session(request):
 
 
 # Views Session_Student
-def session_student(request):
-    session = Session.objects.all()
-    session_student = Session_Student.objects.all()
+def session_student(request, pk):
+    session = Session.objects.get(session_id=pk)
+    session_student = Session_Student.objects.filter(session_id=pk).all()
     context = {'session': session,
                 'session_student': session_student}
     return render(request, 'almaher/session_student.html', context)

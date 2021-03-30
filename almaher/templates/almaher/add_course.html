@@ -24,8 +24,20 @@
         {% csrf_token %}
         <div class="form-group row">
             <div class="col-sm-6 mb-4 mb-sm-0">
-                <input type="text" class="form-control form-control-user" id="course" name="ncourse"
+                <label for="exampleInputEmail1" class="form-label">Course Name</label>
+                <input type="text" class="form-control form-control-user" id="ncourse" name="ncourse"
                     placeholder="Course Name" required>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <div class="col-sm-6 mb-4 mb-sm-0">
+                <label for="exampleInputEmail1" class="form-label">Start Date</label>
+                <input type="date" class="form-control rounded-pill" id="sdate" name="sdate" required>
+            </div>
+            <div class="col-sm-6">
+                <label for="exampleInputEmail1" class="form-label">End Date</label>
+                <input type="date" class="form-control rounded-pill" id="edate" name="edate" required>
             </div>
         </div>
 
