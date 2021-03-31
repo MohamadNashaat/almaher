@@ -51,8 +51,7 @@ urlpatterns = [
 
     # Urls Sessions_Class
     path('session/student/<int:pk>', views.session_student, name='session_student'),
-    path('session/student/add', views.add_session_student, name='add_session_student'),
-    path('session/student/edit/<int:pk>', views.edit_session_student, name='edit_session_student'),
-    path('session/student/del/<int:pk>', views.del_session_student, name='del_session_student'),
+    path('session/student/add/<int:pk>/<int:num>', views.add_session_student, name='add_session_student'),
+    path('session/student/del/<int:pk>/<int:num>', views.del_session_student, name='del_session_student'),
 
 ]

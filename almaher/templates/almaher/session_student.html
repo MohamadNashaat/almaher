@@ -43,12 +43,6 @@
                 <div class="me-auto p-2 bd-highlight"><h5>Teacher: {{session.teacher_id}}</h5></div>
                 <div class="p-2 bd-highlight"><h5>Level: {{session.level_id}}</h5></div>
             </div>
-            <div class="d-flex bd-highlight mb-auto">
-                <a type="button" class="m-0  btn btn-success" href="{% url '' %}">
-                    <i class="fas fa-fw fa-user-plus"></i>
-                    <span>Add student to session</span>
-                </a>
-            </div>
         </div>
         <div class="card-body">
             <div class="table-responsive">
@@ -56,8 +50,12 @@
                     <thead>
                         <tr>
                             <th>#</th>
-                            <th>Student</th>
-                            <th>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Father</th>
+                            <th>BDate</th>
+                            <th>Level</th>
+                            <th></th>
                             </th>
                         </tr>
                     </thead>
@@ -65,10 +63,50 @@
                         {% for item in session_student %}
                         <tr>
                             <td>{{item.student_id.person_id}}</td>
-                            <td>{{item.student_id}}</td>
+                            <td>{{item.student_id.first_name}}</td>
+                            <td>{{item.student_id.last_name}}</td>
+                            <td>{{item.student_id.father_name}}</td>
+                            <td>{{item.student_id.bdate}}</td>
+                            <td>{{item.student_id.level_id.level_name}}</td>
                             <td>
-                                <a href="{% url 'del_session_student' item.student_id.person_id %}" class="btn btn-danger btn-circle btn-sm">
-                                    <i class="fas fa-times"></i>
+                                <a href="{% url 'del_session_student' session.session_id item.id %}" class="btn btn-danger btn-circle btn-sm">
+                                    <i class="fas fa-user-times"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Father</th>
+                            <th>BDate</th>
+                            <th>Level</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in student %}
+                        <tr>
+                            <td>{{item.person_id}}</td>
+                            <td>{{item.first_name}}</td>
+                            <td>{{item.last_name}}</td>
+                            <td>{{item.father_name}}</td>
+                            <td>{{item.bdate}}</td>
+                            <td>{{item.level_id.level_name}}</td>
+                            <td>
+                                <a href="{% url 'add_session_student' session.session_id item.person_id %}" class="btn btn-success btn-circle btn-sm">
+                                    <i class="fas fa-user-plus"></i>
                                 </a>
                             </td>
                         </tr>
@@ -81,17 +119,3 @@
 </div>
 
 {% endblock %}
-
-
-
-<div class="input-group">
-    <select class="form-select" id="inputGroupSelect04" aria-label="Example select with button addon">
-        <option selected>Choose...</option>
-        <option value="1">One</option>
-        <option value="2">Two</option>
-        <option value="3">Three</option>
-    </select>
-    <button class="btn btn-outline-secondary" type="button">Button</button>
-</div>
-    
-    

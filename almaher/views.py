@@ -3,6 +3,7 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.db.models import Q
 from .models import *
 
 # Create your views here.
@@ -301,29 +302,25 @@ def del_session(request):
 # Views Session_Student
 def session_student(request, pk):
     session = Session.objects.get(session_id=pk)
-    session_student = Session_Student.objects.filter(session_id=pk).all()
+    session_student = Session_Student.objects.all().filter(session_id=pk)
+    in_session = Session_Student.objects.all().filter(session_id=pk).values_list('student_id', flat=True)
+    in_session = list(in_session)
+    # Q objects can be negated with the ~ operator
+    all_student = Person.objects.all().filter(~Q(pk__in=in_session)).filter(type_id=2, level_id=session.level_id)
+    student = all_student
     context = {'session': session,
-                'session_student': session_student}
+                'session_student': session_student,
+                'student': student}
     return render(request, 'almaher/session_student.html', context)
 
-def add_session_student(request):
-    if request.method == 'POST':
-        messages.success(request, 'Add success!')
-        return HttpResponseRedirect(reverse('session_student'))
-    context = {'course': course,}
-    return render(request, 'almaher/add_session_student.html', context)
+def add_session_student(request, pk, num):
+    session = Session.objects.get(pk=pk)
+    student = Person.objects.get(pk=num)
+    add_new = Session_Student(session_id=session, student_id=student)
+    add_new.save()
+    return redirect('session_student', pk)
 
-def edit_session_student(request):
-    session = Session.objects.all()
-    session_student = Session_Student.objects.all()
-    if request.method == 'POST':
-        new_session_student = Session_Student()
-        new_session_student.save()
-        messages.success(request, 'Add success!')
-        return HttpResponseRedirect(reverse('edit_session_student'))
-    context = {'session': session,
-                'session_student': session_student}
-    return render(request, 'almaher/session_student.html', context)
-
-def del_session_student(request):
-    pass
+def del_session_student(request, pk, num):
+    get_session_student = Session_Student.objects.get(pk=num)
+    get_session_student.delete()
+    return redirect('session_student', pk)
