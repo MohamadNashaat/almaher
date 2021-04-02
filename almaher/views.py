@@ -191,8 +191,10 @@ def add_course(request):
 def edit_course(request):
     pass
 
-def del_course(request):
-    pass
+def del_course(request, pk):
+    get_course = Course.objects.get(pk=pk)
+    get_course.delete()
+    return redirect('course')
 
 # Views Level
 def level(request):
@@ -212,8 +214,10 @@ def add_level(request):
 def edit_level(request):
     pass
 
-def del_level(request):
-    pass
+def del_level(request, pk):
+    get_level = Level.objects.get(pk=pk)
+    get_level.delete()
+    return redirect('level')
 
 # Views Position
 def position(request):
@@ -234,8 +238,10 @@ def add_position(request):
 def edit_position(request):
     pass
 
-def del_position(request):
-    pass
+def del_position(request, pk):
+    get_position = Position.objects.get(pk=pk)
+    get_position.delete()
+    return redirect('position')
 
 # Views Time
 def time(request):
@@ -255,8 +261,10 @@ def add_time(request):
 def edit_time(request):
     pass
 
-def del_time(request):
-    pass
+def del_time(request, pk):
+    get_time = Time.objects.get(pk=pk)
+    get_time.delete()
+    return redirect('time')
 
 # Views Session
 def session(request):
@@ -292,12 +300,49 @@ def add_session(request):
                 }
     return render(request, 'almaher/add_session.html', context)
 
-def edit_session(request):
-    pass
+def edit_session(request, pk):
+    session = Session.objects.get(pk=pk)
+    if request.method =='POST':
+        get_snumber = request.POST['snumber']
+        get_course = request.POST['course']
+        get_teacher = request.POST['teacher']
+        get_level = request.POST['level']
+        get_position = request.POST['position']
+        get_time = request.POST['time']
+        #
+        course = Course.objects.get(pk=get_course)
+        teacher = Person.objects.get(pk=get_teacher)
+        level = Level.objects.get(pk=get_level)
+        position = Position.objects.get(pk=get_position)
+        time = Time.objects.get(pk=get_time)
+        #
+        session.session_number = get_snumber
+        session.course_id = course
+        session.teacher_id = teacher
+        session.level_id = level
+        session.time_id = time
+        session.save()
+        messages.success(request, 'Edit success!')
+        return HttpResponseRedirect(reverse('session'))
 
-def del_session(request):
-    pass
+    teacher = Person.objects.all().filter(type_id=1)
+    position = Position.objects.all()
+    level = Level.objects.all()
+    time = Time.objects.all()
+    course = Course.objects.all()
+    context = {'session': session,
+                'teacher': teacher,
+                'position': position,
+                'level': level,
+                'time': time,
+                'course': course
+                }
+    return render(request, 'almaher/edit_session.html', context)
 
+def del_session(request, pk):
+    get_session = Session.objects.get(pk=pk)
+    get_session.delete()
+    return redirect('session')
 
 # Views Session_Student
 def session_student(request, pk):

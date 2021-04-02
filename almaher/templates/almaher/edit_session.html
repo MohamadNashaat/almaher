@@ -1,0 +1,97 @@
+{% extends 'almaher/base.html'%}
+
+{% block body%}
+
+<!-- Begin Page Content -->
+<div class="container-fluid">
+
+    <!-- Page Heading -->
+    <h1 class="h3 mb-4 text-gray-800">Edit Session</h1>
+
+    <div class="card p-4">
+        <form action="{% url 'edit_session' session.session_id %}" method="post">
+            {% csrf_token %}
+            <div class="form-group row">
+                <div class="col-sm-6 mb-3 mb-sm-0">
+                    <label for="exampleInputEmail1" class="form-label">Session Number</label>
+                    <input type="text" class="form-control form-control-user" id="snumber" name="snumber"
+                        placeholder="Session Number" value="{{session.session_number}}" required>
+                </div>
+                <div class="col-sm-6">
+                    <label for="exampleInputEmail1" class="form-label">Course</label>
+                    <select class="form-control form-select rounded-pill" aria-label="Default select example" name="course" id="course">
+                        {% if session.course_id %}
+                            <option value="{{session.course_id.course_id}}" selected>{{session.course_id.course_name}}</option>
+                        {% endif %}
+                        {% for item in course%}
+                        <option value="{{item.course_id}}">{{item.course_name}}</option>
+                        {% endfor %}
+                        
+                    </select>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-sm-6 mb-3 mb-sm-0">
+                    <label for="exampleInputEmail1" class="form-label">Teacher</label>
+                    <select class="form-control form-select rounded-pill" aria-label="Default select example" name="teacher" id="teacher">
+                        {% if session.teacher_id %}
+                            <option value="{{session.teacher_id.person_id}}" selected>{{session.teacher_id.first_name}} {{session.teacher_id.last_name}}</option>
+                        {% else %}                    
+                            {% for item in teacher%}
+                            <option value="{{item.person_id}}">{{item.first_name}} {{item.last_name}}</option>
+                            {% endfor %}
+                        {% endif %}
+                    </select>
+                </div>
+                <div class="col-sm-6">
+                    <label for="exampleInputEmail1" class="form-label">Level</label>
+                    <select class="form-control form-select rounded-pill" aria-label="Default select example" name="level" id="level">
+                        {% if session.level_id %}
+                            <option value="{{session.level_id.level_id}}" selected>{{session.level_id.level_name}}</option>
+                        {% else %}
+                            <option value="0" selected>Select Level</option>
+                        {% endif %}
+                        {% for item in level%}
+                        <option value="{{item.level_id}}">{{item.level_name}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            
+            <div class="form-group row">
+                <div class="col-sm-6 mb-3 mb-sm-0">
+                    <label for="exampleInputEmail1" class="form-label">Position</label>
+                    <select class="form-control form-select rounded-pill" aria-label="Default select example" name="position" id="position">
+                        {% if session.position_id %}
+                            <option value="{{session.position_id.position_id}}" selected>{{session.position_id.position_name}}</option>
+                        {% else %}
+                            {% for item in position%}
+                                <option value="{{item.position_id}}">{{item.position_name}}</option>
+                            {% endfor %}    
+                        {% endif %}
+                    </select>
+                </div>
+                <div class="col-sm-6">
+                    <labelclass="form-label">Time</label>
+                    <select class="form-control form-select rounded-pill" aria-label="Default select example" name="time" id="time">
+                        {% if session.time_id %}
+                            <option value="{{session.time_id.time_id}}" selected>{{session.time_id.time_name}}</option>
+                        {% else %}
+                            {% for item in time%}
+                                <option value="{{item.time_id}}">{{item.time_name}}</option>
+                            {% endfor %}
+                        {% endif %}
+                    </select>
+                </div>
+            </div>
+            
+                    <a type="button" class="m-0  btn btn-secondary" href="{% url 'session'%}">
+                <span>Cancel</span>
+            </a>
+            <button type="submit" class="btn btn-primary ">Save</button>
+        </form>
+    </div> 
+</div>
+<!-- /.container-fluid -->  
+
+{% endblock %}
