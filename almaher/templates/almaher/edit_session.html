@@ -1,15 +1,11 @@
-{% extends 'almaher/base.html'%}
+{% extends 'almaher/base_card_dml.html'%}
 
-{% block body%}
+{% block pg_head %}
+    Edit Session
+{% endblock %}
 
-<!-- Begin Page Content -->
-<div class="container-fluid">
-
-    <!-- Page Heading -->
-    <h1 class="h3 mb-4 text-gray-800">Edit Session</h1>
-
-    <div class="card p-4">
-        <form action="{% url 'edit_session' session.session_id %}" method="post">
+{% block card_body %}
+    <form action="{% url 'edit_session' session.session_id %}" method="post">
             {% csrf_token %}
             <div class="form-group row">
                 <div class="col-sm-6 mb-3 mb-sm-0">
@@ -84,14 +80,11 @@
                     </select>
                 </div>
             </div>
-            
-                    <a type="button" class="m-0  btn btn-secondary" href="{% url 'session'%}">
+            <div class="d-flex justify-content-center">
+                <a type="button" class="m-0  btn btn-secondary w-25 mr-4" href="{% url 'session'%}">
                 <span>Cancel</span>
-            </a>
-            <button type="submit" class="btn btn-primary ">Save</button>
+                </a>
+                <button type="submit" class="btn btn-primary w-25">Save</button>
+            </div>
         </form>
-    </div> 
-</div>
-<!-- /.container-fluid -->  
-
 {% endblock %}

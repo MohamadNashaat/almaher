@@ -1,25 +1,10 @@
-{% extends 'almaher/base.html'%}
+{% extends 'almaher/base_card_dml.html'%}
 
-{% block body%}
+{% block pg_head %}
+    Add Course
+{% endblock %}
 
-<!-- Begin Page Content -->
-<div class="container-fluid">
-
-    {% if messages %}
-    {% for message in messages %}
-    {% if message.tags %}
-    <div class="d-flex justify-content-center">
-        <div class="alert alert-success my-4 text-center w-50" role="alert">
-            {{message}}
-        </div>
-    </div>
-    {% endif %}
-    {% endfor %}
-    {% endif %}
-
-    <!-- Page Heading -->
-    <h1 class="h3 mb-4 text-gray-800">Add Course</h1>
-
+{% block card_body %}
     <form class="user" action="{% url 'add_course' %}" method="post">
         {% csrf_token %}
         <div class="form-group row">
@@ -42,15 +27,10 @@
         </div>
 
         <div class="d-flex justify-content-center">
-            <a type="button" class="btn btn-secondary btn-user w-25 mr-4" href="{% url 'course'%}">
+            <a type="button" class="btn btn-secondary w-25 mr-4" href="{% url 'course'%}">
                 <span>Cancel</span>
             </a>
-            <input type="submit" value="Add" class="btn btn-primary btn-user w-25">
+            <input type="submit" value="Add" class="btn btn-primary w-25">
         </div>
-    </form>   
-    
-    
-</div>
-<!-- /.container-fluid -->  
-
+    </form>
 {% endblock %}

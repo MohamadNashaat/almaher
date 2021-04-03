@@ -1,14 +1,10 @@
-{% extends 'almaher/base.html'%}
+{% extends 'almaher/base_card_dml.html'%}
 
-{% block body%}
+{% block pg_head %}
+    Delete Student
+{% endblock %}
 
-<!-- Begin Page Content -->
-<div class="container-fluid">
-
-    <!-- Page Heading -->
-    <h1 class="h3 mb-4 text-gray-800">Delete Student</h1>
-    
-    <div class="card p-4">
+{% block card_body %}
     <form action="{% url 'del_student' student.person_id%}" method="post">
         {% csrf_token %}
         <div class="mb-3">
@@ -28,14 +24,11 @@
                     Select "Delete" below if you are ready to delete this current user!
                 </label>
         </div>
-        <a type="button" class="m-0  btn btn-secondary" href="{% url 'student'%}">
-            <span>Cancel</span>
-        </a>
-        <button type="submit" class="btn btn-danger ">Delete</button>
+        <div class="d-flex justify-content-center">
+            <a type="button" class="m-0  btn btn-secondary w-25 mr-4" href="{% url 'student'%}">
+                <span>Cancel</span>
+            </a>
+            <button type="submit" class="btn btn-danger w-25">Delete</button>
+        </div>
     </form>
-    </div> 
-    
-</div>
-<!-- /.container-fluid -->  
-
 {% endblock %}

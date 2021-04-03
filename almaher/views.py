@@ -20,14 +20,11 @@ def index(request):
                 'c_course': c_course}
     return render(request, 'almaher/index.html', context)
 
-
 def login(request):
     return render(request, 'almaher/login.html')
 
-
 def blank(request):
     return render(request, 'almaher/blank.html')
-
 
 def pg_404(request):
     return render(request, 'almaher/404.html')
@@ -39,7 +36,6 @@ def teacher(request):
     context = {'c_teacher': c_teacher,
                 'teacher': teacher}
     return render(request, 'almaher/teacher.html', context)
-
 
 def add_teacher(request):
     if request.method == 'POST':
@@ -60,7 +56,6 @@ def add_teacher(request):
         return HttpResponseRedirect(reverse('teacher'))
     
     return render(request, 'almaher/add_teacher.html')
-
 
 def edit_teacher(request, pk):
     teacher = Person.objects.get(person_id=pk)
@@ -85,7 +80,6 @@ def edit_teacher(request, pk):
         return redirect('teacher')
     return render(request, 'almaher/edit_teacher.html', {'teacher': teacher})
 
-
 def del_teacher(request, pk):
     teacher = Person.objects.get(person_id=pk)
     if request.method =='POST':
@@ -93,7 +87,6 @@ def del_teacher(request, pk):
         return redirect('teacher')
     return render(request, 'almaher/del_teacher.html', {'teacher': teacher})
     
-
 # Views Students
 def student(request):
     student = Person.objects.all().filter(type_id=2)
@@ -101,7 +94,6 @@ def student(request):
     context = {'c_student': c_student,
                 'student': student}
     return render(request, 'almaher/student.html', context)
-
 
 def add_student(request):
     level = Level.objects.all()
@@ -130,7 +122,6 @@ def add_student(request):
         return HttpResponseRedirect(reverse('student'))
     context = {'level': level}
     return render(request, 'almaher/add_student.html', context)
-
 
 def edit_student(request, pk):
     student = Person.objects.get(person_id=pk)
@@ -162,14 +153,12 @@ def edit_student(request, pk):
                 'level': level}
     return render(request, 'almaher/edit_student.html', context)
 
-
 def del_student(request, pk):
     student = Person.objects.get(person_id=pk)
     if request.method =='POST':
         student.delete()
         return redirect('student')
     return render(request, 'almaher/del_student.html', {'student': student})
-
 
 # Views Course
 def course(request):
@@ -233,7 +222,6 @@ def add_position(request):
         messages.success(request, 'Add success!')
         return HttpResponseRedirect(reverse('position'))
     return render(request, 'almaher/add_position.html')
-
 
 def edit_position(request):
     pass

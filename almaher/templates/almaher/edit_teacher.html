@@ -1,65 +1,57 @@
-{% extends 'almaher/base.html'%}
+{% extends 'almaher/base_card_dml.html'%}
 
-{% block body%}
+{% block pg_head %}
+    Edit Teacher
+{% endblock %}
 
-<!-- Begin Page Content -->
-<div class="container-fluid">
-
-    <!-- Page Heading -->
-    <h1 class="h3 mb-4 text-gray-800">Edit Teacher</h1>
-
-    <div class="card p-4">
+{% block card_body %}
     <form action="{% url 'edit_teacher' teacher.person_id%}" method="post">
-        {% csrf_token %}
-        <div class="form-group row">
-            <div class="col-sm-6 mb-3">
-                <label for="exampleInputEmail1" class="form-label">First Name</label>
-                <input type="text" class="form-control" value="{{teacher.first_name}}" name="fname" id="exampleInputEmail1" aria-describedby="emailHelp" >
+            {% csrf_token %}
+            <div class="form-group row">
+                <div class="col-sm-6 mb-3">
+                    <label for="exampleInputEmail1" class="form-label">First Name</label>
+                    <input type="text" class="form-control" value="{{teacher.first_name}}" name="fname" id="exampleInputEmail1" aria-describedby="emailHelp" >
+                </div>
+                <div class="col-sm-6 mb-3">
+                    <label for="exampleInputEmail1" class="form-label">Last Name</label>
+                    <input type="text" class="form-control" value="{{teacher.last_name}}" name="lname" id="exampleInputEmail1" aria-describedby="emailHelp" >
+                </div>
             </div>
-            <div class="col-sm-6 mb-3">
-                <label for="exampleInputEmail1" class="form-label">Last Name</label>
-                <input type="text" class="form-control" value="{{teacher.last_name}}" name="lname" id="exampleInputEmail1" aria-describedby="emailHelp" >
+            <div class="form-group row">
+                <div class="col-sm-6 mb-3">
+                    <label for="exampleInputEmail1" class="form-label">Father Name</label>
+                    <input type="text" class="form-control" value="{{teacher.father_name}}" name="father_name" id="exampleInputEmail1" aria-describedby="emailHelp" >
+                </div>
+                <div class="col-sm-6 mb-3">
+                    <label for="exampleInputEmail1" class="form-label">Brith Date</label>
+                    <input type="date" class="form-control" value="{{teacher.bdate|date:'Y-m-d'}}" name="bdate" id="exampleInputEmail1" aria-describedby="emailHelp" >
+                </div>
             </div>
-        </div>
-        <div class="form-group row">
-            <div class="col-sm-6 mb-3">
-                <label for="exampleInputEmail1" class="form-label">Father Name</label>
-                <input type="text" class="form-control" value="{{teacher.father_name}}" name="father_name" id="exampleInputEmail1" aria-describedby="emailHelp" >
+            <div class="form-group row">
+                <div class="col-sm-6 mb-3">
+                    <label for="exampleInputEmail1" class="form-label">Home Number</label>
+                    <input type="text" class="form-control" value="{{teacher.home_number}}" name="hnumber" id="exampleInputEmail1" aria-describedby="emailHelp" >
+                </div>
+                <div class="col-sm-6 mb-3">
+                    <label for="exampleInputEmail1" class="form-label">Phone Number</label>
+                    <input type="text" class="form-control" value="{{teacher.phone_number}}" name="pnumber" id="exampleInputEmail1" aria-describedby="emailHelp" >
+                </div>
             </div>
-            <div class="col-sm-6 mb-3">
-                <label for="exampleInputEmail1" class="form-label">Brith Date</label>
-                <input type="date" class="form-control" value="{{teacher.bdate|date:'Y-m-d'}}" name="bdate" id="exampleInputEmail1" aria-describedby="emailHelp" >
+            <div class="form-group row">
+                <div class="col-sm-6 mb-3">
+                    <label for="exampleInputEmail1" class="form-label">Address</label>
+                    <input type="text" class="form-control" value="{{teacher.address}}" name="address" id="exampleInputEmail1" aria-describedby="emailHelp" >
+                </div>
+                <div class="col-sm-6 mb-4">
+                    <label for="exampleInputEmail1" class="form-label">Job</label>
+                    <input type="text" class="form-control" value="{{teacher.job}}" name="job" id="exampleInputEmail1" aria-describedby="emailHelp" >
+                </div>
             </div>
-        </div>
-        <div class="form-group row">
-            <div class="col-sm-6 mb-3">
-                <label for="exampleInputEmail1" class="form-label">Home Number</label>
-                <input type="text" class="form-control" value="{{teacher.home_number}}" name="hnumber" id="exampleInputEmail1" aria-describedby="emailHelp" >
+            <div class="d-flex justify-content-center">
+                <a type="button" class="m-0  btn btn-secondary w-25 mr-4" href="{% url 'teacher'%}">
+                    <span>Cancel</span>
+                </a>
+                <button type="submit" class="btn btn-primary w-25">Save</button>
             </div>
-            <div class="col-sm-6 mb-3">
-                <label for="exampleInputEmail1" class="form-label">Phone Number</label>
-                <input type="text" class="form-control" value="{{teacher.phone_number}}" name="pnumber" id="exampleInputEmail1" aria-describedby="emailHelp" >
-            </div>
-        </div>
-        <div class="form-group row">
-            <div class="col-sm-6 mb-3">
-                <label for="exampleInputEmail1" class="form-label">Address</label>
-                <input type="text" class="form-control" value="{{teacher.address}}" name="address" id="exampleInputEmail1" aria-describedby="emailHelp" >
-            </div>
-            <div class="col-sm-6 mb-4">
-                <label for="exampleInputEmail1" class="form-label">Job</label>
-                <input type="text" class="form-control" value="{{teacher.job}}" name="job" id="exampleInputEmail1" aria-describedby="emailHelp" >
-            </div>
-        </div>
-                <a type="button" class="m-0  btn btn-secondary" href="{% url 'teacher'%}">
-            <span>Cancel</span>
-        </a>
-        <button type="submit" class="btn btn-primary ">Save</button>
-    </form>
-    </div> 
-    
-
-</div>
-<!-- /.container-fluid -->  
-
+        </form>
 {% endblock %}

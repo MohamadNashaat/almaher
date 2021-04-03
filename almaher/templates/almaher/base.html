@@ -26,6 +26,8 @@
     <!-- Custom styles for this page -->
     <link href="{% static 'vendor/datatables/dataTables.bootstrap4.min.css'%}" rel="stylesheet">
 
+    <!-- My style-->
+    <link href="{% static 'css/my-style.css'%}" rel="stylesheet">
 
 </head>
 
@@ -228,10 +230,15 @@
 
                 </nav>
                 <!-- End of Topbar -->
+                
+                <!-- Begin Page Content -->
+                <div class="container-fluid">
 
-                {% block body%}
+                    {% block body%}
 
-                {% endblock %}
+                    {% endblock %}
+
+                </div>
                 
             </div>
                 <!-- End of Main Content -->
