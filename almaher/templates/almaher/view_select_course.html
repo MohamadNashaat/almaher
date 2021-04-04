@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block card_body %}
-    <form action="{% url 'select_course' %}" method="post">
+    <form action="{% url 'view_select_course' %}" method="post">
         {% csrf_token %}
         <div class="form-group row">
             <div class="mb-3 mb-sm-0">

@@ -375,3 +375,26 @@ def select_course(request):
     context = {'course': course,
                 }
     return render(request, 'almaher/select_course.html', context)
+
+# View view_sessions
+def view_select_course(request):
+    course = Course.objects.all()
+    if request.method =='POST':
+        get_course = request.POST['course']
+        get_course = Course.objects.get(pk=get_course)
+        # Set session course_id
+        request.session['view_get_course_id'] = get_course.course_id
+        return redirect('view_session_student')
+    context = {'course': course,
+                }
+    return render(request, 'almaher/view_select_course.html', context)
+
+def view_session_student(request):
+    view_get_course_id = request.session['view_get_course_id']
+    view_get_course_id = Course.objects.get(pk=view_get_course_id)
+    session = Session.objects.all().filter(course_id=view_get_course_id).values_list('session_id', flat=True)
+    session_student = Session_Student.objects.all().filter(session_id__in=session)
+    context = {'session_student': session_student,
+                }
+    return render(request, 'almaher/view_session_student.html', context)
+

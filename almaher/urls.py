@@ -57,5 +57,9 @@ urlpatterns = [
     # Select Course
     path('select/course', views.select_course, name='select_course'),
 
+    # View_Select_Course
+    path('view/select/course', views.view_select_course, name='view_select_course'),
+    # View_Session_Student    
+    path('view/session/student', views.view_session_student, name='view_session_student'),
 
 ]

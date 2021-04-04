@@ -29,7 +29,6 @@
 {% block th_table %}
     <th>Level Name</th>
     <th></th>
-    <th></th>
 {% endblock %}
 
 {% block tr_table%}
@@ -38,14 +37,11 @@
         <td>{{item.level_id}}</td>
         <td>{{item.level_name}}</td>
         <td>
-            <a href="{% url 'edit_level' item.level_id %}" class="btn btn-info btn-circle btn-sm">
-                <i class="fas fa-edit"></i>
-            </a>
-        </td>
-        <td>
-            <a href="{% url 'del_level' item.level_id %}" class="btn btn-danger btn-circle btn-sm">
-                <i class="fas fa-times"></i>
-            </a>
+            <div class="d-flex justify-content-center">
+                <a href="{% url 'del_level' item.level_id %}" class="btn btn-danger btn-circle btn-sm">
+                    <i class="fas fa-times"></i>
+                </a>
+            </div>
         </td>
     </tr>
     {% endfor %}
