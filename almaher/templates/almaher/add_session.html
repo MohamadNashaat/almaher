@@ -14,17 +14,6 @@
                     placeholder="Session Number" required>
             </div>
             <div class="col-sm-6">
-                <label for="exampleInputEmail1" class="form-label">Course</label>
-                <select class="form-control form-select rounded-pill" aria-label="Default select example" name="course" id="course" required>
-                    {% for item in course%}
-                    <option value="{{item.course_id}}">{{item.course_name}}</option>
-                    {% endfor %}
-                </select>
-            </div>
-        </div>
-
-        <div class="form-group row">
-            <div class="col-sm-6 mb-3 mb-sm-0">
                 <label for="exampleInputEmail1" class="form-label">Teacher</label>
                 <select class="form-control form-select rounded-pill" aria-label="Default select example" name="teacher" id="teacher" required>
                     {% for item in teacher%}
@@ -32,7 +21,10 @@
                     {% endfor %}
                 </select>
             </div>
-            <div class="col-sm-6">
+        </div>
+
+        <div class="form-group row">
+            <div class="col-sm-6 mb-3 mb-sm-0">
                 <label for="exampleInputEmail1" class="form-label">Level</label>
                 <select class="form-control form-select rounded-pill" aria-label="Default select example" name="level" id="level" required>
                     {% for item in level%}
@@ -40,10 +32,7 @@
                     {% endfor %}
                 </select>
             </div>
-        </div>
-        
-        <div class="form-group row">
-            <div class="col-sm-6 mb-3 mb-sm-0">
+            <div class="col-sm-6">
                 <label for="exampleInputEmail1" class="form-label">Position</label>
                 <select class="form-control form-select rounded-pill" aria-label="Default select example" name="position" id="position" required>
                     {% for item in position%}
@@ -51,7 +40,10 @@
                     {% endfor %}
                 </select>
             </div>
-            <div class="col-sm-6">
+        </div>
+        
+        <div class="form-group row">
+            <div class="col-sm-6 mb-3 mb-sm-0">
                 <labelclass="form-label">Time</label>
                 <select class="form-control form-select rounded-pill" aria-label="Default select example" name="time" id="time" required>
                     {% for item in time%}

@@ -54,4 +54,8 @@ urlpatterns = [
     path('session/student/add/<int:pk>/<int:num>', views.add_session_student, name='add_session_student'),
     path('session/student/del/<int:pk>/<int:num>', views.del_session_student, name='del_session_student'),
 
+    # Select Course
+    path('select/course', views.select_course, name='select_course'),
+
+
 ]

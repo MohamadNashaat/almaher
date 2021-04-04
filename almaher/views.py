@@ -255,13 +255,17 @@ def del_time(request, pk):
     return redirect('time')
 
 # Views Session
-def session(request):
-    session = Session.objects.all()
-    context = {'session': session}
+def session(request):    
+    get_course_id = request.session['get_course_id']
+    session = Session.objects.all().filter(course_id=get_course_id)
+    context = {'session': session,
+                'get_course_id': get_course_id
+                }
     return render(request, 'almaher/session.html', context)
 
 def add_session(request):
-    course = Course.objects.all()
+    get_course_id = request.session['get_course_id']
+    get_course_id = Course.objects.get(pk=get_course_id)
     level = Level.objects.all()
     position = Position.objects.all()
     time = Time.objects.all()
@@ -269,18 +273,16 @@ def add_session(request):
     student = Person.objects.all().filter(type_id=2)
     if request.method == 'POST':
         snumber = request.POST['snumber']
-        course = Course.objects.get(pk=request.POST['course'])
         teacher = Person.objects.get(pk=request.POST['teacher'])
         level = Level.objects.get(pk=request.POST['level'])
         position = Position.objects.get(pk=request.POST['position'])
         time = Time.objects.get(pk=request.POST['time'])
-        new_session = Session(level_id=level, course_id=course,
+        new_session = Session(level_id=level, course_id=get_course_id,
                              position_id=position, time_id=time, session_number=snumber, teacher_id=teacher)
         new_session.save()
         messages.success(request, 'Add success!')
         return HttpResponseRedirect(reverse('session'))
-    context = {'course': course,
-                'level': level,
+    context = {'level': level,
                 'position': position,
                 'time': time,
                 'teacher': teacher,
@@ -336,8 +338,11 @@ def del_session(request, pk):
 def session_student(request, pk):
     session = Session.objects.get(session_id=pk)
     session_student = Session_Student.objects.all().filter(session_id=pk)
-    in_session = Session_Student.objects.all().filter(session_id=pk).values_list('student_id', flat=True)
-    in_session = list(in_session)
+    # Get student not Enrolment in sessions
+    get_course_id = request.session['get_course_id']
+    get_course_id = Course.objects.get(pk=get_course_id)
+    get_session = Session.objects.all().filter(course_id=get_course_id).values_list('session_id', flat=True)
+    in_session = Session_Student.objects.all().filter(session_id__in=get_session).filter().values_list('student_id', flat=True)
     # Q objects can be negated with the ~ operator
     all_student = Person.objects.all().filter(~Q(pk__in=in_session)).filter(type_id=2, level_id=session.level_id)
     student = all_student
@@ -357,3 +362,16 @@ def del_session_student(request, pk, num):
     get_session_student = Session_Student.objects.get(pk=num)
     get_session_student.delete()
     return redirect('session_student', pk)
+
+# Views select course
+def select_course(request):
+    course = Course.objects.all()
+    if request.method =='POST':
+        get_course = request.POST['course']
+        get_course = Course.objects.get(pk=get_course)
+        # Set session course_id
+        request.session['get_course_id'] = get_course.course_id
+        return redirect('session')
+    context = {'course': course,
+                }
+    return render(request, 'almaher/select_course.html', context)
