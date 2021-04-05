@@ -398,3 +398,52 @@ def view_session_student(request):
                 }
     return render(request, 'almaher/view_session_student.html', context)
 
+# View attendance
+def select_attendance(request):
+    course = Course.objects.all()
+    if request.method =='POST':
+        get_type = request.POST['type']
+        get_course = request.POST['course']
+        get_course = Course.objects.get(pk=get_course)
+        request.session['attendance_get_course_id'] = get_course.course_id
+        if get_type=='1':
+            return redirect('attendance_teacher')
+        else:
+            return redirect('attendance_student')
+    context = {'course': course,
+                }
+    return render(request, 'almaher/attendance_select_course.html', context)
+
+def attendance_teacher(request):
+    teacher = Person.objects.all().filter(type_id=1).values_list('person_id', flat=True)
+    attendance_get_course_id = request.session['attendance_get_course_id']
+    session = Session.objects.all().filter(course_id=attendance_get_course_id).values_list('session_id', flat=True)
+    attendance = Attendance.objects.all().filter(person_id__in=teacher, session_id__in=session)
+    day_attendance = Attendance.objects.all().filter(session_id__in=session).values_list('day', flat=True).distinct()
+    context = {'attendance': attendance,
+                'day_attendance': day_attendance}
+    return render(request, 'almaher/attendance.html', context)
+
+def attendance_student(request):
+    student = Person.objects.all().filter(type_id=2).values_list('person_id', flat=True)
+    attendance_get_course_id = request.session['attendance_get_course_id']
+    session = Session.objects.all().filter(course_id=attendance_get_course_id).values_list('session_id', flat=True)
+    name_attendance = Attendance.objects.all().filter(person_id__in=student, session_id__in=session).distinct('person_id')
+    attendance = Attendance.objects.all().filter(person_id__in=student, session_id__in=session)
+    day_attendance = Attendance.objects.all().filter(session_id__in=session).values_list('day', flat=True).distinct()
+    context = {'attendance': attendance,
+                'name_attendance': name_attendance,
+                'day_attendance': day_attendance}
+    return render(request, 'almaher/attendance.html', context)
+
+def attendance_true(request, pk):
+    attendance = Attendance.objects.get(pk=pk)
+    attendance.status = True
+    attendance.save()
+    return redirect('attendance_student')
+
+def attendance_false(request, pk):
+    attendance = Attendance.objects.get(pk=pk)
+    attendance.status = False
+    attendance.save()
+    return redirect('attendance_student')

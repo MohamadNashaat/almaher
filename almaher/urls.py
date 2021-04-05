@@ -54,12 +54,20 @@ urlpatterns = [
     path('session/student/add/<int:pk>/<int:num>', views.add_session_student, name='add_session_student'),
     path('session/student/del/<int:pk>/<int:num>', views.del_session_student, name='del_session_student'),
 
-    # Select Course
-    path('select/course', views.select_course, name='select_course'),
+    # Urls Select Course for session
+    path('select/session', views.select_course, name='select_course'),
 
-    # View_Select_Course
-    path('view/select/course', views.view_select_course, name='view_select_course'),
-    # View_Session_Student    
+    # Urls View_Session_Student
+    path('select/view/session', views.view_select_course, name='view_select_course'),
     path('view/session/student', views.view_session_student, name='view_session_student'),
 
+    # Urls Attendance
+    path('select/attendance', views.select_attendance, name='attendance'),
+    path('attendance/teacher', views.attendance_teacher, name='attendance_teacher'),
+    path('attendance/student', views.attendance_student, name='attendance_student'),
+    path('attendance/true/<int:pk>', views.attendance_true, name='attendance_true'),
+    path('attendance/false/<int:pk>', views.attendance_false, name='attendance_false'),
+
+    # Urls Exam
+    path('select/exam', views.view_select_course, name='exam'),
 ]
