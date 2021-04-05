@@ -77,7 +77,7 @@ WSGI_APPLICATION = 'aliman.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'djanog_database',
+        'NAME': 'aliman',
         'USER': 'postgres',
         'PASSWORD': 'sys',
         'HOST': 'localhost',
