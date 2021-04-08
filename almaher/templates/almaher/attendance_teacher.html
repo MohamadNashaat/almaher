@@ -1,7 +1,7 @@
 {% extends 'almaher/base_card_dml.html'%}
 
 {% block pg_head %}
-    View Sessions
+    Teacher Attendances
 {% endblock %}
 
 {% block card_body %}
@@ -20,11 +20,12 @@
             <tbody>
                 {% for item in name_attendance %}
                 <tr>
-                    <td>{{item.session_id.session_number}}</td>
+                    <!--<td>{{item.session_id.session_number}}</td>-->
+                    <td>{{item.course_id}}</td>
                     <td>{{item.person_id.first_name}}</td>
                     <td>{{item.person_id.last_name}}</td>
                     <!--Get studet _d then list status day-->
-                    {% for item_status in attendance %}
+                    {% for item_status in status_attendance %}
                         {% if item_status.person_id == item.person_id%}
                             {% if item_status.status == True %}
                                 <td>

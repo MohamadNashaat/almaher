@@ -67,7 +67,13 @@ urlpatterns = [
     path('attendance/student', views.attendance_student, name='attendance_student'),
     path('attendance/true/<int:pk>', views.attendance_true, name='attendance_true'),
     path('attendance/false/<int:pk>', views.attendance_false, name='attendance_false'),
+    path('attendance/generater', views.attendance_generater, name='attendance_generater'),
+
+    
 
     # Urls Exam
     path('select/exam', views.view_select_course, name='exam'),
+
+
+
 ]

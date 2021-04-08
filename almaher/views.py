@@ -4,6 +4,8 @@ from django.urls import reverse
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
+from datetime import datetime
+from datetime import timedelta
 from .models import *
 
 # Create your views here.
@@ -403,6 +405,7 @@ def select_attendance(request):
     course = Course.objects.all()
     if request.method =='POST':
         get_type = request.POST['type']
+        request.session['attendance_type'] = get_type
         get_course = request.POST['course']
         get_course = Course.objects.get(pk=get_course)
         request.session['attendance_get_course_id'] = get_course.course_id
@@ -417,33 +420,71 @@ def select_attendance(request):
 def attendance_teacher(request):
     teacher = Person.objects.all().filter(type_id=1).values_list('person_id', flat=True)
     attendance_get_course_id = request.session['attendance_get_course_id']
-    session = Session.objects.all().filter(course_id=attendance_get_course_id).values_list('session_id', flat=True)
-    attendance = Attendance.objects.all().filter(person_id__in=teacher, session_id__in=session)
-    day_attendance = Attendance.objects.all().filter(session_id__in=session).values_list('day', flat=True).distinct()
-    context = {'attendance': attendance,
-                'day_attendance': day_attendance}
-    return render(request, 'almaher/attendance.html', context)
+    name_attendance = Attendance.objects.all().filter(person_id__in=teacher, course_id=attendance_get_course_id).distinct('person_id')
+    day_attendance = Attendance.objects.all().filter(person_id__in=teacher, course_id=attendance_get_course_id).values_list('day', flat=True).distinct()
+    status_attendance = Attendance.objects.all().filter(person_id__in=teacher, course_id=attendance_get_course_id)
+    context = {'name_attendance': name_attendance,
+                'day_attendance': day_attendance,
+                'status_attendance': status_attendance,
+                }
+    return render(request, 'almaher/attendance_teacher.html', context)
 
 def attendance_student(request):
     student = Person.objects.all().filter(type_id=2).values_list('person_id', flat=True)
     attendance_get_course_id = request.session['attendance_get_course_id']
-    session = Session.objects.all().filter(course_id=attendance_get_course_id).values_list('session_id', flat=True)
-    name_attendance = Attendance.objects.all().filter(person_id__in=student, session_id__in=session).distinct('person_id')
-    attendance = Attendance.objects.all().filter(person_id__in=student, session_id__in=session)
-    day_attendance = Attendance.objects.all().filter(session_id__in=session).values_list('day', flat=True).distinct()
-    context = {'attendance': attendance,
-                'name_attendance': name_attendance,
-                'day_attendance': day_attendance}
-    return render(request, 'almaher/attendance.html', context)
+    name_attendance = Attendance.objects.all().filter(person_id__in=student, course_id=attendance_get_course_id).distinct('person_id')
+    day_attendance = Attendance.objects.all().filter(person_id__in=student, course_id=attendance_get_course_id).values_list('day', flat=True).distinct()
+    status_attendance = Attendance.objects.all().filter(person_id__in=student, course_id=attendance_get_course_id)
+    context = {'name_attendance': name_attendance,
+                'day_attendance': day_attendance,
+                'status_attendance': status_attendance,
+                }
+    return render(request, 'almaher/attendance_student.html', context)
 
 def attendance_true(request, pk):
     attendance = Attendance.objects.get(pk=pk)
     attendance.status = True
     attendance.save()
-    return redirect('attendance_student')
+    attendance_type = request.session['attendance_type']
+    if attendance_type=='1':
+        return redirect('attendance_teacher')
+    else:
+        return redirect('attendance_student')
 
 def attendance_false(request, pk):
     attendance = Attendance.objects.get(pk=pk)
     attendance.status = False
     attendance.save()
-    return redirect('attendance_student')
+    attendance_type = request.session['attendance_type']
+    if attendance_type=='1':
+        return redirect('attendance_teacher')
+    else:
+        return redirect('attendance_student')
+
+def attendance_generater(request):
+    course = Course.objects.all()
+    if request.method =='POST':
+        get_course = request.POST['course']
+        get_sdate = request.POST['sdate']
+        get_sdate = datetime.strptime(get_sdate, "%Y-%m-%d")
+        get_num = int(request.POST['num'])
+        get_course = Course.objects.get(pk=get_course)
+        person = Person.objects.all().values_list('person_id', flat=True)
+        #in_attendance = Attendance.objects.all().filter(course_id=get_course).filter(person_id__in=person).values_list('person_id', flat=True).distinct()
+        ## To filter student - in session
+        #person = person.filter(~Q(person_id__in=in_attendance)).values_list('person_id', flat=True)
+        new_date = []
+        for i in range(get_num):
+            new_date.append(get_sdate)
+            get_sdate = get_sdate + timedelta(days=7)
+        for item in person:
+            p1 = Person.objects.get(pk=item)
+            for x in range(get_num):
+                Attendance.objects.create(person_id=p1, course_id=get_course, day=new_date[x], status=False)
+                # Add 7 days after first day
+        messages.success(request, 'Add success!')
+        return HttpResponseRedirect(reverse('attendance'))
+    context = {'course': course,
+                }
+    return render(request, 'almaher/attendance_generater.html', context)
+

@@ -56,17 +56,21 @@ class Session(models.Model):
     position_id = models.ForeignKey(Position, on_delete=models.CASCADE)
     time_id = models.ForeignKey(Time, on_delete=models.CASCADE)
     teacher_id = models.ForeignKey(Person, null=True, on_delete=models.SET_NULL)
+    def __str__(self):
+        return f'{self.session_number}'
 
 class Session_Student(models.Model):
     id = models.AutoField(primary_key=True)
     session_id = models.ForeignKey(Session, on_delete=models.CASCADE)
     student_id = models.ForeignKey(Person, on_delete=models.CASCADE)
+    def __str__(self):
+        return f'{self.id}'
 
 class Attendance(models.Model):
     attendance_id = models.AutoField(primary_key=True)
     person_id = models.ForeignKey(Person, on_delete=models.CASCADE)
-    session_id = models.ForeignKey(Session, on_delete=models.CASCADE)
+    course_id = models.ForeignKey(Course, on_delete=models.CASCADE)
     day = models.DateField()
-    status = models.BooleanField(default=False)
+    status = models.BooleanField()
     def __str__(self):
         return f'{self.day}'
