@@ -420,9 +420,10 @@ def select_attendance(request):
 def attendance_teacher(request):
     teacher = Person.objects.all().filter(type_id=1).values_list('person_id', flat=True)
     attendance_get_course_id = request.session['attendance_get_course_id']
-    name_attendance = Attendance.objects.all().filter(person_id__in=teacher, course_id=attendance_get_course_id).distinct('person_id')
-    day_attendance = Attendance.objects.all().filter(person_id__in=teacher, course_id=attendance_get_course_id).values_list('day', flat=True).distinct()
-    status_attendance = Attendance.objects.all().filter(person_id__in=teacher, course_id=attendance_get_course_id)
+    session = Session.objects.all().filter(course_id=attendance_get_course_id).values_list('session_id', flat=True)
+    name_attendance = Attendance.objects.all().filter(person_id__in=teacher, session_id__in=session).distinct('person_id')
+    day_attendance = Attendance.objects.all().filter(person_id__in=teacher, session_id__in=session).values_list('day', flat=True).order_by('day').distinct()
+    status_attendance = Attendance.objects.all().filter(person_id__in=teacher, session_id__in=session).order_by('day')
     context = {'name_attendance': name_attendance,
                 'day_attendance': day_attendance,
                 'status_attendance': status_attendance,
@@ -432,9 +433,10 @@ def attendance_teacher(request):
 def attendance_student(request):
     student = Person.objects.all().filter(type_id=2).values_list('person_id', flat=True)
     attendance_get_course_id = request.session['attendance_get_course_id']
-    name_attendance = Attendance.objects.all().filter(person_id__in=student, course_id=attendance_get_course_id).distinct('person_id')
-    day_attendance = Attendance.objects.all().filter(person_id__in=student, course_id=attendance_get_course_id).values_list('day', flat=True).distinct()
-    status_attendance = Attendance.objects.all().filter(person_id__in=student, course_id=attendance_get_course_id)
+    session = Session.objects.all().filter(course_id=attendance_get_course_id).values_list('session_id', flat=True)
+    name_attendance = Attendance.objects.all().filter(person_id__in=student, session_id__in=session).distinct('person_id')
+    day_attendance = Attendance.objects.all().filter(person_id__in=student, session_id__in=session).values_list('day', flat=True).order_by('day').distinct()
+    status_attendance = Attendance.objects.all().filter(person_id__in=student, session_id__in=session).order_by('day')
     context = {'name_attendance': name_attendance,
                 'day_attendance': day_attendance,
                 'status_attendance': status_attendance,
@@ -465,23 +467,36 @@ def attendance_generater(request):
     course = Course.objects.all()
     if request.method =='POST':
         get_course = request.POST['course']
+        # Get start date and number for loop
         get_sdate = request.POST['sdate']
         get_sdate = datetime.strptime(get_sdate, "%Y-%m-%d")
         get_num = int(request.POST['num'])
-        get_course = Course.objects.get(pk=get_course)
-        person = Person.objects.all().values_list('person_id', flat=True)
-        #in_attendance = Attendance.objects.all().filter(course_id=get_course).filter(person_id__in=person).values_list('person_id', flat=True).distinct()
-        ## To filter student - in session
-        #person = person.filter(~Q(person_id__in=in_attendance)).values_list('person_id', flat=True)
         new_date = []
         for i in range(get_num):
             new_date.append(get_sdate)
             get_sdate = get_sdate + timedelta(days=7)
-        for item in person:
-            p1 = Person.objects.get(pk=item)
+        # Get course id
+        get_course = Course.objects.get(pk=get_course)
+        session = Session.objects.all().filter(course_id=get_course)
+        session_list = session.values_list('session_id', flat=True)
+        teacher = session.values_list('teacher_id', flat=True)
+        session_student = Session_Student.objects.all().filter(session_id__in=session_list)
+        student = session_student.values_list('student_id', flat=True)
+        
+        # Add teacher to attendance
+        for item in teacher:
+            get_teacher = Person.objects.get(pk=item)
+            get_session = session.get(teacher_id=get_teacher)
             for x in range(get_num):
-                Attendance.objects.create(person_id=p1, course_id=get_course, day=new_date[x], status=False)
-                # Add 7 days after first day
+                Attendance.objects.create(person_id=get_teacher, session_id=get_session, day=new_date[x], status=False)
+
+        # Add student to attendance
+        for item in student:
+            get_student = Person.objects.get(pk=item)
+            get_session_student = session_student.get(student_id=get_student) 
+            for x in range(get_num):
+                Attendance.objects.create(person_id=get_student, session_id=get_session_student.session_id, day=new_date[x], status=False)
+        
         messages.success(request, 'Add success!')
         return HttpResponseRedirect(reverse('attendance'))
     context = {'course': course,
