@@ -28,14 +28,19 @@
                         {% if item_status.person_id == item.person_id%}
                             {% if item_status.status == True %}
                                 <td>
-                                    <a href="{% url 'attendance_false' item_status.attendance_id %}" class="btn btn-success btn-circle btn-sm">
-                                        <i class="fa fa-check-circle"></i>
-                                    </a>
+                                    <div class="form-check">
+                                        <div class="d-flex justify-content-center">
+                                            <input class="form-check-input" onclick="to_false({{item_status.attendance_id}})" type="checkbox" value="" id="{{item_status.attendance_id}}" checked>
+                                        </div>
+                                    </div>
                                 </td>
                             {% else %}
                                 <td>
-                                    <a href="{% url 'attendance_true' item_status.attendance_id %}" class="btn btn-danger btn-circle btn-sm">
-                                        <i class="fa fa-circle"></i>
+                                    <div class="form-check">
+                                        <div class="d-flex justify-content-center">
+                                            <input class="form-check-input" onclick="to_true({{item_status.attendance_id}})" type="checkbox" value="" id="{{item_status.attendance_id}}">
+                                        </div>
+                                    </div>
                                     </a>
                                 </td>
                             {% endif %}
@@ -46,4 +51,29 @@
             </tbody>
         </table>
     </div>
+{% endblock %}
+
+{% block javaScript%}
+    <script>
+        function to_true(x){
+            let attendance_id = x;
+            $.ajax({
+            url: "{% url 'change_status_true' %}",
+            data:{
+                'attendance_id':attendance_id
+                },
+            dataType: 'json',
+            });
+        };
+        function to_false(x){
+            let attendance_id = x;
+            $.ajax({
+            url: "{% url 'change_status_false' %}",
+            data:{
+                'attendance_id':attendance_id
+                },
+            dataType: 'json',
+            });
+        };
+    </script>
 {% endblock %}

@@ -4,16 +4,16 @@ from django.urls import reverse
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
-from datetime import datetime
-from datetime import timedelta
+from datetime import datetime, timedelta
+from django.http import JsonResponse
 from .models import *
 
 # Create your views here.
 
 #@login_required(login_url='login')
 def index(request):
-    c_teacher = Person.objects.all().filter(type_id=1).count()
-    c_student = Person.objects.all().filter(type_id=2).count()
+    c_teacher = Person.objects.all().filter(person_type_id=1).count()
+    c_student = Person.objects.all().filter(person_type_id=2).count()
     c_course = Course.objects.all().count()
     c_session = Session.objects.all().count()
     context = {'c_teacher': c_teacher, 
@@ -33,7 +33,7 @@ def pg_404(request):
 
 # Views Teachers
 def teacher(request):
-    teacher = Person.objects.all().filter(type_id=1)
+    teacher = Person.objects.all().filter(person_type_id=1)
     c_teacher = teacher.count()
     context = {'c_teacher': c_teacher,
                 'teacher': teacher}
@@ -50,7 +50,7 @@ def add_teacher(request):
         ad = request.POST['address']
         bd = request.POST['bdate']
         p_type = Person_Type.objects.get(pk=1)
-        new_teacher = Person(type_id=p_type, first_name=fname, last_name=lname,
+        new_teacher = Person(person_type_id=p_type, first_name=fname, last_name=lname,
                             father_name=father_n, home_number=hn, phone_number=pn,
                             job=j, address=ad, bdate=bd)
         new_teacher.save()
@@ -91,7 +91,7 @@ def del_teacher(request, pk):
     
 # Views Students
 def student(request):
-    student = Person.objects.all().filter(type_id=2)
+    student = Person.objects.all().filter(person_type_id=2)
     c_student = student.count()
     context = {'c_student': c_student,
                 'student': student}
@@ -112,11 +112,11 @@ def add_student(request):
         level_id = request.POST['level']
         if level_id != 0:
             get_level = Level.objects.get(pk=level_id)
-            new_teacher = Person(type_id=p_type, first_name=fname, last_name=lname,
+            new_teacher = Person(person_type_id=p_type, first_name=fname, last_name=lname,
                             father_name=father_n, home_number=hn, phone_number=pn,
                             job=j, address=ad, bdate=bd, level_id=get_level)
         else:
-            new_teacher = Person(type_id=p_type, first_name=fname, last_name=lname,
+            new_teacher = Person(person_type_id=p_type, first_name=fname, last_name=lname,
                             father_name=father_n, home_number=hn, phone_number=pn,
                             job=j, address=ad, bdate=bd)              
         new_teacher.save()
@@ -179,9 +179,6 @@ def add_course(request):
         return HttpResponseRedirect(reverse('course'))
     return render(request, 'almaher/add_course.html')
 
-def edit_course(request):
-    pass
-
 def del_course(request, pk):
     get_course = Course.objects.get(pk=pk)
     get_course.delete()
@@ -201,9 +198,6 @@ def add_level(request):
         messages.success(request, 'Add success!')
         return HttpResponseRedirect(reverse('level'))
     return render(request, 'almaher/add_level.html')
-
-def edit_level(request):
-    pass
 
 def del_level(request, pk):
     get_level = Level.objects.get(pk=pk)
@@ -225,9 +219,6 @@ def add_position(request):
         return HttpResponseRedirect(reverse('position'))
     return render(request, 'almaher/add_position.html')
 
-def edit_position(request):
-    pass
-
 def del_position(request, pk):
     get_position = Position.objects.get(pk=pk)
     get_position.delete()
@@ -247,9 +238,6 @@ def add_time(request):
         messages.success(request, 'Add success!')
         return HttpResponseRedirect(reverse('time'))
     return render(request, 'almaher/add_time.html')
-
-def edit_time(request):
-    pass
 
 def del_time(request, pk):
     get_time = Time.objects.get(pk=pk)
@@ -271,8 +259,8 @@ def add_session(request):
     level = Level.objects.all()
     position = Position.objects.all()
     time = Time.objects.all()
-    teacher = Person.objects.all().filter(type_id=1)
-    student = Person.objects.all().filter(type_id=2)
+    in_session = Session.objects.all().filter(course_id=get_course_id).values_list('teacher_id', flat=True)
+    teacher = Person.objects.all().filter(person_type_id=1).filter(~Q(pk__in=in_session))
     if request.method == 'POST':
         snumber = request.POST['snumber']
         teacher = Person.objects.get(pk=request.POST['teacher'])
@@ -288,7 +276,6 @@ def add_session(request):
                 'position': position,
                 'time': time,
                 'teacher': teacher,
-                'student': student,
                 }
     return render(request, 'almaher/add_session.html', context)
 
@@ -317,7 +304,10 @@ def edit_session(request, pk):
         messages.success(request, 'Edit success!')
         return HttpResponseRedirect(reverse('session'))
 
-    teacher = Person.objects.all().filter(type_id=1)
+    get_course_id = request.session['get_course_id']
+    get_course_id = Course.objects.get(pk=get_course_id)
+    in_session = Session.objects.all().filter(course_id=get_course_id).filter(~Q(teacher_id=session.teacher_id)).values_list('teacher_id', flat=True)
+    teacher = Person.objects.all().filter(person_type_id=1).filter(~Q(pk__in=in_session))
     position = Position.objects.all()
     level = Level.objects.all()
     time = Time.objects.all()
@@ -346,7 +336,7 @@ def session_student(request, pk):
     get_session = Session.objects.all().filter(course_id=get_course_id).values_list('session_id', flat=True)
     in_session = Session_Student.objects.all().filter(session_id__in=get_session).filter().values_list('student_id', flat=True)
     # Q objects can be negated with the ~ operator
-    all_student = Person.objects.all().filter(~Q(pk__in=in_session)).filter(type_id=2, level_id=session.level_id)
+    all_student = Person.objects.all().filter(~Q(pk__in=in_session)).filter(person_type_id=2, level_id=session.level_id)
     student = all_student
     context = {'session': session,
                 'session_student': session_student,
@@ -418,7 +408,7 @@ def select_attendance(request):
     return render(request, 'almaher/attendance_select_course.html', context)
 
 def attendance_teacher(request):
-    teacher = Person.objects.all().filter(type_id=1).values_list('person_id', flat=True)
+    teacher = Person.objects.all().filter(person_type_id=1).values_list('person_id', flat=True)
     attendance_get_course_id = request.session['attendance_get_course_id']
     session = Session.objects.all().filter(course_id=attendance_get_course_id).values_list('session_id', flat=True)
     name_attendance = Attendance.objects.all().filter(person_id__in=teacher, session_id__in=session).distinct('person_id')
@@ -431,7 +421,7 @@ def attendance_teacher(request):
     return render(request, 'almaher/attendance_teacher.html', context)
 
 def attendance_student(request):
-    student = Person.objects.all().filter(type_id=2).values_list('person_id', flat=True)
+    student = Person.objects.all().filter(person_type_id=2).values_list('person_id', flat=True)
     attendance_get_course_id = request.session['attendance_get_course_id']
     session = Session.objects.all().filter(course_id=attendance_get_course_id).values_list('session_id', flat=True)
     name_attendance = Attendance.objects.all().filter(person_id__in=student, session_id__in=session).distinct('person_id')
@@ -443,25 +433,23 @@ def attendance_student(request):
                 }
     return render(request, 'almaher/attendance_student.html', context)
 
-def attendance_true(request, pk):
-    attendance = Attendance.objects.get(pk=pk)
+def change_status_true(request):   
+    attendance_id = request.GET.get('attendance_id')
+    attendance = Attendance.objects.get(pk=attendance_id)
     attendance.status = True
     attendance.save()
-    attendance_type = request.session['attendance_type']
-    if attendance_type=='1':
-        return redirect('attendance_teacher')
-    else:
-        return redirect('attendance_student')
+    context = {        
+    }
+    return JsonResponse(context)
 
-def attendance_false(request, pk):
-    attendance = Attendance.objects.get(pk=pk)
+def change_status_false(request):   
+    attendance_id = request.GET.get('attendance_id')
+    attendance = Attendance.objects.get(pk=attendance_id)
     attendance.status = False
     attendance.save()
-    attendance_type = request.session['attendance_type']
-    if attendance_type=='1':
-        return redirect('attendance_teacher')
-    else:
-        return redirect('attendance_student')
+    context = {        
+    }
+    return JsonResponse(context)
 
 def attendance_generater(request):
     course = Course.objects.all()
@@ -503,3 +491,31 @@ def attendance_generater(request):
                 }
     return render(request, 'almaher/attendance_generater.html', context)
 
+# View exam
+def select_exam(request):
+    course = Course.objects.all()
+    exam_time = Exam_Time.objects.all()
+    if request.method =='POST':
+        get_course = request.POST['course']
+        get_course = Course.objects.get(pk=get_course)
+        request.session['exam_course'] = get_course.course_id
+        #
+        get_exam_time = request.POST['exam_time']
+        get_exam_time = Exam_Time.objects.get(pk=get_exam_time)
+        request.session['exam_time'] = get_exam_time.exam_time_id
+        return redirect('exam')
+    context = {'course': course,
+                'exam_time': exam_time,
+                }
+    return render(request, 'almaher/exam_select_course.html', context)
+
+def exam(request):
+    get_exam_course = request.session['exam_course']
+    get_exam_time = request.session['exam_time']
+
+    session = Session.objects.filter(course_id=get_exam_course)
+    in_session = session.values_list('session_id', float=True)
+    exam = Exam.objects.filter(session_id__in=in_session, exam_time_id=get_exam_time)
+    context = {'exam': exam,
+                }
+    return render(request, 'almaher/exam.html', context)

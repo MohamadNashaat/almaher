@@ -1,8 +1,66 @@
-{% extends 'almaher/base.html'%}
+{% extends 'almaher/base_datatables.html'%}
 
-{% block body%}
+{% block mess %}
+    {% if messages %}
+    {% for message in messages %}
+    {% if message.tags %}
+    <div class="d-flex justify-content-center">
+        <div class="alert alert-success my-2 text-center w-25" role="alert">
+            {{message}}
+        </div>
+    </div>
+    {% endif %}
+    {% endfor %}
+    {% endif %}
+{% endblock %}
 
-    <!-- Page Heading -->
-    <h1 class="h3 mb-4 text-gray-800">Blank Page</h1>
+{% block pg_head %}
+    Sessions
+{% endblock %}
 
+{% block add_url %}
+    {% url 'add_session' %}
+{% endblock %}
+
+{% block url_name %}
+    Add Session
+{% endblock %}
+
+{% block th_table %}
+    <th>Exam Type</th>
+    <th>Exam Time</th>
+    <th>Teacher</th>
+    <th>Student</th>
+    <th>Session</th>
+    <th>Mark 1</th>
+    <th>Mark 2</th>
+    <th>Result</th>
+    <th></th>
+    <th></th>
+{% endblock %}
+
+{% block tr_table%}
+    {% for item in exam%}
+    <tr>
+        <td>{{item.exam_id}}</td>
+        <td>{{item.exam_type_id}}</td>
+        <td>{{item.exam_time_id}}</td>
+        <td>{{item.teacher_id}}</td>
+        <td>{{item.student_id}}</td>
+        <td>{{item.session_id}}</td>
+        <td>{{item.first_mark}}</td>
+        <td>{{item.second_mark}}</td>
+        <td>{{item.result}}</td>
+        <!--<td>
+            <a href="{% url 'edit_session' item.session_id %}" class="btn btn-info btn-circle btn-sm">
+                <i class="fas fa-edit"></i>
+            </a>
+        </td>
+        <td>
+            <a href="{% url 'del_session' item.session_id %}" class="btn btn-danger btn-circle btn-sm">
+                <i class="fas fa-times"></i>
+            </a>
+        </td>-->
+    </tr>
+    {% endfor %}
 {% endblock %}

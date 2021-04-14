@@ -1,14 +1,17 @@
 from django.db import models
 
 class Person_Type(models.Model):
-    per_type_id = models.AutoField(primary_key=True)
+    per_type_id = models.IntegerField(primary_key=True)
     type_name = models.CharField(max_length=120)
     def __str__(self):
         return self.type_name
+    # per_type_id = 1 ==> Teacher
+    # per_type_id = 2 ==> Student
+    # per_type_id = 3 ==> Graduated
 
 class Person(models.Model):
     person_id = models.AutoField(primary_key=True)
-    type_id = models.ForeignKey(Person_Type, on_delete=models.CASCADE)
+    person_type_id = models.ForeignKey(Person_Type, on_delete=models.CASCADE)
     first_name = models.CharField(max_length=120)
     last_name = models.CharField(max_length=120)
     father_name = models.CharField(max_length=120)
@@ -74,3 +77,30 @@ class Attendance(models.Model):
     status = models.BooleanField()
     def __str__(self):
         return f'{self.day}'
+
+class Exam_Type(models.Model):
+    exam_type_id = models.IntegerField(primary_key=True)
+    exam_type_name = models.CharField(max_length=120)
+    def __str__(self):
+        return f'{self.exam_type_name}'
+    #exam_type_id = 1 ==> نظري
+    #exam_type_id = 2 ==> عملي
+
+class Exam_Time(models.Model):
+    exam_time_id = models.IntegerField(primary_key=True)
+    exam_time_name = models.CharField(max_length=120)
+    def __str__(self):
+        return f'{self.exam_time_name}'
+    #exam_time_id = 1 ==> الامتحان الأول
+    #exam_time_id = 2 ==> التكميلي
+
+class Exam(models.Model):
+    exam_id = models.AutoField(primary_key=True)
+    exam_type_id = models.ForeignKey(Exam_Type, on_delete=models.CASCADE)
+    exam_time_id = models.ForeignKey(Exam_Time, on_delete=models.CASCADE)
+    student_id = models.ForeignKey(Person, on_delete=models.CASCADE)
+    teacher_id = models.ForeignKey(Person, on_delete=models.CASCADE, related_name='teacher_id')
+    session_id = models.ForeignKey(Session, on_delete=models.CASCADE)
+    first_mark = models.FloatField(null=True)
+    second_mark = models.FloatField(null=True)
+    result = models.FloatField()
