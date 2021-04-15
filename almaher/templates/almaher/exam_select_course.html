@@ -36,7 +36,7 @@
             <div class="mb-3 mb-sm-0">
                 <div class="d-flex justify-content-center">
                     <select class="form-control form-select rounded-pill w-50" aria-label="Default select example" name="exam_time" id="exam_time" required>
-                        {% for item in exam_time%}
+                        {% for item in exam_time %}
                             <option value="{{item.exam_time_id}}">{{item.exam_time_name}}</option>
                         {% endfor %}
                     </select>

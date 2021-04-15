@@ -1,16 +1,44 @@
+from .models import *
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, redirect
-from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.contrib import messages
+from django.contrib.auth import authenticate ,login, logout
 from django.contrib.auth.decorators import login_required
-from django.db.models import Q
 from datetime import datetime, timedelta
-from django.http import JsonResponse
-from .models import *
+from django.db.models import Q
+import xlwt
 
 # Create your views here.
 
-#@login_required(login_url='login')
+def user_login(request):
+    if request.user.is_authenticated:
+        return redirect('')
+    else:
+        if request.method == 'POST':
+            username = request.POST.get('username')
+            password = request.POST.get('password')
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                login(request, user)
+                return redirect('')
+            else:
+                messages.info(request, 'Please enter the correct username and password!')
+    return render(request, 'almaher/login.html')
+
+def user_logout(request):
+    logout(request)
+    return redirect('login')
+
+@login_required(login_url='login')
+def blank(request):
+    return render(request, 'almaher/blank.html')
+
+@login_required(login_url='login')
+def pg_404(request):
+    return render(request, 'almaher/404.html')
+
+@login_required(login_url='login')
 def index(request):
     c_teacher = Person.objects.all().filter(person_type_id=1).count()
     c_student = Person.objects.all().filter(person_type_id=2).count()
@@ -22,16 +50,8 @@ def index(request):
                 'c_course': c_course}
     return render(request, 'almaher/index.html', context)
 
-def login(request):
-    return render(request, 'almaher/login.html')
-
-def blank(request):
-    return render(request, 'almaher/blank.html')
-
-def pg_404(request):
-    return render(request, 'almaher/404.html')
-
 # Views Teachers
+@login_required(login_url='login')
 def teacher(request):
     teacher = Person.objects.all().filter(person_type_id=1)
     c_teacher = teacher.count()
@@ -39,6 +59,7 @@ def teacher(request):
                 'teacher': teacher}
     return render(request, 'almaher/teacher.html', context)
 
+@login_required(login_url='login')
 def add_teacher(request):
     if request.method == 'POST':
         fname = request.POST['fname']
@@ -59,6 +80,7 @@ def add_teacher(request):
     
     return render(request, 'almaher/add_teacher.html')
 
+@login_required(login_url='login')
 def edit_teacher(request, pk):
     teacher = Person.objects.get(person_id=pk)
     if request.method =='POST':
@@ -82,6 +104,7 @@ def edit_teacher(request, pk):
         return redirect('teacher')
     return render(request, 'almaher/edit_teacher.html', {'teacher': teacher})
 
+@login_required(login_url='login')
 def del_teacher(request, pk):
     teacher = Person.objects.get(person_id=pk)
     if request.method =='POST':
@@ -90,6 +113,7 @@ def del_teacher(request, pk):
     return render(request, 'almaher/del_teacher.html', {'teacher': teacher})
     
 # Views Students
+@login_required(login_url='login')
 def student(request):
     student = Person.objects.all().filter(person_type_id=2)
     c_student = student.count()
@@ -97,6 +121,7 @@ def student(request):
                 'student': student}
     return render(request, 'almaher/student.html', context)
 
+@login_required(login_url='login')
 def add_student(request):
     level = Level.objects.all()
     if request.method == 'POST':
@@ -125,6 +150,7 @@ def add_student(request):
     context = {'level': level}
     return render(request, 'almaher/add_student.html', context)
 
+@login_required(login_url='login')
 def edit_student(request, pk):
     student = Person.objects.get(person_id=pk)
     level = Level.objects.all()
@@ -155,6 +181,7 @@ def edit_student(request, pk):
                 'level': level}
     return render(request, 'almaher/edit_student.html', context)
 
+@login_required(login_url='login')
 def del_student(request, pk):
     student = Person.objects.get(person_id=pk)
     if request.method =='POST':
@@ -163,11 +190,13 @@ def del_student(request, pk):
     return render(request, 'almaher/del_student.html', {'student': student})
 
 # Views Course
+@login_required(login_url='login')
 def course(request):
     course = Course.objects.all()
     context = {'course': course}
     return render(request, 'almaher/course.html', context)
 
+@login_required(login_url='login')
 def add_course(request):
     if request.method == 'POST':
         ncourse = request.POST['ncourse']
@@ -179,17 +208,20 @@ def add_course(request):
         return HttpResponseRedirect(reverse('course'))
     return render(request, 'almaher/add_course.html')
 
+@login_required(login_url='login')
 def del_course(request, pk):
     get_course = Course.objects.get(pk=pk)
     get_course.delete()
     return redirect('course')
 
 # Views Level
+@login_required(login_url='login')
 def level(request):
     level = Level.objects.all()
     context = {'level': level}
     return render(request, 'almaher/level.html', context)
 
+@login_required(login_url='login')
 def add_level(request):
     if request.method == 'POST':
         nlevel = request.POST['nlevel']
@@ -199,17 +231,20 @@ def add_level(request):
         return HttpResponseRedirect(reverse('level'))
     return render(request, 'almaher/add_level.html')
 
+@login_required(login_url='login')
 def del_level(request, pk):
     get_level = Level.objects.get(pk=pk)
     get_level.delete()
     return redirect('level')
 
 # Views Position
+@login_required(login_url='login')
 def position(request):
     position = Position.objects.all()
     context = {'position': position}
     return render(request, 'almaher/position.html', context)
 
+@login_required(login_url='login')
 def add_position(request):
     if request.method == 'POST':
         nposition = request.POST['nposition']
@@ -219,17 +254,20 @@ def add_position(request):
         return HttpResponseRedirect(reverse('position'))
     return render(request, 'almaher/add_position.html')
 
+@login_required(login_url='login')
 def del_position(request, pk):
     get_position = Position.objects.get(pk=pk)
     get_position.delete()
     return redirect('position')
 
 # Views Time
+@login_required(login_url='login')
 def time(request):
     time = Time.objects.all()
     context = {'time': time}
     return render(request, 'almaher/time.html', context)
 
+@login_required(login_url='login')
 def add_time(request):
     if request.method == 'POST':
         ntime = request.POST['ntime']
@@ -239,12 +277,15 @@ def add_time(request):
         return HttpResponseRedirect(reverse('time'))
     return render(request, 'almaher/add_time.html')
 
+@login_required(login_url='login')
 def del_time(request, pk):
     get_time = Time.objects.get(pk=pk)
     get_time.delete()
     return redirect('time')
 
 # Views Session
+
+@login_required(login_url='login')
 def session(request):    
     get_course_id = request.session['get_course_id']
     session = Session.objects.all().filter(course_id=get_course_id)
@@ -253,6 +294,7 @@ def session(request):
                 }
     return render(request, 'almaher/session.html', context)
 
+@login_required(login_url='login')
 def add_session(request):
     get_course_id = request.session['get_course_id']
     get_course_id = Course.objects.get(pk=get_course_id)
@@ -279,6 +321,7 @@ def add_session(request):
                 }
     return render(request, 'almaher/add_session.html', context)
 
+@login_required(login_url='login')
 def edit_session(request, pk):
     session = Session.objects.get(pk=pk)
     if request.method =='POST':
@@ -321,12 +364,14 @@ def edit_session(request, pk):
                 }
     return render(request, 'almaher/edit_session.html', context)
 
+@login_required(login_url='login')
 def del_session(request, pk):
     get_session = Session.objects.get(pk=pk)
     get_session.delete()
     return redirect('session')
 
 # Views Session_Student
+@login_required(login_url='login')
 def session_student(request, pk):
     session = Session.objects.get(session_id=pk)
     session_student = Session_Student.objects.all().filter(session_id=pk)
@@ -343,6 +388,7 @@ def session_student(request, pk):
                 'student': student}
     return render(request, 'almaher/session_student.html', context)
 
+@login_required(login_url='login')
 def add_session_student(request, pk, num):
     session = Session.objects.get(pk=pk)
     student = Person.objects.get(pk=num)
@@ -350,12 +396,14 @@ def add_session_student(request, pk, num):
     add_new.save()
     return redirect('session_student', pk)
 
+@login_required(login_url='login')
 def del_session_student(request, pk, num):
     get_session_student = Session_Student.objects.get(pk=num)
     get_session_student.delete()
     return redirect('session_student', pk)
 
 # Views select course
+@login_required(login_url='login')
 def select_course(request):
     course = Course.objects.all()
     if request.method =='POST':
@@ -369,28 +417,31 @@ def select_course(request):
     return render(request, 'almaher/select_course.html', context)
 
 # View view_sessions
+@login_required(login_url='login')
 def view_select_course(request):
     course = Course.objects.all()
     if request.method =='POST':
         get_course = request.POST['course']
         get_course = Course.objects.get(pk=get_course)
         # Set session course_id
-        request.session['view_get_course_id'] = get_course.course_id
+        request.session['get_course_id'] = get_course.course_id
         return redirect('view_session_student')
     context = {'course': course,
                 }
     return render(request, 'almaher/view_select_course.html', context)
 
+@login_required(login_url='login')
 def view_session_student(request):
-    view_get_course_id = request.session['view_get_course_id']
-    view_get_course_id = Course.objects.get(pk=view_get_course_id)
-    session = Session.objects.all().filter(course_id=view_get_course_id).values_list('session_id', flat=True)
+    get_course_id = request.session['get_course_id']
+    get_course_id = Course.objects.get(pk=get_course_id)
+    session = Session.objects.all().filter(course_id=get_course_id).values_list('session_id', flat=True)
     session_student = Session_Student.objects.all().filter(session_id__in=session)
     context = {'session_student': session_student,
                 }
     return render(request, 'almaher/view_session_student.html', context)
 
 # View attendance
+@login_required(login_url='login')
 def select_attendance(request):
     course = Course.objects.all()
     if request.method =='POST':
@@ -398,7 +449,7 @@ def select_attendance(request):
         request.session['attendance_type'] = get_type
         get_course = request.POST['course']
         get_course = Course.objects.get(pk=get_course)
-        request.session['attendance_get_course_id'] = get_course.course_id
+        request.session['get_course_id'] = get_course.course_id
         if get_type=='1':
             return redirect('attendance_teacher')
         else:
@@ -407,10 +458,11 @@ def select_attendance(request):
                 }
     return render(request, 'almaher/attendance_select_course.html', context)
 
+@login_required(login_url='login')
 def attendance_teacher(request):
     teacher = Person.objects.all().filter(person_type_id=1).values_list('person_id', flat=True)
-    attendance_get_course_id = request.session['attendance_get_course_id']
-    session = Session.objects.all().filter(course_id=attendance_get_course_id).values_list('session_id', flat=True)
+    get_course_id = request.session['get_course_id']
+    session = Session.objects.all().filter(course_id=get_course_id).values_list('session_id', flat=True)
     name_attendance = Attendance.objects.all().filter(person_id__in=teacher, session_id__in=session).distinct('person_id')
     day_attendance = Attendance.objects.all().filter(person_id__in=teacher, session_id__in=session).values_list('day', flat=True).order_by('day').distinct()
     status_attendance = Attendance.objects.all().filter(person_id__in=teacher, session_id__in=session).order_by('day')
@@ -420,10 +472,11 @@ def attendance_teacher(request):
                 }
     return render(request, 'almaher/attendance_teacher.html', context)
 
+@login_required(login_url='login')
 def attendance_student(request):
     student = Person.objects.all().filter(person_type_id=2).values_list('person_id', flat=True)
-    attendance_get_course_id = request.session['attendance_get_course_id']
-    session = Session.objects.all().filter(course_id=attendance_get_course_id).values_list('session_id', flat=True)
+    get_course_id = request.session['get_course_id']
+    session = Session.objects.all().filter(course_id=get_course_id).values_list('session_id', flat=True)
     name_attendance = Attendance.objects.all().filter(person_id__in=student, session_id__in=session).distinct('person_id')
     day_attendance = Attendance.objects.all().filter(person_id__in=student, session_id__in=session).values_list('day', flat=True).order_by('day').distinct()
     status_attendance = Attendance.objects.all().filter(person_id__in=student, session_id__in=session).order_by('day')
@@ -451,6 +504,7 @@ def change_status_false(request):
     }
     return JsonResponse(context)
 
+@login_required(login_url='login')
 def attendance_generater(request):
     course = Course.objects.all()
     if request.method =='POST':
@@ -492,30 +546,221 @@ def attendance_generater(request):
     return render(request, 'almaher/attendance_generater.html', context)
 
 # View exam
+@login_required(login_url='login')
 def select_exam(request):
     course = Course.objects.all()
     exam_time = Exam_Time.objects.all()
     if request.method =='POST':
         get_course = request.POST['course']
         get_course = Course.objects.get(pk=get_course)
-        request.session['exam_course'] = get_course.course_id
-        #
+        request.session['get_course_id'] = get_course.course_id
         get_exam_time = request.POST['exam_time']
         get_exam_time = Exam_Time.objects.get(pk=get_exam_time)
-        request.session['exam_time'] = get_exam_time.exam_time_id
+        request.session['get_exam_time'] = get_exam_time.exam_time_id
         return redirect('exam')
     context = {'course': course,
                 'exam_time': exam_time,
                 }
     return render(request, 'almaher/exam_select_course.html', context)
 
+@login_required(login_url='login')
 def exam(request):
-    get_exam_course = request.session['exam_course']
-    get_exam_time = request.session['exam_time']
+    get_course_id = request.session['get_course_id']
+    get_course_id = Course.objects.get(pk=get_course_id)
+    #get_exam_time = request.session['get_exam_time']
+    #get_exam = Exam_Time.objects.get(pk=get_exam_time)
+    #session = Session.objects.filter(course_id=get_course_id)
+    #in_session = session.values_list('session_id', float=True)
+    #exam = Exam.objects.filter(session_id__in=in_session, exam_time_id=get_exam.exam_time_id)
+    #context = {'exam': exam,
+    #            }
+    return render(request, 'almaher/exam.html')
 
-    session = Session.objects.filter(course_id=get_exam_course)
-    in_session = session.values_list('session_id', float=True)
-    exam = Exam.objects.filter(session_id__in=in_session, exam_time_id=get_exam_time)
-    context = {'exam': exam,
-                }
-    return render(request, 'almaher/exam.html', context)
+
+# Export to *
+def export_excel_student(request):
+    response = HttpResponse(content_type='application/ms-excel')
+    response['Content-Disposition'] = 'attachment; filename="students.xls"'
+
+    wb = xlwt.Workbook(encoding='utf-8')
+    ws = wb.add_sheet('Students')
+
+    # Sheet header, first row
+    row_num = 0
+
+    font_style = xlwt.XFStyle()
+    font_style.font.bold = True
+
+    columns = ['Person id', 'First name', 'Last name', 'Father name', 'Home number',
+                'Phone number', 'Level_id', 'Birth date', 'Job', 'Address']
+
+    for col_num in range(len(columns)):
+        ws.write(row_num, col_num, columns[col_num], font_style)
+
+    # Sheet body, remaining rows
+    font_style = xlwt.XFStyle()
+
+    rows = []
+
+    persons = Person.objects.all().filter(person_type_id=2)
+    
+    for person in persons:
+        person_bd = person.bdate
+        person_bd = person_bd.strftime('%m/%d/%Y')
+        vlues = [person.person_id, person.first_name, person.last_name, person.father_name, 
+            person.home_number, person.phone_number, person.level_id.level_name, person_bd,
+            person.job, person.address]
+        rows.append(vlues)
+
+    for row in rows:
+        row_num += 1
+        for col_num in range(len(row)):
+            ws.write(row_num, col_num, row[col_num], font_style)
+
+    wb.save(response)
+    return response
+
+def export_excel_teacher(request):
+    response = HttpResponse(content_type='application/ms-excel')
+    response['Content-Disposition'] = 'attachment; filename="teacher.xls"'
+
+    wb = xlwt.Workbook(encoding='utf-8')
+    ws = wb.add_sheet('Students')
+
+    # Sheet header, first row
+    row_num = 0
+
+    font_style = xlwt.XFStyle()
+    font_style.font.bold = True
+
+    columns = ['Person id', 'First name', 'Last name', 'Father name', 'Home number',
+                'Phone number', 'Birth date', 'Job', 'Address']
+
+    for col_num in range(len(columns)):
+        ws.write(row_num, col_num, columns[col_num], font_style)
+
+    # Sheet body, remaining rows
+    font_style = xlwt.XFStyle()
+
+    rows = []
+
+    persons = Person.objects.all().filter(person_type_id=1)
+    
+    for person in persons:
+        person_bd = person.bdate
+        person_bd = person_bd.strftime('%m/%d/%Y')
+        vlues = [person.person_id, person.first_name, person.last_name, person.father_name, 
+            person.home_number, person.phone_number, person_bd,
+            person.job, person.address]
+        rows.append(vlues)
+
+    for row in rows:
+        row_num += 1
+        for col_num in range(len(row)):
+            ws.write(row_num, col_num, row[col_num], font_style)
+
+    wb.save(response)
+    return response
+
+def export_excel_attendance_student(request):
+    response = HttpResponse(content_type='application/ms-excel')
+    response['Content-Disposition'] = 'attachment; filename="attendance_student.xls"'
+
+    wb = xlwt.Workbook(encoding='utf-8')
+    ws = wb.add_sheet('Students')
+
+    # Sheet header, first row
+    row_num = 0
+
+    font_style = xlwt.XFStyle()
+    font_style.font.bold = True
+
+    student = Person.objects.all().filter(person_type_id=2).values_list('person_id', flat=True)
+    get_course_id = request.session['get_course_id']
+    session = Session.objects.all().filter(course_id=get_course_id).values_list('session_id', flat=True)
+    day_attendance = Attendance.objects.all().filter(person_id__in=student, session_id__in=session).order_by('day').distinct('day')
+
+    columns = ['Session number', 'First name', 'Last name']
+
+    for day in day_attendance:
+        get_day = day.day
+        get_day = get_day.strftime('%m/%d/%Y')
+        columns.append(get_day)
+
+    for col_num in range(len(columns)):
+        ws.write(row_num, col_num, columns[col_num], font_style)
+
+    # Sheet body, remaining rows
+    font_style = xlwt.XFStyle()
+
+    rows = []
+
+    name_attendance = Attendance.objects.all().filter(person_id__in=student, session_id__in=session).distinct('person_id')
+    status_attendance = Attendance.objects.all().filter(person_id__in=student, session_id__in=session).order_by('day')
+        
+    for attendance in name_attendance:
+        value = [attendance.session_id.session_number, attendance.person_id.first_name, attendance.person_id.last_name]
+        for s_attendance in status_attendance:
+            if attendance.person_id == s_attendance.person_id:
+                value.append(str(s_attendance.status))
+        rows.append(value)
+
+    for row in rows:
+        row_num += 1
+        for col_num in range(len(row)):
+            ws.write(row_num, col_num, row[col_num], font_style)
+
+    wb.save(response)
+    return response
+
+
+
+def export_excel_attendance_teacher(request):    
+    response = HttpResponse(content_type='application/ms-excel')
+    response['Content-Disposition'] = 'attachment; filename="attendance_teacher.xls"'
+
+    wb = xlwt.Workbook(encoding='utf-8')
+    ws = wb.add_sheet('Students')
+
+    # Sheet header, first row
+    row_num = 0
+
+    font_style = xlwt.XFStyle()
+    font_style.font.bold = True
+
+    teacher = Person.objects.all().filter(person_type_id=1).values_list('person_id', flat=True)
+    get_course_id = request.session['get_course_id']
+    session = Session.objects.all().filter(course_id=get_course_id).values_list('session_id', flat=True)
+    day_attendance = Attendance.objects.all().filter(person_id__in=teacher, session_id__in=session).order_by('day').distinct('day')
+    columns = ['Session number', 'First name', 'Last name']
+
+    for day in day_attendance:
+        get_day = day.day
+        get_day = get_day.strftime('%m/%d/%Y')
+        columns.append(get_day)
+
+    for col_num in range(len(columns)):
+        ws.write(row_num, col_num, columns[col_num], font_style)
+
+    # Sheet body, remaining rows
+    font_style = xlwt.XFStyle()
+
+    rows = []
+
+    name_attendance = Attendance.objects.all().filter(person_id__in=teacher, session_id__in=session).distinct('person_id')
+    status_attendance = Attendance.objects.all().filter(person_id__in=teacher, session_id__in=session).order_by('day')
+    
+    for attendance in name_attendance:
+        value = [attendance.session_id.session_number, attendance.person_id.first_name, attendance.person_id.last_name]
+        for s_attendance in status_attendance:
+            if attendance.person_id == s_attendance.person_id:
+                value.append(str(s_attendance.status))
+        rows.append(value)
+
+    for row in rows:
+        row_num += 1
+        for col_num in range(len(row)):
+            ws.write(row_num, col_num, row[col_num], font_style)
+
+    wb.save(response)
+    return response

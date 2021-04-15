@@ -3,7 +3,8 @@ from . import views
 
 urlpatterns = [
     path('', views.index, name=''),
-    path('login', views.login, name='login'),
+    path('login', views.user_login, name='login'),
+     path('logout', views.user_logout, name='logout'),
     path('blank', views.blank, name='blank'),
     path('404', views.pg_404, name='404'),
     
@@ -68,7 +69,12 @@ urlpatterns = [
 
     # Urls Exam
     path('select/exam', views.select_exam, name='select_exam'),
-    path('exam', views.exam, name='exam'),   
+    path('exam', views.exam, name='exam'),
 
+    # Urls Export to *
+    path('export/excel/student', views.export_excel_student, name='export_excel_student'),
+    path('export/excel/teacher', views.export_excel_teacher, name='export_excel_teacher'),
+    path('export/excel/attendance/student', views.export_excel_attendance_student, name='export_excel_attendance_student'),
+    path('export/excel/attendance/teacher', views.export_excel_attendance_teacher, name='export_excel_attendance_teacher'),
 
 ]
