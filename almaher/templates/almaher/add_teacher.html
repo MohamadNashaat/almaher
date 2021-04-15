@@ -1,5 +1,19 @@
 {% extends 'almaher/base_card_dml.html'%}
 
+{% block mess %}
+    {% if messages %}
+    {% for message in messages %}
+    {% if message.tags %}
+    <div class="d-flex justify-content-center">
+        <div class="alert alert-success my-2 text-center w-25" role="alert">
+            {{message}}
+        </div>
+    </div>
+    {% endif %}
+    {% endfor %}
+    {% endif %}
+{% endblock %}
+
 {% block pg_head %}
     Add Teacher
 {% endblock %}
@@ -52,7 +66,7 @@
 
         <div class="d-flex justify-content-center">
             <a type="button" class="btn btn-secondary w-25 mr-4" href="{% url 'teacher'%}">
-                <span>Cancel</span>
+                <span>Back</span>
             </a>
             <input type="submit" value="Add" class="btn btn-primary w-25">
         </div>

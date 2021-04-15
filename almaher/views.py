@@ -76,8 +76,7 @@ def add_teacher(request):
                             job=j, address=ad, bdate=bd)
         new_teacher.save()
         messages.success(request, 'Add success!')
-        return HttpResponseRedirect(reverse('teacher'))
-    
+        return HttpResponseRedirect(reverse('add_teacher'))
     return render(request, 'almaher/add_teacher.html')
 
 @login_required(login_url='login')
@@ -135,7 +134,7 @@ def add_student(request):
         bd = request.POST['bdate']
         p_type = Person_Type.objects.get(pk=2)
         level_id = request.POST['level']
-        if level_id != 0:
+        if int(level_id) != 0:
             get_level = Level.objects.get(pk=level_id)
             new_teacher = Person(person_type_id=p_type, first_name=fname, last_name=lname,
                             father_name=father_n, home_number=hn, phone_number=pn,
@@ -146,7 +145,7 @@ def add_student(request):
                             job=j, address=ad, bdate=bd)              
         new_teacher.save()
         messages.success(request, 'Add success!')
-        return HttpResponseRedirect(reverse('student'))
+        return HttpResponseRedirect(reverse('add_student'))
     context = {'level': level}
     return render(request, 'almaher/add_student.html', context)
 
@@ -284,7 +283,6 @@ def del_time(request, pk):
     return redirect('time')
 
 # Views Session
-
 @login_required(login_url='login')
 def session(request):    
     get_course_id = request.session['get_course_id']
@@ -313,7 +311,7 @@ def add_session(request):
                              position_id=position, time_id=time, session_number=snumber, teacher_id=teacher)
         new_session.save()
         messages.success(request, 'Add success!')
-        return HttpResponseRedirect(reverse('session'))
+        return HttpResponseRedirect(reverse('add_session'))
     context = {'level': level,
                 'position': position,
                 'time': time,
