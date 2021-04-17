@@ -30,7 +30,7 @@
             <div class="col-sm-6">
                 <label for="exampleInputEmail1" class="form-label">Teacher</label>
                 <select class="form-control form-select rounded-pill" aria-label="Default select example" name="teacher" id="teacher" required>
-                    {% for item in teacher%}
+                    {% for item in teacher %}
                     <option value="{{item.person_id}}">{{item.first_name}} {{item.last_name}}</option>
                     {% endfor %}
                 </select>

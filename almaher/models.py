@@ -52,11 +52,11 @@ class Time(models.Model):
 
 class Session(models.Model):
     session_id = models.AutoField(primary_key=True)
-    session_number = models.IntegerField()
+    session_number = models.IntegerField(unique=True)
     course_id = models.ForeignKey(Course, on_delete=models.CASCADE)
     level_id = models.ForeignKey(Level, on_delete=models.CASCADE)
-    position_id = models.ForeignKey(Position, on_delete=models.CASCADE)
-    time_id = models.ForeignKey(Time, on_delete=models.CASCADE)
+    position_id = models.ForeignKey(Position, null=True, on_delete=models.CASCADE)
+    time_id = models.ForeignKey(Time, null=True, on_delete=models.CASCADE)
     teacher_id = models.ForeignKey(Person, null=True, on_delete=models.SET_NULL)
     def __str__(self):
         return f'{self.session_id}'
@@ -78,7 +78,7 @@ class Attendance(models.Model):
         return f'{self.day}'
 
 class Exam_Type(models.Model):
-    exam_type_id = models.IntegerField(primary_key=True)
+    exam_type_id = models.AutoField(primary_key=True)
     exam_type_name = models.CharField(max_length=120)
     def __str__(self):
         return f'{self.exam_type_name}'
@@ -86,12 +86,13 @@ class Exam_Type(models.Model):
     #exam_type_id = 2 ==> عملي
 
 class Exam_Time(models.Model):
-    exam_time_id = models.IntegerField(primary_key=True)
+    exam_time_id = models.AutoField(primary_key=True)
     exam_time_name = models.CharField(max_length=120)
     def __str__(self):
         return f'{self.exam_time_name}'
     #exam_time_id = 1 ==> الامتحان الأول
     #exam_time_id = 2 ==> التكميلي
+    #exam_time_id = 3 ==> الاعادة 
 
 class Exam(models.Model):
     exam_id = models.AutoField(primary_key=True)

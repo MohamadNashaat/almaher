@@ -42,12 +42,14 @@ urlpatterns = [
 
     # Urls Sessions
     path('session', views.session, name='session'),
+    path('session/generate', views.generate_session, name='generate_session'),
     path('session/add', views.add_session, name='add_session'),
     path('session/edit/<int:pk>', views.edit_session, name='edit_session'),
     path('session/del/<int:pk>', views.del_session, name='del_session'),
 
-    # Urls Sessions_Class
+    # Urls Sessions_Students
     path('session/student/<int:pk>', views.session_student, name='session_student'),
+    path('select/manage/session', views.select_manage_session, name='select_manage_session'),
     path('session/student/add/<int:pk>/<int:num>', views.add_session_student, name='add_session_student'),
     path('session/student/del/<int:pk>/<int:num>', views.del_session_student, name='del_session_student'),
 

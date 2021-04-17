@@ -27,8 +27,9 @@
 {% endblock %}
 
 {% block th_table %}
+    <th>#</th>
     <th>Level Name</th>
-    <th></th>
+    <!--<th></th>-->
 {% endblock %}
 
 {% block tr_table%}
@@ -36,13 +37,13 @@
     <tr>
         <td>{{item.level_id}}</td>
         <td>{{item.level_name}}</td>
-        <td>
+        <!--<td>
             <div class="d-flex justify-content-center">
                 <a href="{% url 'del_level' item.level_id %}" class="btn btn-danger btn-circle btn-sm">
                     <i class="fas fa-times"></i>
                 </a>
             </div>
-        </td>
+        </td>-->
     </tr>
     {% endfor %}
 {% endblock %}

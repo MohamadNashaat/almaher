@@ -19,11 +19,18 @@
 {% endblock %}
 
 {% block add_url %}
-    {% url 'add_session' %}
+    {% url 'generate_session' %}
 {% endblock %}
 
 {% block url_name %}
-    Add Session
+    Generate Session
+{% endblock %}
+
+{% block url2 %}
+    <!--<a type="button" class="m-0  btn btn-success mr-4" href="{% url 'add_session' %}">
+        <i class="fas fa-fw fa-plus-circle"></i>
+        <span>Add Session</span>
+    </a>-->
 {% endblock %}
 
 {% block th_table %}
@@ -41,7 +48,6 @@
 {% block tr_table%}
     {% for item in session%}
     <tr>
-        <td>{{item.session_id}}</td>
         <td>{{item.session_number}}</td>
         <td>{{item.course_id.course_name}}</td>
         <td>{{item.teacher_id}}</td>
