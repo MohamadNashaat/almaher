@@ -439,42 +439,86 @@ def select_manage_session(request):
         get_course = Course.objects.get(pk=get_course)
         # Set session course_id
         request.session['get_course_id'] = get_course.course_id
-        return redirect('session_student', 0)
+        num = 1
+        return redirect('session_student', num)
     context = {'course': course,
                 }
     return render(request, 'almaher/select_manage_session.html', context)
 
-def to_session_student(request):
-    pass
 
 @login_required(login_url='login')
 def session_student(request, pk):
-    if pk == 0:
-        session = Session.objects.first()
-        session_student = Session_Student.objects.all().filter(session_id=session)
-        # Get student not Enrolment in sessions
-        get_course_id = request.session['get_course_id']
-        get_course_id = Course.objects.get(pk=get_course_id)
-        get_session = Session.objects.all().filter(course_id=get_course_id).values_list('session_id', flat=True)
-        in_session = Session_Student.objects.all().filter(session_id__in=get_session).filter().values_list('student_id', flat=True)
-        # Q objects can be negated with the ~ operator
-        all_student = Person.objects.all().filter(~Q(pk__in=in_session)).filter(person_type_id=2, level_id=session.level_id)
-        student = all_student
+    get_course_id = request.session['get_course_id']
+    get_course_id = Course.objects.get(pk=get_course_id)
+    c_session_stud = Session.objects.count()
+    if c_session_stud != 0:
+        f_session = Session.objects.first()
+        l_session = Session.objects.last()
+        to_next = pk + 1
+        to_previous = pk - 1
+
+        if request.method =='POST':
+            get_snumber = int(request.POST['snumber'])
+            session = Session.objects.get(course_id=get_course_id, session_number=get_snumber)
+            to_next = session.session_id + 1
+            to_previous = session.session_id - 1
+            session_student = Session_Student.objects.all().filter(session_id=session)
+            # Get student not Enrolment in sessions
+            get_session = Session.objects.all().filter(course_id=get_course_id).values_list('session_id', flat=True)
+            in_session = Session_Student.objects.all().filter(session_id__in=get_session).filter().values_list('student_id', flat=True)
+            # Q objects can be negated with the ~ operator
+            all_student = Person.objects.all().filter(~Q(pk__in=in_session)).filter(person_type_id=2, level_id=session.level_id)
+            student = all_student
+            context = {'session': session,
+                    'session_student': session_student,
+                    'student': student,
+                    'f_session': f_session,
+                    'l_session': l_session,
+                    'to_next': to_next,
+                    'to_previous': to_previous,
+                    }
+            return render(request, 'almaher/session_student.html', context)
+
+        if pk == 1:
+            session = f_session
+            session_student = Session_Student.objects.all().filter(session_id=f_session)
+            # Get student not Enrolment in sessions
+            get_session = Session.objects.all().filter(course_id=get_course_id).values_list('session_id', flat=True)
+            in_session = Session_Student.objects.all().filter(session_id__in=get_session).filter().values_list('student_id', flat=True)
+            # Q objects can be negated with the ~ operator
+            all_student = Person.objects.all().filter(~Q(pk__in=in_session)).filter(person_type_id=2, level_id=session.level_id)
+            student = all_student
+            to_next = f_session.session_id + 1
+            context = {'session': session,
+                    'session_student': session_student,
+                    'student': student,
+                    'f_session': f_session,
+                    'l_session': l_session,
+                    'to_next': to_next,
+                    'to_previous': to_previous,
+                    }
+            return render(request, 'almaher/session_student.html', context)
+        else:
+            session = Session.objects.get(session_id=pk)
+            session_student = Session_Student.objects.all().filter(session_id=pk)
+            # Get student not Enrolment in sessions
+            get_session = Session.objects.all().filter(course_id=get_course_id).values_list('session_id', flat=True)
+            in_session = Session_Student.objects.all().filter(session_id__in=get_session).filter().values_list('student_id', flat=True)
+            # Q objects can be negated with the ~ operator
+            all_student = Person.objects.all().filter(~Q(pk__in=in_session)).filter(person_type_id=2, level_id=session.level_id)
+            student = all_student
+            context = {'session': session,
+                    'session_student': session_student,
+                    'student': student,
+                    'f_session': f_session,
+                    'l_session': l_session,
+                    'to_next': to_next,
+                    'to_previous': to_previous,
+                    }
+            return render(request, 'almaher/session_student.html', context)
     else:
-        session = Session.objects.get(session_id=pk)
-        session_student = Session_Student.objects.all().filter(session_id=pk)
-        # Get student not Enrolment in sessions
-        get_course_id = request.session['get_course_id']
-        get_course_id = Course.objects.get(pk=get_course_id)
-        get_session = Session.objects.all().filter(course_id=get_course_id).values_list('session_id', flat=True)
-        in_session = Session_Student.objects.all().filter(session_id__in=get_session).filter().values_list('student_id', flat=True)
-        # Q objects can be negated with the ~ operator
-        all_student = Person.objects.all().filter(~Q(pk__in=in_session)).filter(person_type_id=2, level_id=session.level_id)
-        student = all_student
-    context = {'session': session,
-                'session_student': session_student,
-                'student': student}
-    return render(request, 'almaher/session_student.html', context)
+        return redirect('select_manage_session')
+    
 
 @login_required(login_url='login')
 def add_session_student(request, pk, num):

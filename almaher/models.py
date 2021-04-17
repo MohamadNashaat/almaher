@@ -20,6 +20,7 @@ class Person(models.Model):
     address = models.CharField(max_length=120)
     bdate = models.DateField()
     level_id = models.ForeignKey('Level', on_delete=models.CASCADE, null=True)
+    status = models.BooleanField(default=True)
     create_date = models.DateField(auto_now_add=True, null=True)
     def __str__(self):
         return f'{self.first_name} {self.last_name}'
