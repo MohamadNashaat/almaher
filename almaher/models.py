@@ -7,6 +7,7 @@ class Person_Type(models.Model):
         return self.type_name
     # per_type_id = 1 ==> Teacher
     # per_type_id = 2 ==> Student
+    # per_type_id = 3 ==> Graduate
 
 class Person(models.Model):
     person_id = models.AutoField(primary_key=True)

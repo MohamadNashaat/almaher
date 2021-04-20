@@ -79,4 +79,15 @@ urlpatterns = [
     path('export/excel/attendance/student', views.export_excel_attendance_student, name='export_excel_attendance_student'),
     path('export/excel/attendance/teacher', views.export_excel_attendance_teacher, name='export_excel_attendance_teacher'),
 
+    
+    path('person', views.person, name='person'),
+    path('graduate', views.graduate, name='graduate'),
+    # Lock Person
+    path('person/lock/<int:pk>', views.lock_person, name='lock_person'),
+    path('person/unlock/<int:pk>', views.unlock_person, name='unlock_person'),
+    
+    path('wait/', views.wait_list, name='wait_list'),
+
+    path('select_new_course/', views.select_new_course, name='select_new_course')
+
 ]

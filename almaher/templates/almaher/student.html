@@ -39,11 +39,8 @@
     <th>Last Name</th>
     <th>Father</th>
     <th>BDate</th>
-    <th>Home Number</th>
-    <th>Phone Number</th>
-    <th>Address</th>
-    <th>Job</th>
     <th>Level</th>
+    <th></th>
     <th></th>
     <th></th>
 {% endblock %}
@@ -56,14 +53,15 @@
         <td>{{item.last_name}}</td>
         <td>{{item.father_name}}</td>
         <td>{{item.bdate}}</td>
-        <td>{{item.home_number}}</td>
-        <td>{{item.phone_number}}</td>
-        <td>{{item.address}}</td>
-        <td>{{item.job}}</td>
         <td>{{item.level_id.level_name}}</td>
         <td>
             <a href="{% url 'edit_student' item.person_id %}" class="btn btn-info btn-circle btn-sm">
                 <i class="fas fa-edit"></i>
+            </a>
+        </td>
+        <td>
+            <a href="{% url 'lock_person' item.person_id %}" class="btn btn-danger btn-circle btn-sm">
+                <i class="fas fa-lock"></i>
             </a>
         </td>
         <td>

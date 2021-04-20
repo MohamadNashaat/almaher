@@ -1,0 +1,48 @@
+{% extends 'almaher/base.html'%}
+
+{% block body%}
+
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-2">
+            <h1 class="h3 m-0 text-gray-800">Wait List</h1>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered display" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Type</th>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Father</th>
+                            <th>Level</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in person%}
+                            <tr>
+                                <td>{{item.person_id}}</td>
+                                <td>{{item.person_type_id}}</td>
+                                <td>{{item.first_name}}</td>
+                                <td>{{item.last_name}}</td>
+                                <td>{{item.father_name}}</td>
+                                <td>{{item.level_id.level_name}}</td>
+                                <td>
+                                    <div class="d-flex justify-content-center">
+                                        <a href="{% url 'unlock_person' item.person_id %}" class="btn btn-success btn-circle btn-sm">
+                                            <i class="fas fa-unlock"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
