@@ -8,17 +8,23 @@ urlpatterns = [
     path('blank', views.blank, name='blank'),
     path('404', views.pg_404, name='404'),
     
+    # Manage Person
+    path('person', views.person, name='person'),
+    path('person/edit/<int:pk>', views.edit_person, name='edit_person'),
+    path('person/del/<int:pk>', views.del_person, name='del_person'),
+
+    path('person/lock/<int:pk>', views.lock_person, name='lock_person'),
+    path('person/unlock/<int:pk>', views.unlock_person, name='unlock_person'),
+
+    path('graduate', views.graduate, name='graduate'),
+
     # Urls Teachers
     path('teacher', views.teacher, name='teacher'),
     path('teacher/add', views.add_teacher, name='add_teacher'),
-    path('teacher/edit/<int:pk>', views.edit_teacher, name='edit_teacher'),
-    path('teacher/del/<int:pk>', views.del_teacher, name='del_teacher'),
-
+    
     # Urls Students
     path('student', views.student, name='student'),
     path('student/add', views.add_student, name='add_student'),
-    path('student/edit/<int:pk>', views.edit_student, name='edit_student'),
-    path('student/del/<int:pk>', views.del_student, name='del_student'),
 
     # Urls Courses
     path('course', views.course, name='course'),
@@ -49,15 +55,10 @@ urlpatterns = [
 
     # Urls Sessions_Students
     path('session/student/<int:pk>', views.session_student, name='session_student'),
-    path('select/manage/session', views.select_manage_session, name='select_manage_session'),
     path('session/student/add/<int:pk>/<int:num>', views.add_session_student, name='add_session_student'),
     path('session/student/del/<int:pk>/<int:num>', views.del_session_student, name='del_session_student'),
 
-    # Urls Select Course for session
-    path('select/session', views.select_course, name='select_course'),
-
     # Urls View_Session_Student
-    path('select/view/session', views.view_select_course, name='view_select_course'),
     path('view/session/student', views.view_session_student, name='view_session_student'),
 
     # Urls Attendance
@@ -65,6 +66,7 @@ urlpatterns = [
     path('attendance/teacher', views.attendance_teacher, name='attendance_teacher'),
     path('attendance/student', views.attendance_student, name='attendance_student'),
     path('attendance/generater', views.attendance_generater, name='attendance_generater'),
+    
     # JSON
     path('ajax/change_status_true', views.change_status_true, name='change_status_true'),
     path('ajax/change_status_false', views.change_status_false, name='change_status_false'),
@@ -78,16 +80,15 @@ urlpatterns = [
     path('export/excel/teacher', views.export_excel_teacher, name='export_excel_teacher'),
     path('export/excel/attendance/student', views.export_excel_attendance_student, name='export_excel_attendance_student'),
     path('export/excel/attendance/teacher', views.export_excel_attendance_teacher, name='export_excel_attendance_teacher'),
-
     
-    path('person', views.person, name='person'),
-    path('graduate', views.graduate, name='graduate'),
-    # Lock Person
-    path('person/lock/<int:pk>', views.lock_person, name='lock_person'),
-    path('person/unlock/<int:pk>', views.unlock_person, name='unlock_person'),
     
-    path('wait/', views.wait_list, name='wait_list'),
+    
+    
+    
+    
+    path('wait', views.wait_list, name='wait_list'),
 
-    path('select_new_course/', views.select_new_course, name='select_new_course')
+    # Urls Select Course for session
+    path('select/course', views.select_course, name='select_course'),
 
 ]

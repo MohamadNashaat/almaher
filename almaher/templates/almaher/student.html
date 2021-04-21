@@ -33,6 +33,7 @@
 {% block url_name %}
     Add Student
 {% endblock %}
+
 {% block th_table %}
     <th>#</th>
     <th>First Name</th>
@@ -40,9 +41,7 @@
     <th>Father</th>
     <th>BDate</th>
     <th>Level</th>
-    <th></th>
-    <th></th>
-    <th></th>
+    <th>Status</th>
 {% endblock %}
 
 {% block tr_table%}
@@ -55,19 +54,11 @@
         <td>{{item.bdate}}</td>
         <td>{{item.level_id.level_name}}</td>
         <td>
-            <a href="{% url 'edit_student' item.person_id %}" class="btn btn-info btn-circle btn-sm">
-                <i class="fas fa-edit"></i>
-            </a>
-        </td>
-        <td>
-            <a href="{% url 'lock_person' item.person_id %}" class="btn btn-danger btn-circle btn-sm">
-                <i class="fas fa-lock"></i>
-            </a>
-        </td>
-        <td>
-            <a href="{% url 'del_student' item.person_id %}" class="btn btn-danger btn-circle btn-sm">
-                <i class="fas fa-user-times"></i>
-            </a>
+            <div class="d-flex justify-content-center">
+                <a href="{% url 'lock_person' item.person_id %}" class="btn btn-danger btn-circle btn-sm">
+                    <i class="fas fa-lock"></i>
+                </a>
+            </div>
         </td>
     </tr>
     {% endfor %}

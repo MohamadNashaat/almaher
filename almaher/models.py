@@ -54,7 +54,7 @@ class Time(models.Model):
 
 class Session(models.Model):
     session_id = models.AutoField(primary_key=True)
-    session_number = models.IntegerField(unique=True)
+    session_number = models.IntegerField()
     course_id = models.ForeignKey(Course, on_delete=models.CASCADE)
     level_id = models.ForeignKey(Level, on_delete=models.CASCADE)
     position_id = models.ForeignKey(Position, null=True, on_delete=models.CASCADE)

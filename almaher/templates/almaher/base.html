@@ -100,21 +100,24 @@
                 Session
             </div>
             <li class="nav-item">
-                <a class="nav-link" href="{% url 'select_course'%}">
+                <a class="nav-link" href="{% url 'session'%}">
                     <i class="fas fa-fw fa-users"></i>
                     <span>Manage Session</span></a>
-                <a class="nav-link" href="{% url 'select_manage_session'%}">
+                <a class="nav-link" href="{% url 'session_student' 1 %}">
                     <i class="fas fa-fw fa-users"></i>
                     <span>Manage Sessions Students</span></a>
-                <a class="nav-link" href="{% url 'view_select_course'%}">
+                <a class="nav-link" href="{% url 'view_session_student'%}">
                     <i class="fas fa-fw fa-users"></i>
-                    <span>Sessions Students</span></a>
+                    <span>View Sessions Students</span></a>
                 <a class="nav-link" href="{% url 'attendance'%}">
                     <i class="fas fa-fw fa-calendar"></i>
                     <span>Attendance</span></a>
                 <a class="nav-link" href="{% url 'select_exam'%}">
                     <i class="fas fa-fw fa-chart-area"></i>
                     <span>Exams</span></a>
+                <a class="nav-link" href="{% url 'select_exam'%}">
+                    <i class="fas fa-fw fa-chart-area"></i>
+                    <span>Results</span></a>
             </li>
             <!-- Divider -->
             <hr class="sidebar-divider">
@@ -161,16 +164,19 @@
                     <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
                         <i class="fa fa-bars"></i>
                     </button>
+                    
+                   <a href="{% url 'select_course' %}" class="btn btn-primary btn-icon-split btn-sm">   
+                        <span class="text">Select Cours</span>
+                        <span class="text"> - </span>
+                        <span class="text">{{get_course_id.course_name}}</span>
+                    </a>
 
                     <!-- Topbar Navbar -->
                     <ul class="navbar-nav ml-auto">
 
                         <!-- Nav Item - Search Dropdown (Visible Only XS) -->
                         <li class="nav-item dropdown no-arrow d-sm-none">
-                            <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-search fa-fw"></i>
-                            </a>
+                            
                             <!-- Dropdown - Messages -->
                             <div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in"
                                 aria-labelledby="searchDropdown">
