@@ -130,15 +130,6 @@
                 <a class="nav-link" href="{% url 'course'%}">
                     <i class="fas fa-fw fa-book"></i>
                     <span>Manage Courses</span></a>
-                <a class="nav-link" href="{% url 'level'%}">
-                    <i class="fas fa-fw fa-graduation-cap"></i>
-                    <span>Manage Levels</span></a> 
-                <a class="nav-link" href="{% url 'position'%}">
-                    <i class="fas fa-fw fa-location-arrow"></i>
-                    <span>Manage Position</span></a>
-                <a class="nav-link" href="{% url 'time'%}">
-                    <i class="fas fa-fw fa-clock"></i>
-                    <span>Manage Time</span></a>  
             </li>
             <!-- Divider -->
             <hr class="sidebar-divider">
@@ -164,12 +155,6 @@
                     <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
                         <i class="fa fa-bars"></i>
                     </button>
-                    
-                   <a href="{% url 'select_course' %}" class="btn btn-primary btn-icon-split btn-sm">   
-                        <span class="text">Select Cours</span>
-                        <span class="text"> - </span>
-                        <span class="text">{{get_course_id.course_name}}</span>
-                    </a>
 
                     <!-- Topbar Navbar -->
                     <ul class="navbar-nav ml-auto">

@@ -31,20 +31,6 @@ urlpatterns = [
     path('course/add', views.add_course, name='add_course'),
     path('course/del/<int:pk>', views.del_course, name='del_course'),
 
-    # Urls Levels
-    path('level', views.level, name='level'),
-    path('level/add', views.add_level, name='add_level'),
-    path('level/del/<int:pk>', views.del_level, name='del_level'),
-
-    # Urls Positions
-    path('position', views.position, name='position'),
-    path('position/add', views.add_position, name='add_position'),
-    path('position/del/<int:pk>', views.del_position, name='del_position'),
-
-    # Urls Times
-    path('time', views.time, name='time'),
-    path('time/add', views.add_time, name='add_time'),
-    path('time/del/<int:pk>', views.del_time, name='del_time'),
 
     # Urls Sessions
     path('session', views.session, name='session'),
@@ -80,10 +66,6 @@ urlpatterns = [
     path('export/excel/teacher', views.export_excel_teacher, name='export_excel_teacher'),
     path('export/excel/attendance/student', views.export_excel_attendance_student, name='export_excel_attendance_student'),
     path('export/excel/attendance/teacher', views.export_excel_attendance_teacher, name='export_excel_attendance_teacher'),
-    
-    
-    
-    
     
     
     path('wait', views.wait_list, name='wait_list'),

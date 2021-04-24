@@ -40,18 +40,23 @@
         <div class="form-group row">
             <div class="col-sm-6 mb-3 mb-sm-0">
                 <label for="exampleInputEmail1" class="form-label">Level</label>
-                <select class="form-control form-select rounded-pill" aria-label="Default select example" name="level" id="level" required>
-                    {% for item in level%}
-                    <option value="{{item.level_id}}">{{item.level_name}}</option>
-                    {% endfor %}
+                <select class="form-control form-select rounded-pill" aria-label="Default select example" name="level" id="level">
+                    <option value="مبتدئ أ ">مبتدئ أ </option>
+                    <option value="مبتدئ ب ">مبتدئ ب </option>
+                    <option value="متوسط أ"> متوسط أ</option>
+                    <option value="متوسط ب"> متوسط ب</option>
+                    <option value="متقدم أ"> متقدم أ</option>
+                    <option value="متقدم ب"> متقدم ب</option>
                 </select>
             </div>
             <div class="col-sm-6">
                 <label for="exampleInputEmail1" class="form-label">Position</label>
                 <select class="form-control form-select rounded-pill" aria-label="Default select example" name="position" id="position" required>
-                    {% for item in position%}
-                    <option value="{{item.position_id}}">{{item.position_name}}</option>
-                    {% endfor %}
+                    <option value="توسعة مكتبة"> توسعة مكتبة</option>
+                    <option value="قبو"> قبو</option>
+                    <option value="توسعة حرم رئيسي"> توسعة حرم رئيسي</option>
+                    <option value="حرم رئيسي"> حرم رئيسي</option>
+                    <option value="تحت السدة"> تحت السدة</option>
                 </select>
             </div>
         </div>
@@ -60,9 +65,7 @@
             <div class="col-sm-6 mb-3 mb-sm-0">
                 <labelclass="form-label">Time</label>
                 <select class="form-control form-select rounded-pill" aria-label="Default select example" name="time" id="time" required>
-                    {% for item in time%}
-                    <option value="{{item.time_id}}">{{item.time_name}}</option>
-                    {% endfor %}
+                    <option value="بعد جلسة الصفا"> بعد جلسة الصفا</option>
                 </select>
             </div>
         </div>
