@@ -181,9 +181,7 @@ def add_teacher(request):
 @login_required(login_url='login')
 def student(request):
     student = Person.objects.all().filter(type_id='Student', status=True)
-    c_student = student.count()
-    context = {'c_student': c_student,
-                'student': student,
+    context = {'student': student,
                 }
     return render(request, 'almaher/student.html', context)
 
@@ -285,6 +283,19 @@ def generate_session(request):
             Session.objects.create(level_id=beginner_b,course_id=get_course_id,session_number=l1, time_id=time, position_id=p5)
         for l1 in range(116,136):
             Session.objects.create(level_id=beginner_a,course_id=get_course_id,session_number=l1, time_id=time, position_id=p1)
+        
+        # Loop to add students to sessions
+        student = Person.objects.filter(type_id='Student', status=True).order_by('bdate').values_list('person_id', flat=True)  # level_id=session.level_id
+        global var_num
+        var_num = 0
+        for session_loop in range(1,136):
+            session = Session.objects.get(course_id=get_course_id, session_number=session_loop)
+            for student_loop in range(1,5): # add four stuents to every session
+                get_student = int(student[var_num])
+                new_student = Person.objects.get(pk=get_student)
+                Session_Student.objects.create(session_id=session, student_id=new_student)
+                var_num += 1
+
     return redirect('session')
 
 @login_required(login_url='login')
@@ -296,7 +307,7 @@ def add_session(request):
     get_course_id = Course.objects.get(pk=get_course_id)
 
     in_session = Session.objects.all().filter(course_id=get_course_id).values_list('teacher_id', flat=True)
-    teacher = Person.objects.all().filter(type_id='Teacher')
+    teacher = Person.objects.all().filter(type_id='Teacher')# or 'Graduate')
     teacher = teacher.filter(~Q(pk__in=in_session))
     if request.method == 'POST':
         snumber = request.POST['snumber']
@@ -342,7 +353,7 @@ def edit_session(request, pk):
         messages.success(request, 'Edit success!')
         return HttpResponseRedirect(reverse('session'))
     in_session = Session.objects.all().filter(course_id=get_course_id).filter(~Q(teacher_id=session.teacher_id)).values_list('teacher_id', flat=True)
-    teacher = Person.objects.all().filter(type_id='Teacher').filter(~Q(pk__in=in_session))
+    teacher = Person.objects.all().filter(type_id__in=('Teacher', 'Graduate')).filter(~Q(pk__in=in_session)).order_by('first_name') #.filter(level_id=session.level_id)
     course = Course.objects.all()
     context = {'session': session,
                 'teacher': teacher,
@@ -366,68 +377,41 @@ def session_student(request, pk):
     get_course_id = Course.objects.get(pk=get_course_id)
 
     c_session_stud = Session.objects.count()
-    if c_session_stud != 0:
-        f_session = Session.objects.first()
-        l_session = Session.objects.last()
-        to_next = pk + 1
-        to_previous = pk - 1
 
-        if request.method =='POST':
+    if request.method =='POST':
             get_snumber = int(request.POST['snumber'])
             session = Session.objects.get(course_id=get_course_id, session_number=get_snumber)
-            to_next = session.session_id + 1
-            to_previous = session.session_id - 1
-            session_student = Session_Student.objects.all().filter(session_id=session)
-            # Get student not Enrolment in sessions
-            get_session = Session.objects.all().filter(course_id=get_course_id).values_list('session_id', flat=True)
-            in_session = Session_Student.objects.all().filter(session_id__in=get_session).filter().values_list('student_id', flat=True)
-            # Q objects can be negated with the ~ operator
-            student = Person.objects.all().filter(~Q(pk__in=in_session)).filter(type_id='Student', level_id=session.level_id, status=True)
-            context = {'session': session,
-                    'session_student': session_student,
-                    'student': student,
-                    'f_session': f_session,
-                    'l_session': l_session,
-                    'to_next': to_next,
-                    'to_previous': to_previous,
-                    }
-            return render(request, 'almaher/session_student.html', context)
+            return redirect('session_student', session.session_id)
+
+    elif c_session_stud != 0:
+        global new_pk
+        f_session = Session.objects.first()
+        l_session = Session.objects.last()
 
         if pk == 1:
-            session = f_session
-            session_student = Session_Student.objects.all().filter(session_id=f_session)
-            # Get student not Enrolment in sessions
-            get_session = Session.objects.all().filter(course_id=get_course_id).values_list('session_id', flat=True)
-            in_session = Session_Student.objects.all().filter(session_id__in=get_session).filter().values_list('student_id', flat=True)
-            # Q objects can be negated with the ~ operator
-            student = Person.objects.all().filter(~Q(pk__in=in_session)).filter(type_id='Student', level_id=session.level_id, status=True)
-            to_next = f_session.session_id + 1
-            context = {'session': session,
-                    'session_student': session_student,
-                    'student': student,
-                    'f_session': f_session,
-                    'l_session': l_session,
-                    'to_next': to_next,
-                    'to_previous': to_previous,
-                    }
-            return render(request, 'almaher/session_student.html', context)
+            new_pk = f_session.session_id
         else:
-            session = Session.objects.get(session_id=pk)
-            session_student = Session_Student.objects.all().filter(session_id=pk)
-            # Get student not Enrolment in sessions
-            get_session = Session.objects.all().filter(course_id=get_course_id).values_list('session_id', flat=True)
-            in_session = Session_Student.objects.all().filter(session_id__in=get_session).filter().values_list('student_id', flat=True)
-            # Q objects can be negated with the ~ operator
-            student = Person.objects.all().filter(~Q(pk__in=in_session)).filter(type_id='Student', level_id=session.level_id, status=True)
-            context = {'session': session,
-                    'session_student': session_student,
-                    'student': student,
-                    'f_session': f_session,
-                    'l_session': l_session,
-                    'to_next': to_next,
-                    'to_previous': to_previous,
-                    }
-            return render(request, 'almaher/session_student.html', context)
+            new_pk = pk
+
+        to_next = new_pk + 1
+        to_previous = new_pk - 1
+
+        session = Session.objects.get(session_id=new_pk)
+        session_student = Session_Student.objects.all().filter(session_id=new_pk)
+        # Get student not Enrolment in sessions
+        get_session = Session.objects.all().filter(course_id=get_course_id).values_list('session_id', flat=True)
+        in_session = Session_Student.objects.all().filter(session_id__in=get_session).values_list('student_id', flat=True)
+        # Q objects can be negated with the ~ operator
+        student = Person.objects.filter(type_id='Student', level_id=session.level_id, status=True).filter(~Q(pk__in=in_session))
+        context = {'session': session,
+                'session_student': session_student,
+                'student': student,
+                'f_session': f_session,
+                'l_session': l_session,
+                'to_next': to_next,
+                'to_previous': to_previous,
+                }
+        return render(request, 'almaher/session_student.html', context)
     else:
         return redirect('session')
     

@@ -92,7 +92,7 @@
                             <td>{{item.student_id.last_name}}</td>
                             <td>{{item.student_id.father_name}}</td>
                             <td>{{item.student_id.bdate}}</td>
-                            <td>{{item.student_id.level_id.level_name}}</td>
+                            <td>{{item.student_id.level_id}}</td>
                             <td>
                                 <a href="{% url 'del_session_student' session.session_id item.id %}" class="btn btn-danger btn-circle btn-sm">
                                     <i class="fas fa-user-times"></i>
@@ -128,7 +128,7 @@
                             <td>{{item.last_name}}</td>
                             <td>{{item.father_name}}</td>
                             <td>{{item.bdate}}</td>
-                            <td>{{item.level_id.level_name}}</td>
+                            <td>{{item.level_id}}</td>
                             <td>
                                 <a href="{% url 'add_session_student' session.session_id item.person_id %}" class="btn btn-success btn-circle btn-sm">
                                     <i class="fas fa-user-plus"></i>
