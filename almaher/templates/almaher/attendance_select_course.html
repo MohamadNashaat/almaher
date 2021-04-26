@@ -15,7 +15,7 @@
 {% endblock %}
 
 {% block pg_head %}
-    Select Course
+    Select Attendance
 {% endblock %}
 
 {% block card_header %}
@@ -30,17 +30,6 @@
 {% block card_body %}
     <form action="{% url 'attendance' %}" method="post">
         {% csrf_token %}
-        <!--<div class="form-group row">
-            <div class="mb-3 mb-sm-0">
-                <div class="d-flex justify-content-center">
-                    <select class="form-control form-select rounded-pill w-50" aria-label="Default select example" name="course" id="course" required>
-                        {% for item in course%}
-                        <option value="{{item.course_id}}">{{item.course_name}}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-            </div>
-        </div>-->
         <div class="form-group row">
             <div class="mb-3 mb-sm-0">
                 <div class="d-flex justify-content-center">

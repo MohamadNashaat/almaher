@@ -15,30 +15,29 @@
 {% endblock %}
 
 {% block pg_head %}
-    Select Course
+    Select Exam
 {% endblock %}
 
 {% block card_body %}
-    <form action="{% url 'exam' %}" method="post">
+    <form action="{% url 'select_exam' %}" method="post">
         {% csrf_token %}
         <div class="form-group row">
             <div class="mb-3 mb-sm-0">
                 <div class="d-flex justify-content-center">
-                    <select class="form-control form-select rounded-pill w-50" aria-label="Default select example" name="course" id="course" required>
-                        {% for item in course%}
-                            <option value="{{item.course_id}}">{{item.course_name}}</option>
-                        {% endfor %}
+                    <select class="form-control form-select rounded-pill w-50" aria-label="Default select example" name="type" id="type" required>
+                        <option value="نظري">نظري</option>
+                        <option value="عملي">عملي</option>
                     </select>
                 </div>
             </div>
         </div>
-        <div class="form-group row">
+         <div class="form-group row">
             <div class="mb-3 mb-sm-0">
                 <div class="d-flex justify-content-center">
-                    <select class="form-control form-select rounded-pill w-50" aria-label="Default select example" name="exam_time" id="exam_time" required>
-                        {% for item in exam_time %}
-                            <option value="{{item.exam_time_id}}">{{item.exam_time_name}}</option>
-                        {% endfor %}
+                    <select class="form-control form-select rounded-pill w-50" aria-label="Default select example" name="time" id="time" required>
+                        <option value="الامتحان الأول">الامتحان الأول</option>
+                        <option value="التكميلي">التكميلي</option>
+                        <option value="الاعادة">الاعادة</option>
                     </select>
                 </div>
             </div>

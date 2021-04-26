@@ -60,6 +60,8 @@ urlpatterns = [
     # Urls Exam
     path('select/exam', views.select_exam, name='select_exam'),
     path('exam', views.exam, name='exam'),
+    path('exam/theoretical/add', views.add_theoretical_exam, name='add_theoretical_exam'),
+    path('exam/practical/add', views.add_practical_exam, name='add_practical_exam'),
 
     # Urls Export to *
     path('export/excel/student', views.export_excel_student, name='export_excel_student'),
