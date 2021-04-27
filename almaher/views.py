@@ -6,6 +6,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate ,login, logout
 from django.contrib.auth.decorators import login_required
 from datetime import datetime, timedelta
+from django.db.models import Max
 from django.db.models import Q
 import xlwt
 
@@ -160,6 +161,11 @@ def teacher(request):
 @login_required(login_url='login')
 def add_teacher(request):
     if request.method == 'POST':
+        # Get index id
+        count_index = Person.objects.all().count()
+        if count_index != 0:
+            count_index = Person.objects.all().aggregate(Max('person_id'))['person_id__max']
+        count_index += 1
         fname = request.POST['fname']
         lname = request.POST['lname']
         father_n = request.POST['father_name']
@@ -169,7 +175,7 @@ def add_teacher(request):
         ad = request.POST['address']
         bd = request.POST['bdate']
         level = request.POST['level']
-        Person.objects.create(type_id='Teacher', first_name=fname, last_name=lname,
+        Person.objects.create(person_id=count_index, type_id='Teacher', first_name=fname, last_name=lname,
                             father_name=father_n, home_number=hn, phone_number=pn,
                             job=j, address=ad, bdate=bd, level_id=level)
         messages.success(request, 'Add success!')
@@ -188,6 +194,10 @@ def student(request):
 @login_required(login_url='login')
 def add_student(request):
     if request.method == 'POST':
+        count_index = Person.objects.all().count()
+        if count_index != 0:
+            count_index = Person.objects.all().aggregate(Max('person_id'))['person_id__max']
+        count_index += 1
         fname = request.POST['fname']
         lname = request.POST['lname']
         father_n = request.POST['father_name']
@@ -197,7 +207,7 @@ def add_student(request):
         ad = request.POST['address']
         bd = request.POST['bdate']
         level = request.POST['level']
-        Person.objects.create(type_id='Student', first_name=fname, last_name=lname,
+        Person.objects.create(person_id=count_index, type_id='Student', first_name=fname, last_name=lname,
                         father_name=father_n, home_number=hn, phone_number=pn,
                         job=j, address=ad, bdate=bd, level_id=level)
         messages.success(request, 'Add success!')
@@ -234,10 +244,14 @@ def course(request):
 @login_required(login_url='login')
 def add_course(request):
     if request.method == 'POST':
+        count_index = Course.objects.all().count()
+        if count_index != 0:
+            count_index = Course.objects.all().aggregate(Max('course_id'))['course_id__max']
+        count_index += 1
         ncourse = request.POST['ncourse']
         sdate = request.POST['sdate']
         edate = request.POST['edate']
-        Course.objects.create(course_name=ncourse, start_date=sdate, end_date=edate)
+        Course.objects.create(course_id=count_index, course_name=ncourse, start_date=sdate, end_date=edate)
         messages.success(request, 'Add success!')
         return HttpResponseRedirect(reverse('course'))
     context = {}
@@ -323,6 +337,10 @@ def add_session(request):
     get_course_id = request.session['get_course_id']
     get_course_id = Course.objects.get(pk=get_course_id)
 
+    count_index = Session.objects.all().count()
+    if count_index != 0:
+        count_index = Session.objects.all().aggregate(Max('session_id'))['session_id__max']
+    count_index += 1
     in_session = Session.objects.all().filter(course_id=get_course_id).values_list('teacher_id', flat=True)
     teacher = Person.objects.all().filter(type_id__in=('Teacher', 'Graduate'))
     teacher = teacher.filter(~Q(pk__in=in_session))
@@ -332,7 +350,7 @@ def add_session(request):
         level = request.POST['level']
         position = request.POST['position']
         time = request.POST['time']
-        Session.objects.create(level_id=level, course_id=get_course_id,
+        Session.objects.create(session_id=count_index, level_id=level, course_id=get_course_id,
                              position_id=position, time_id=time, session_number=snumber, teacher_id=teacher)
         messages.success(request, 'Add success!')
         return HttpResponseRedirect(reverse('add_session'))
@@ -434,9 +452,13 @@ def session_student(request, pk):
 
 @login_required(login_url='login')
 def add_session_student(request, pk, num):
+    count_index = Session_Student.objects.all().count()
+    if count_index != 0:
+        count_index = Session_Student.objects.all().aggregate(Max('id'))['id__max']
+    count_index += 1
     session = Session.objects.get(pk=pk)
     student = Person.objects.get(pk=num)
-    Session_Student.objects.create(session_id=session, student_id=student)
+    Session_Student.objects.create(id=count_index, session_id=session, student_id=student)
     return redirect('session_student', pk)
 
 @login_required(login_url='login')
@@ -507,15 +529,23 @@ def attendance_generater(request):
         for item in teacher:
             get_teacher = Person.objects.get(pk=item)
             get_session = session.get(teacher_id=get_teacher)
+            count_index = Attendance.objects.all().count()
+            if count_index != 0:
+                count_index = Attendance.objects.all().aggregate(Max('attendance_id'))['attendance_id__max']
+            count_index += 1
             for x in range(get_num):
-                Attendance.objects.create(person_id=get_teacher, session_id=get_session, day=new_date[x], status=False)
+                Attendance.objects.create(attendance_id=count_index, person_id=get_teacher, session_id=get_session, day=new_date[x], status=False)
 
         # Add student to attendance
         for item in student:
             get_student = Person.objects.get(pk=item)
-            get_session_student = session_student.get(student_id=get_student) 
+            get_session_student = session_student.get(student_id=get_student)
+            count_index = Attendance.objects.all().count()
+            if count_index != 0:
+                count_index = Attendance.objects.all().aggregate(Max('attendance_id'))['attendance_id__max']
+            count_index += 1
             for x in range(get_num):
-                Attendance.objects.create(person_id=get_student, session_id=get_session_student.session_id, day=new_date[x], status=False)
+                Attendance.objects.create(attendance_id=count_index, person_id=get_student, session_id=get_session_student.session_id, day=new_date[x], status=False)
         
         messages.success(request, 'Add success!')
         return HttpResponseRedirect(reverse('attendance'))
@@ -632,6 +662,10 @@ def add_theoretical_exam(request):
     teacher = Person.objects.all().filter(type_id__in=('Teacher', 'Graduate'), status=True)   
     
     if request.method == 'POST':
+        count_index = Exam.objects.all().count()
+        if count_index != 0:
+            count_index = Exam.objects.all().aggregate(Max('exam_id'))['exam_id__max']
+        count_index += 1
         get_time = request.POST['time']
         mark = request.POST['mark']
         student = request.POST['student']
@@ -640,7 +674,7 @@ def add_theoretical_exam(request):
         in_session = Session.objects.filter(course_id=get_course_id).values_list('session_id', flat=True)
         session = Session_Student.objects.get(session_id__in=in_session, student_id=student)
 
-        Exam.objects.create(type_id='نظري', time_id=get_time, 
+        Exam.objects.create(exam_id=count_index, type_id='نظري', time_id=get_time, 
         student_id=student, session_id=session.session_id, mark=mark)
         
         messages.success(request, 'Add success!')
@@ -664,6 +698,10 @@ def add_practical_exam(request):
     teacher = Person.objects.all().filter(type_id__in=('Teacher', 'Graduate'), status=True)   
     
     if request.method == 'POST':
+        count_index = Exam.objects.all().count()
+        if count_index != 0:
+            count_index = Exam.objects.all().aggregate(Max('exam_id'))['exam_id__max']
+        count_index += 1
         get_time = request.POST['time']
         mark = request.POST['mark']
         student = request.POST['student']
@@ -674,7 +712,7 @@ def add_practical_exam(request):
         in_session = Session.objects.filter(course_id=get_course_id).values_list('session_id', flat=True)
         session = Session_Student.objects.get(session_id__in=in_session, student_id=student)
 
-        Exam.objects.create(type_id='عملي', time_id=get_time, 
+        Exam.objects.create(exam_id=count_index, type_id='عملي', time_id=get_time, 
         student_id=student, teacher_id=teacher, session_id=session.session_id, mark=mark)
         
         messages.success(request, 'Add success!')
