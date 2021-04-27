@@ -102,3 +102,19 @@ class Exam(models.Model):
     mark = models.FloatField(null=True)
     def __str__(self):
         return f'{self.mark}'
+
+class Result(models.Model):
+    result = (
+        ('إعادة','إعادة'),
+        ('ناجح','ناجح'),
+        ('نجاح شرطي','نجاح شرطي')
+    )
+    result_id = models.AutoField(primary_key=True)
+    student_id = models.ForeignKey(Person, on_delete=models.CASCADE)
+    session_id = models.ForeignKey(Session, on_delete=models.CASCADE)
+    attendance = models.FloatField(null=True)
+    theoretical_mark = models.FloatField(null=True)
+    practical_mark = models.FloatField(null=True)
+    result = models.CharField(max_length=50, null=True, choices=result)
+    def __str__(self):
+        return f'{self.result}'

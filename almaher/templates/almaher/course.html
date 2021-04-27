@@ -18,12 +18,11 @@
     Courses
 {% endblock %}
 
-{% block add_url %}
-    {% url 'add_course'%}
-{% endblock %}
-
-{% block url_name %}
-    Add Course
+{% block url_1 %}
+    <a type="button" class="m-0 btn btn-success mr-4" href="{% url 'add_course' %}">
+        <i class="fas fa-fw fa-plus-circle"></i>
+        <span>Add Course</span>
+    </a>
 {% endblock %}
 
 {% block th_table %}

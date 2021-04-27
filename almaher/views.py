@@ -678,14 +678,26 @@ def add_practical_exam(request):
         student_id=student, teacher_id=teacher, session_id=session.session_id, mark=mark)
         
         messages.success(request, 'Add success!')
-        return HttpResponseRedirect(reverse('add_practical_exam')) 
+        return HttpResponseRedirect(reverse('add_practical_exam'))
     context = {'student': student,
                 'teacher': teacher,
                 }
     return render(request, 'almaher/add_practical_exam.html', context)
 
 
+@login_required(login_url='login')
+def result(request):
+    # Check request session
+    if not request.session.get('get_course_id', False):
+        return redirect('select_course')
+    get_course_id = request.session['get_course_id']
+    get_course_id = Course.objects.get(pk=get_course_id)
 
+    in_session = Session.objects.filter(course_id=get_course_id).values_list('session_id', flat=True)
+    result = Result.objects.filter(session_id__in=in_session)
+    context = {'result': result,
+                }
+    return render(request, 'almaher/result.html', context)
 
 
 

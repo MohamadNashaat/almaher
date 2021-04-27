@@ -15,53 +15,40 @@
 {% endblock %}
 
 {% block pg_head %}
-    Exam
+    Result
 {% endblock %}
 
 {% block export %}
 <a href="{% url 'export_excel_student' %}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
     <i class="fas fa-download fa-sm text-white">
-    <span>Export exam to excel</span>
+    <span>Export result to excel</span>
     </i>
 </a>
 {% endblock %}
 
-{% block url_1 %}
-    <a type="button" class="m-0 btn btn-success mr-4 my-1" href="{% url 'add_theoretical_exam' %}">
-        <i class="fas fa-fw fa-plus-circle"></i>
-        <span>Add theoretical</span>
-    </a>
-{% endblock %}
-
-{% block url_2 %}
-    <a type="button" class="m-0  btn btn-success mr-4 my-1" href="{% url 'add_practical_exam' %}">
-        <i class="fas fa-fw fa-plus-circle"></i>
-        <span>Add practical<span>
-    </a>
-{% endblock %}
 
 {% block th_table %}
     <th>#</th>
     <th>Student</th>
     <th>Course</th>
     <th>Session</th>
-    <th>Teacher</th>
-    <th>Type</th>
-    <th>Time</th>
-    <th>Mark</th>
+    <th>Attendance</th>
+    <th>Theoretical</th>
+    <th>Practical</th>
+    <th>Result</th>
 {% endblock %}
 
 {% block tr_table%}
-    {% for item in exam%}
+    {% for item in result%}
     <tr>
-        <td>{{item.exam_id}}</td>
+        <td>{{item.result_id}}</td>
         <td>{{item.student_id}}</td>
         <td>{{item.session_id.course_id}}</td>
         <td>{{item.session_id.session_number}}</td>
-        <td>{{item.teacher_id}}</td>
-        <td>{{item.type_id}}</td>
-        <td>{{item.time_id}}</td>
-        <td>{{item.mark}}</td>
+        <td>{{item.attendance}}</td>
+        <td>{{item.theoretical_mark}}</td>
+        <td>{{item.practical_mark}}</td>
+        <td>{{item.result}}</td>
     </tr>
     {% endfor %}
 {% endblock %}

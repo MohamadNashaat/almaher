@@ -26,12 +26,11 @@
 </a>
 {% endblock %}
 
-{% block add_url %}
-    {% url 'add_teacher'%}
-{% endblock %}
-
-{% block url_name %}
-    Add Teacher
+{% block url_1 %}
+    <a type="button" class="m-0 btn btn-success mr-4" href="{% url 'add_teacher' %}">
+        <i class="fas fa-fw fa-plus-circle"></i>
+        <span>Add Teacher</span>
+    </a>
 {% endblock %}
 
 {% block th_table %}

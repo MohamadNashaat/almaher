@@ -1,48 +1,57 @@
-{% extends 'almaher/base.html'%}
+{% extends 'almaher/base_datatables.html'%}
 
-{% block body%}
-
-    <!-- DataTales Example -->
-    <div class="card shadow mb-4">
-        <div class="card-header py-2">
-            <h1 class="h3 m-0 text-gray-800">Graduated</h1>
-        </div>
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-bordered display" id="dataTable" width="100%" cellspacing="0">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>First Name</th>
-                            <th>Last Name</th>
-                            <th>Father</th>
-                            <th>BDate</th>
-                            <th>Level</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for item in graduate%}
-                            <tr>
-                                <td>{{item.person_id}}</td>
-                                <td>{{item.first_name}}</td>
-                                <td>{{item.last_name}}</td>
-                                <td>{{item.father_name}}</td>
-                                <td>{{item.bdate}}</td>
-                                <td>{{item.level_id}}</td>
-                                <td>
-                                    <div class="d-flex justify-content-center">
-                                        <a href="{% url 'lock_person' item.person_id %}" class="btn btn-danger btn-circle btn-sm">
-                                            <i class="fas fa-lock"></i>
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+{% block mess %}
+    {% if messages %}
+    {% for message in messages %}
+    {% if message.tags %}
+    <div class="d-flex justify-content-center">
+        <div class="alert alert-success my-2 text-center w-25" role="alert">
+            {{message}}
         </div>
     </div>
+    {% endif %}
+    {% endfor %}
+    {% endif %}
+{% endblock %}
 
+{% block pg_head %}
+    Graduated
+{% endblock %}
+
+{% block export %}
+<a href="{% url 'export_excel_teacher' %}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+    <i class="fas fa-download fa-sm text-white">
+    <span>Export graduate to excel</span>
+    </i>
+</a>
+{% endblock %}
+
+{% block th_table %}
+    <th>#</th>
+    <th>First Name</th>
+    <th>Last Name</th>
+    <th>Father</th>
+    <th>BDate</th>
+    <th>Level</th>
+    <th>Status</th>
+{% endblock %}
+
+{% block tr_table%}
+    {% for item in graduate%}
+        <tr>
+            <td>{{item.person_id}}</td>
+            <td>{{item.first_name}}</td>
+            <td>{{item.last_name}}</td>
+            <td>{{item.father_name}}</td>
+            <td>{{item.bdate}}</td>
+            <td>{{item.level_id}}</td>
+            <td>
+                <div class="d-flex justify-content-center">
+                    <a href="{% url 'lock_person' item.person_id %}" class="btn btn-danger btn-circle btn-sm">
+                        <i class="fas fa-lock"></i>
+                    </a>
+                </div>
+            </td>
+        </tr>
+    {% endfor %}
 {% endblock %}

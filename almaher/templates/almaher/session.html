@@ -18,15 +18,14 @@
     Sessions
 {% endblock %}
 
-{% block add_url %}
-    {% url 'generate_session' %}
+{% block url_1 %}
+    <a type="button" class="m-0 btn btn-success mr-4" href="{% url 'generate_session' %}">
+        <i class="fas fa-fw fa-plus-circle"></i>
+        <span>Generate Session</span>
+    </a>
 {% endblock %}
 
-{% block url_name %}
-    Generate Session
-{% endblock %}
-
-{% block url2 %}
+{% block url_2 %}
     <!--<a type="button" class="m-0  btn btn-success mr-4" href="{% url 'add_session' %}">
         <i class="fas fa-fw fa-plus-circle"></i>
         <span>Add Session</span>
