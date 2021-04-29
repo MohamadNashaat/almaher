@@ -165,7 +165,7 @@ def add_teacher(request):
         count_index = Person.objects.all().count()
         if count_index != 0:
             count_index = Person.objects.all().aggregate(Max('person_id'))['person_id__max']
-        count_index += 1
+            count_index += 1
         fname = request.POST['fname']
         lname = request.POST['lname']
         father_n = request.POST['father_name']
@@ -197,7 +197,7 @@ def add_student(request):
         count_index = Person.objects.all().count()
         if count_index != 0:
             count_index = Person.objects.all().aggregate(Max('person_id'))['person_id__max']
-        count_index += 1
+            count_index += 1
         fname = request.POST['fname']
         lname = request.POST['lname']
         father_n = request.POST['father_name']
@@ -247,7 +247,7 @@ def add_course(request):
         count_index = Course.objects.all().count()
         if count_index != 0:
             count_index = Course.objects.all().aggregate(Max('course_id'))['course_id__max']
-        count_index += 1
+            count_index += 1
         ncourse = request.POST['ncourse']
         sdate = request.POST['sdate']
         edate = request.POST['edate']
@@ -272,7 +272,16 @@ def session(request):
     get_course_id = request.session['get_course_id']
     get_course_id = Course.objects.get(pk=get_course_id)
     session = Session.objects.all().filter(course_id=get_course_id)
-    context = {'session': session,
+    c_session = session.count()
+    session_list = []
+    if c_session != 0:
+        for s_loop in range(1,136):
+            get_session = session.get(session_number=s_loop)
+            c_student = Session_Student.objects.filter(session_id=get_session).count()
+            session_list.append(c_student)
+
+    zip_list = zip(session, session_list)
+    context = {'zip_list': zip_list,
                 }
     return render(request, 'almaher/session.html', context)
 
@@ -283,6 +292,18 @@ def generate_session(request):
         return redirect('select_course')
     get_course_id = request.session['get_course_id']
     get_course_id = Course.objects.get(pk=get_course_id)
+
+    # Get index id session
+    count_index = Session.objects.all().count()
+    if count_index != 0:
+        count_index = Session.objects.all().aggregate(Max('session_id'))['session_id__max']
+        count_index += 1
+    # Get index id session student
+    count_index_s_student = Session_Student.objects.all().count()
+    if count_index_s_student != 0:
+        count_index_s_student = Session_Student.objects.all().aggregate(Max('id'))['id__max']
+    count_index_s_student += 1
+
 
     ch_session = Session.objects.filter(course_id=get_course_id).count()
     if ch_session == 0:
@@ -303,29 +324,137 @@ def generate_session(request):
         p5 = 'تحت السدة'
         # Loop to create sessons
         for l1 in range(1,16):
-            Session.objects.create(level_id=advanced_b,course_id=get_course_id,session_number=l1, time_id=time, position_id=p1)
+            new_session = Session(session_id=count_index, level_id=advanced_b,course_id=get_course_id,session_number=l1, time_id=time, position_id=p1)
+            new_session.save()
+            count_index += 1
+
+            get_session = Session.objects.all().filter(course_id=get_course_id).values_list('session_id', flat=True)
+            in_session = Session_Student.objects.all().filter(session_id__in=get_session).values_list('student_id', flat=True)
+            student = Person.objects.filter(~Q(pk__in=in_session)).filter(type_id='Student', status=True, level_id=new_session.level_id).order_by('bdate').values_list('person_id', flat=True) 
+             
+            var_num = 0
+            for s_loop in range(1,7): # add six stuents to every session
+                if var_num < len(student):
+                    get_student = int(student[var_num])
+                    new_student = Person.objects.get(pk=get_student)
+                    Session_Student.objects.create(id=count_index_s_student, session_id=new_session, student_id=new_student)
+                    var_num += 1
+                    count_index_s_student += 1
+                else:
+                    break
+
         for l1 in range(16,41):
-            Session.objects.create(level_id=advanced_a,course_id=get_course_id,session_number=l1, time_id=time, position_id=p2)
+            new_session = Session(session_id=count_index, level_id=advanced_a,course_id=get_course_id,session_number=l1, time_id=time, position_id=p2)
+            new_session.save()
+            count_index += 1
+
+            get_session = Session.objects.all().filter(course_id=get_course_id).values_list('session_id', flat=True)
+            in_session = Session_Student.objects.all().filter(session_id__in=get_session).values_list('student_id', flat=True)
+            student = Person.objects.filter(~Q(pk__in=in_session)).filter(type_id='Student', status=True, level_id=new_session.level_id).order_by('bdate').values_list('person_id', flat=True) 
+             
+            var_num = 0
+            for s_loop in range(1,7): # add six stuents to every session
+                if var_num < len(student):
+                    get_student = int(student[var_num])
+                    new_student = Person.objects.get(pk=get_student)
+                    Session_Student.objects.create(id=count_index_s_student, session_id=new_session, student_id=new_student)
+                    var_num += 1
+                    count_index_s_student += 1
+                else:
+                    break
+
         for l1 in range(41,66):
-            Session.objects.create(level_id=intermediate_b,course_id=get_course_id,session_number=l1, time_id=time, position_id=p3)
+            new_session = Session(session_id=count_index, level_id=intermediate_b,course_id=get_course_id,session_number=l1, time_id=time, position_id=p3)
+            new_session.save()
+            count_index += 1
+
+            get_session = Session.objects.all().filter(course_id=get_course_id).values_list('session_id', flat=True)
+            in_session = Session_Student.objects.all().filter(session_id__in=get_session).values_list('student_id', flat=True)
+            student = Person.objects.filter(~Q(pk__in=in_session)).filter(type_id='Student', status=True, level_id=new_session.level_id).order_by('bdate').values_list('person_id', flat=True) 
+             
+            var_num = 0
+            for s_loop in range(1,7): # add six stuents to every session
+                if var_num < len(student):
+                    get_student = int(student[var_num])
+                    new_student = Person.objects.get(pk=get_student)
+                    Session_Student.objects.create(id=count_index_s_student, session_id=new_session, student_id=new_student)
+                    var_num += 1
+                    count_index_s_student += 1
+                else:
+                    break
+
         for l1 in range(66,91):
-            Session.objects.create(level_id=intermediate_a,course_id=get_course_id,session_number=l1, time_id=time, position_id=p4)
+            new_session = Session(session_id=count_index, level_id=intermediate_a,course_id=get_course_id,session_number=l1, time_id=time, position_id=p4)
+            new_session.save()
+            count_index += 1
+
+            get_session = Session.objects.all().filter(course_id=get_course_id).values_list('session_id', flat=True)
+            in_session = Session_Student.objects.all().filter(session_id__in=get_session).values_list('student_id', flat=True)
+            student = Person.objects.filter(~Q(pk__in=in_session)).filter(type_id='Student', status=True, level_id=new_session.level_id).order_by('bdate').values_list('person_id', flat=True) 
+             
+            var_num = 0
+            for s_loop in range(1,7): # add six stuents to every session
+                if var_num < len(student):
+                    get_student = int(student[var_num])
+                    new_student = Person.objects.get(pk=get_student)
+                    Session_Student.objects.create(id=count_index_s_student, session_id=new_session, student_id=new_student)
+                    var_num += 1
+                    count_index_s_student += 1
+                else:
+                    break
+
         for l1 in range(91,116):
-            Session.objects.create(level_id=beginner_b,course_id=get_course_id,session_number=l1, time_id=time, position_id=p5)
+            new_session = Session(session_id=count_index, level_id=beginner_b,course_id=get_course_id,session_number=l1, time_id=time, position_id=p5)
+            new_session.save()
+            count_index += 1
+
+            get_session = Session.objects.all().filter(course_id=get_course_id).values_list('session_id', flat=True)
+            in_session = Session_Student.objects.all().filter(session_id__in=get_session).values_list('student_id', flat=True)
+            student = Person.objects.filter(~Q(pk__in=in_session)).filter(type_id='Student', status=True, level_id=new_session.level_id).order_by('bdate').values_list('person_id', flat=True) 
+             
+            var_num = 0
+            for s_loop in range(1,7): # add six stuents to every session
+                if var_num < len(student):
+                    get_student = int(student[var_num])
+                    new_student = Person.objects.get(pk=get_student)
+                    Session_Student.objects.create(id=count_index_s_student, session_id=new_session, student_id=new_student)
+                    var_num += 1
+                    count_index_s_student += 1
+                else:
+                    break
+
         for l1 in range(116,136):
-            Session.objects.create(level_id=beginner_a,course_id=get_course_id,session_number=l1, time_id=time, position_id=p1)
-        
+            new_session = Session(session_id=count_index, level_id=beginner_a,course_id=get_course_id,session_number=l1, time_id=time, position_id=p1)
+            new_session.save()
+            count_index += 1
+
+            get_session = Session.objects.all().filter(course_id=get_course_id).values_list('session_id', flat=True)
+            in_session = Session_Student.objects.all().filter(session_id__in=get_session).values_list('student_id', flat=True)
+            student = Person.objects.filter(~Q(pk__in=in_session)).filter(type_id='Student', status=True, level_id=new_session.level_id).order_by('bdate').values_list('person_id', flat=True) 
+             
+            var_num = 0
+            for s_loop in range(1,7): # add six stuents to every session
+                if var_num < len(student):
+                    get_student = int(student[var_num])
+                    new_student = Person.objects.get(pk=get_student)
+                    Session_Student.objects.create(id=count_index_s_student, session_id=new_session, student_id=new_student)
+                    var_num += 1
+                    count_index_s_student += 1
+                else:
+                    break
+
         # Loop to add students to sessions
-        student = Person.objects.filter(type_id='Student', status=True).order_by('bdate').values_list('person_id', flat=True)  # level_id=session.level_id
-        global var_num
-        var_num = 0
-        for session_loop in range(1,136):
-            session = Session.objects.get(course_id=get_course_id, session_number=session_loop)
-            for student_loop in range(1,5): # add four stuents to every session
-                get_student = int(student[var_num])
-                new_student = Person.objects.get(pk=get_student)
-                Session_Student.objects.create(session_id=session, student_id=new_student)
-                var_num += 1
+
+        #student = Person.objects.filter(type_id='Student', status=True).order_by('bdate').values_list('person_id', flat=True)  # level_id=session.level_id
+        # 
+        #var_num = 0
+        #for session_loop in range(1,136):
+        #    session = Session.objects.get(course_id=get_course_id, session_number=session_loop)
+        #    for student_loop in range(1,5): # add four stuents to every session
+        #        get_student = int(student[var_num])
+        #        new_student = Person.objects.get(pk=get_student)
+        #        Session_Student.objects.create(session_id=session, student_id=new_student)
+        #        var_num += 1
 
     return redirect('session')
 
@@ -340,7 +469,7 @@ def add_session(request):
     count_index = Session.objects.all().count()
     if count_index != 0:
         count_index = Session.objects.all().aggregate(Max('session_id'))['session_id__max']
-    count_index += 1
+        count_index += 1
     in_session = Session.objects.all().filter(course_id=get_course_id).values_list('teacher_id', flat=True)
     teacher = Person.objects.all().filter(type_id__in=('Teacher', 'Graduate'))
     teacher = teacher.filter(~Q(pk__in=in_session))
@@ -455,7 +584,7 @@ def add_session_student(request, pk, num):
     count_index = Session_Student.objects.all().count()
     if count_index != 0:
         count_index = Session_Student.objects.all().aggregate(Max('id'))['id__max']
-    count_index += 1
+        count_index += 1
     session = Session.objects.get(pk=pk)
     student = Person.objects.get(pk=num)
     Session_Student.objects.create(id=count_index, session_id=session, student_id=student)
@@ -532,9 +661,10 @@ def attendance_generater(request):
             count_index = Attendance.objects.all().count()
             if count_index != 0:
                 count_index = Attendance.objects.all().aggregate(Max('attendance_id'))['attendance_id__max']
-            count_index += 1
+                count_index += 1
             for x in range(get_num):
                 Attendance.objects.create(attendance_id=count_index, person_id=get_teacher, session_id=get_session, day=new_date[x], status=False)
+                count_index += 1
 
         # Add student to attendance
         for item in student:
@@ -543,9 +673,10 @@ def attendance_generater(request):
             count_index = Attendance.objects.all().count()
             if count_index != 0:
                 count_index = Attendance.objects.all().aggregate(Max('attendance_id'))['attendance_id__max']
-            count_index += 1
+                count_index += 1
             for x in range(get_num):
                 Attendance.objects.create(attendance_id=count_index, person_id=get_student, session_id=get_session_student.session_id, day=new_date[x], status=False)
+                count_index += 1
         
         messages.success(request, 'Add success!')
         return HttpResponseRedirect(reverse('attendance'))
@@ -665,7 +796,7 @@ def add_theoretical_exam(request):
         count_index = Exam.objects.all().count()
         if count_index != 0:
             count_index = Exam.objects.all().aggregate(Max('exam_id'))['exam_id__max']
-        count_index += 1
+            count_index += 1
         get_time = request.POST['time']
         mark = request.POST['mark']
         student = request.POST['student']
@@ -701,7 +832,7 @@ def add_practical_exam(request):
         count_index = Exam.objects.all().count()
         if count_index != 0:
             count_index = Exam.objects.all().aggregate(Max('exam_id'))['exam_id__max']
-        count_index += 1
+            count_index += 1
         get_time = request.POST['time']
         mark = request.POST['mark']
         student = request.POST['student']
