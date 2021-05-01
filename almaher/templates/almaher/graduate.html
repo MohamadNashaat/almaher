@@ -34,6 +34,8 @@
     <th>BDate</th>
     <th>Level</th>
     <th>Status</th>
+    <th>Edit</th>
+    <th>Delete</th>
 {% endblock %}
 
 {% block tr_table%}
@@ -49,6 +51,20 @@
                 <div class="d-flex justify-content-center">
                     <a href="{% url 'lock_person' item.person_id %}" class="btn btn-danger btn-circle btn-sm">
                         <i class="fas fa-lock"></i>
+                    </a>
+                </div>
+            </td>
+            <td>
+                <div class="d-flex justify-content-center">
+                    <a href="{% url 'edit_person' item.person_id %}" class="btn btn-info btn-circle btn-sm">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                </div>
+            </td>
+            <td>
+                <div class="d-flex justify-content-center">
+                    <a href="{% url 'del_person' item.person_id %}" class="btn btn-danger btn-circle btn-sm">
+                        <i class="fas fa-user-times"></i>
                     </a>
                 </div>
             </td>

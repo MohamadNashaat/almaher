@@ -76,6 +76,7 @@ def person(request):
 
 @login_required(login_url='login')
 def edit_person(request, pk):
+    level = Level.objects.all()
     person = Person.objects.get(person_id=pk)
     if request.method =='POST':
         fname = request.POST['fname']
@@ -87,6 +88,7 @@ def edit_person(request, pk):
         ad = request.POST['address']
         bd = request.POST['bdate']
         level = request.POST['level']
+        level = Level.objects.get(pk=level)
         person.first_name = fname
         person.last_name = lname
         person.father_name = father_n
@@ -99,6 +101,7 @@ def edit_person(request, pk):
         person.save()
         return redirect('person')
     context = {'person': person,
+                'level': level,
                 }
     return render(request, 'almaher/edit_person.html', context)
 
@@ -160,6 +163,7 @@ def teacher(request):
 
 @login_required(login_url='login')
 def add_teacher(request):
+    level = Level.objects.all()
     if request.method == 'POST':
         # Get index id
         count_index = Person.objects.all().count()
@@ -177,12 +181,14 @@ def add_teacher(request):
         ad = request.POST['address']
         bd = request.POST['bdate']
         level = request.POST['level']
+        level = Level.objects.get(pk=level)
         Person.objects.create(person_id=count_index, type_id='Teacher', first_name=fname, last_name=lname,
                             father_name=father_n, home_number=hn, phone_number=pn,
                             job=j, address=ad, bdate=bd, level_id=level)
         messages.success(request, 'Add success!')
         return HttpResponseRedirect(reverse('add_teacher'))
-    context = {}
+    context = {'level': level,
+                }
     return render(request, 'almaher/add_teacher.html', context)
 
 # Views Students
@@ -195,6 +201,7 @@ def student(request):
 
 @login_required(login_url='login')
 def add_student(request):
+    level = Level.objects.all()
     if request.method == 'POST':
         count_index = Person.objects.all().count()
         if count_index == 0:
@@ -211,12 +218,14 @@ def add_student(request):
         ad = request.POST['address']
         bd = request.POST['bdate']
         level = request.POST['level']
+        level = Level.objects.get(pk=level)
         Person.objects.create(person_id=count_index, type_id='Student', first_name=fname, last_name=lname,
                         father_name=father_n, home_number=hn, phone_number=pn,
                         job=j, address=ad, bdate=bd, level_id=level)
         messages.success(request, 'Add success!')
         return HttpResponseRedirect(reverse('add_student'))
-    context = {}
+    context = {'level': level,
+                }
     return render(request, 'almaher/add_student.html', context)
 
 # Views select course
