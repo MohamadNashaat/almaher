@@ -57,6 +57,8 @@ urlpatterns = [
     path('ajax/change_status_true', views.change_status_true, name='change_status_true'),
     path('ajax/change_status_false', views.change_status_false, name='change_status_false'),
 
+    path('ajax/set_teacher', views.set_teacher, name='set_teacher'),
+
     # Urls Exam
     path('select/exam', views.select_exam, name='select_exam'),
     path('exam', views.exam, name='exam'),

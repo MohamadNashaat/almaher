@@ -163,7 +163,9 @@ def add_teacher(request):
     if request.method == 'POST':
         # Get index id
         count_index = Person.objects.all().count()
-        if count_index != 0:
+        if count_index == 0:
+            count_index = 1
+        else:
             count_index = Person.objects.all().aggregate(Max('person_id'))['person_id__max']
             count_index += 1
         fname = request.POST['fname']
@@ -195,7 +197,9 @@ def student(request):
 def add_student(request):
     if request.method == 'POST':
         count_index = Person.objects.all().count()
-        if count_index != 0:
+        if count_index == 0:
+            count_index = 1
+        else:
             count_index = Person.objects.all().aggregate(Max('person_id'))['person_id__max']
             count_index += 1
         fname = request.POST['fname']
@@ -245,7 +249,9 @@ def course(request):
 def add_course(request):
     if request.method == 'POST':
         count_index = Course.objects.all().count()
-        if count_index != 0:
+        if count_index == 0:
+            count_index = 1
+        else:
             count_index = Course.objects.all().aggregate(Max('course_id'))['course_id__max']
             count_index += 1
         ncourse = request.POST['ncourse']
@@ -279,7 +285,6 @@ def session(request):
             get_session = session.get(session_number=s_loop)
             c_student = Session_Student.objects.filter(session_id=get_session).count()
             session_list.append(c_student)
-
     zip_list = zip(session, session_list)
     context = {'zip_list': zip_list,
                 }
@@ -295,14 +300,18 @@ def generate_session(request):
 
     # Get index id session
     count_index = Session.objects.all().count()
-    if count_index != 0:
+    if count_index == 0:
+        count_index = 1
+    else:
         count_index = Session.objects.all().aggregate(Max('session_id'))['session_id__max']
         count_index += 1
     # Get index id session student
     count_index_s_student = Session_Student.objects.all().count()
-    if count_index_s_student != 0:
+    if count_index_s_student == 0:
+        count_index_s_student = 1
+    else:
         count_index_s_student = Session_Student.objects.all().aggregate(Max('id'))['id__max']
-    count_index_s_student += 1
+        count_index_s_student += 1
 
 
     ch_session = Session.objects.filter(course_id=get_course_id).count()
@@ -467,7 +476,9 @@ def add_session(request):
     get_course_id = Course.objects.get(pk=get_course_id)
 
     count_index = Session.objects.all().count()
-    if count_index != 0:
+    if count_index == 0:
+        count_index = 1
+    else:
         count_index = Session.objects.all().aggregate(Max('session_id'))['session_id__max']
         count_index += 1
     in_session = Session.objects.all().filter(course_id=get_course_id).values_list('teacher_id', flat=True)
@@ -548,6 +559,8 @@ def session_student(request, pk):
 
     elif c_session_stud != 0:
         global new_pk
+        #global to_next 
+        #global to_previous
         f_session = Session.objects.first()
         l_session = Session.objects.last()
 
@@ -556,8 +569,18 @@ def session_student(request, pk):
         else:
             new_pk = pk
 
-        to_next = new_pk + 1
-        to_previous = new_pk - 1
+        to_next = new_pk
+        to_previous = new_pk
+        # set to_next & to_previous
+        if new_pk == 1:
+            to_next = new_pk + 1
+        elif new_pk == f_session.session_id:
+            to_next = new_pk + 1
+        elif new_pk == l_session.session_id:
+            to_previous = new_pk - 1
+        else:
+            to_next = new_pk + 1
+            to_previous = new_pk - 1        
 
         session = Session.objects.get(session_id=new_pk)
         session_student = Session_Student.objects.all().filter(session_id=new_pk)
@@ -566,6 +589,8 @@ def session_student(request, pk):
         in_session = Session_Student.objects.all().filter(session_id__in=get_session).values_list('student_id', flat=True)
         # Q objects can be negated with the ~ operator
         student = Person.objects.filter(type_id='Student', level_id=session.level_id, status=True).filter(~Q(pk__in=in_session))
+        in_session_teacher = Session.objects.all().filter(session_id__in=get_session).values_list('teacher_id', flat=True)
+        teacher = Person.objects.filter(type_id__in=('Teacher', 'Graduate'), level_id=session.level_id, status=True).order_by('first_name')#.filter(~Q(pk__in=in_session_teacher))#.order_by('first_name')
         context = {'session': session,
                 'session_student': session_student,
                 'student': student,
@@ -573,16 +598,33 @@ def session_student(request, pk):
                 'l_session': l_session,
                 'to_next': to_next,
                 'to_previous': to_previous,
+                'teacher': teacher,
                 }
         return render(request, 'almaher/session_student.html', context)
     else:
         return redirect('session')
     
+def set_teacher(request):   
+    teacher_id = request.GET.get('teacher_id')
+    session_id = request.GET.get('session_id')
+    get_session = Session.objects.get(pk=session_id)
+
+    if Person.objects.filter(pk=teacher_id).exists():
+        get_teacher = Person.objects.get(pk=teacher_id)
+        get_session.teacher_id = get_teacher
+    else:
+        get_session.teacher_id = None
+    get_session.save()
+    context = {}
+    return JsonResponse(context)
+
 
 @login_required(login_url='login')
 def add_session_student(request, pk, num):
     count_index = Session_Student.objects.all().count()
-    if count_index != 0:
+    if count_index == 0:
+        count_index = 1
+    else:
         count_index = Session_Student.objects.all().aggregate(Max('id'))['id__max']
         count_index += 1
     session = Session.objects.get(pk=pk)
@@ -659,7 +701,9 @@ def attendance_generater(request):
             get_teacher = Person.objects.get(pk=item)
             get_session = session.get(teacher_id=get_teacher)
             count_index = Attendance.objects.all().count()
-            if count_index != 0:
+            if count_index == 0:
+                count_index = 1
+            else:
                 count_index = Attendance.objects.all().aggregate(Max('attendance_id'))['attendance_id__max']
                 count_index += 1
             for x in range(get_num):
@@ -671,7 +715,9 @@ def attendance_generater(request):
             get_student = Person.objects.get(pk=item)
             get_session_student = session_student.get(student_id=get_student)
             count_index = Attendance.objects.all().count()
-            if count_index != 0:
+            if count_index == 0:
+                count_index = 1
+            else:
                 count_index = Attendance.objects.all().aggregate(Max('attendance_id'))['attendance_id__max']
                 count_index += 1
             for x in range(get_num):
@@ -794,7 +840,9 @@ def add_theoretical_exam(request):
     
     if request.method == 'POST':
         count_index = Exam.objects.all().count()
-        if count_index != 0:
+        if count_index == 0:
+            count_index = 1
+        else:
             count_index = Exam.objects.all().aggregate(Max('exam_id'))['exam_id__max']
             count_index += 1
         get_time = request.POST['time']
@@ -830,7 +878,9 @@ def add_practical_exam(request):
     
     if request.method == 'POST':
         count_index = Exam.objects.all().count()
-        if count_index != 0:
+        if count_index == 0:
+            count_index = 1
+        else:
             count_index = Exam.objects.all().aggregate(Max('exam_id'))['exam_id__max']
             count_index += 1
         get_time = request.POST['time']

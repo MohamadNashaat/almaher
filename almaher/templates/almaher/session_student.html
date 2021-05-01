@@ -65,7 +65,24 @@
                 <div class="p-2 bd-highlight"><h5>Level: {{session.level_id}}</h5></div>
             </div>
             <div class="d-flex bd-highlight mb-auto">
-                <div class="me-auto p-2 bd-highlight"><h5>Teacher: {{session.teacher_id}}</h5></div>
+                <div class="me-auto p-2 bd-highlight">
+                    <h5>
+                        <labelclass="form-label">Teacher</label>
+                        <select class="form-control form-select rounded-pill w-100">
+                            {% if session.teacher_id %}
+                                <option selected value="{{session.teacher_id.person_id}}" onclick="set_teacher({{session.session_id}},{{session.teacher_id.person_id}})">{{session.teacher_id}}</option>
+                            {% else %}
+                                <option selected value="{{session.teacher_id.person_id}}" onclick="set_teacher({{session.session_id}},-1)">{{session.teacher_id}}</option>
+                            {% endif %}
+                            {% for item in teacher %}
+                                {% if session.teacher_id.person_id != item.person_id %}
+                                    <option value="{{item.person_id}}" onclick="set_teacher({{session.session_id}},{{item.person_id}})">{{item.first_name}} {{item.last_name}}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </h5>
+                    
+                </div>
                 <div class="p-2 bd-highlight"><h5>Position: {{session.position_id}}</h5></div>
             </div>
         </div>
@@ -149,5 +166,18 @@
     $(document).ready(function() {
         $('table.display').DataTable();
     } );
+
+    function set_teacher(s_id, t_id){
+        let session_id = s_id;
+        let teacher_id = t_id;
+        $.ajax({
+        url: "{% url 'set_teacher' %}",
+        data:{
+            'session_id':session_id,
+            'teacher_id':teacher_id,
+            },
+        dataType: 'json',
+        });
+    };
 </script>
 {% endblock %}
