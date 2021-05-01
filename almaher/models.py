@@ -1,14 +1,24 @@
 from django.db import models
 
+class Level(models.Model):
+    level_name = models.CharField(max_length=50, primary_key=True)
+    create_date = models.DateField(auto_now_add=True, null=True)
+    def __str__(self):
+        return self.level_name
+
+class Position(models.Model):
+    position_name = models.CharField(max_length=50, primary_key=True)
+    create_date = models.DateField(auto_now_add=True, null=True)
+    def __str__(self):
+        return self.position_name
+
+class Time(models.Model):
+    time_name = models.CharField(max_length=50, primary_key=True)
+    create_date = models.DateField(auto_now_add=True, null=True)
+    def __str__(self):
+        return self.time_name
+
 class Person(models.Model):
-    level = (
-        ('مبتدئ أ','مبتدئ أ'),
-        ('مبتدئ ب','مبتدئ ب'),
-        ('متوسط أ','متوسط أ'),
-        ('متوسط ب','متوسط ب'),
-        ('متقدم أ','متقدم أ'),
-        ('متقدم ب','متقدم ب'),
-    )
     person_type = (
         ('Teacher','Teacher'),
         ('Student','Student'),
@@ -28,7 +38,7 @@ class Person(models.Model):
     job = models.CharField(max_length=120, null=True)
     address = models.CharField(max_length=120, null=True)
     bdate = models.DateField(null=True)
-    level_id = models.CharField(max_length=50, null=True, choices=level)
+    level_id = models.ForeignKey(Level, on_delete=models.CASCADE)
     priority_id = models.CharField(max_length=50, null=True, choices=priority)
     status = models.BooleanField(default=True, null=True)
     create_date = models.DateField(auto_now_add=True, null=True)
@@ -45,30 +55,12 @@ class Course(models.Model):
         return self.course_name
 
 class Session(models.Model):
-    level = (
-        ('مبتدئ أ','مبتدئ أ'),
-        ('مبتدئ ب','مبتدئ ب'),
-        ('متوسط أ','متوسط أ'),
-        ('متوسط ب','متوسط ب'),
-        ('متقدم أ','متقدم أ'),
-        ('متقدم ب','متقدم ب'),
-    )
-    time = (
-        ('بعد جلسة الصفا','بعد جلسة الصفا'),
-    )
-    position = (
-        ('حرم رئيسي','حرم رئيسي'),
-        ('توسعة حرم رئيسي','توسعة حرم رئيسي'),
-        ('تحت السدة','تحت السدة'),
-        ('توسعة مكتبة','توسعة مكتبة'),
-        ('قبو','قبو'),
-    )
     session_id = models.IntegerField(primary_key=True)
     session_number = models.IntegerField()
     course_id = models.ForeignKey(Course, on_delete=models.CASCADE)
-    level_id = models.CharField(max_length=50, null=True, choices=level)
-    position_id = models.CharField(max_length=50, null=True, choices=position)
-    time_id = models.CharField(max_length=50, null=True, choices=time)
+    level_id = models.ForeignKey(Level, on_delete=models.CASCADE)
+    position_id = models.ForeignKey(Position, on_delete=models.CASCADE)
+    time_id = models.ForeignKey(Time, on_delete=models.CASCADE)
     teacher_id = models.ForeignKey(Person, null=True, on_delete=models.SET_NULL)
     create_date = models.DateField(auto_now_add=True, null=True)
     def __str__(self):
