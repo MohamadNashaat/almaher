@@ -15,13 +15,13 @@
 {% endblock %}
 
 {% block pg_head %}
-    Teachers
+    المدرسين
 {% endblock %}
 
 {% block export %}
 <a href="{% url 'export_excel_teacher' %}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
     <i class="fas fa-download fa-sm text-white">
-    <span>Export teachers to excel</span>
+    <span>استخراج البيانات لـ Excel</span>
     </i>
 </a>
 {% endblock %}
@@ -29,20 +29,20 @@
 {% block url_1 %}
     <a type="button" class="m-0 btn btn-success mr-4" href="{% url 'add_teacher' %}">
         <i class="fas fa-fw fa-plus-circle"></i>
-        <span>Add Teacher</span>
+        <span>اضافة مدرس</span>
     </a>
 {% endblock %}
 
 {% block th_table %}
     <th>#</th>
-    <th>First Name</th>
-    <th>Last Name</th>
-    <th>Father</th>
-    <th>BDate</th>
-    <th>Level</th>
-    <th>Status</th>
-    <th>Edit</th>
-    <th>Delete</th>
+    <th>الاسم</th>
+    <th>الكنية</th>
+    <th>اسم الاب</th>
+    <th>تاريخ الميلاد</th>
+    <th>المستوى</th>
+    <th>الحالة</th>
+    <th>تعديل</th>
+    <th>حذف</th>
 {% endblock %}
 
 {% block tr_table%}

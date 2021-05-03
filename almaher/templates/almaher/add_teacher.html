@@ -15,7 +15,7 @@
 {% endblock %}
 
 {% block pg_head %}
-    Add Teacher
+    اضافة مدرس
 {% endblock %}
 
 {% block card_body %}
@@ -24,40 +24,40 @@
         <div class="form-group row">
             <div class="col-sm-6 mb-3 mb-sm-0">
                 <input type="text" class="form-control form-control-user" id="fname" name="fname"
-                    placeholder="First Name" required >
+                    placeholder="الاسم" required >
             </div>
             <div class="col-sm-6">
                 <input type="text" class="form-control form-control-user" id="lname" name="lname"
-                    placeholder="Last Name" required>
+                    placeholder="الكنية" required>
             </div>
         </div>
 
         <div class="form-group row">
             <div class="col-sm-6 mb-3 mb-sm-0">
                 <input type="text" class="form-control form-control-user" id="father_name" name="father_name"
-                    placeholder="Father" required>
+                    placeholder="اسم الاب" required>
             </div>
             <div class="col-sm-6">
                 <input type="text" class="form-control form-control-user" id="job" name="job"
-                    placeholder="Job" required>
+                    placeholder="العمل" required>
             </div>
         </div>
         
         <div class="form-group row">
             <div class="col-sm-6 mb-3 mb-sm-0">
                 <input type="text" class="form-control form-control-user" id="pnumber" name="pnumber"
-                    placeholder="Phone Number" required>
+                    placeholder="رقم الهاتف" required>
             </div>
             <div class="col-sm-6">
                 <input type="text" class="form-control form-control-user" id="hnumber" name="hnumber"
-                    placeholder="Home Number" required>
+                    placeholder="رقم الموبايل" required>
             </div>
         </div>
 
         <div class="form-group row">
             <div class="col-sm-6 mb-3 mb-sm-0">
                 <input type="text" class="form-control form-control-user" id="address" name="address"
-                    placeholder="Address" required>
+                    placeholder="العنوان" required>
             </div>
             <div class="col-sm-6">
                 <input type="date" class="form-control rounded-pill" id="bdate" name="bdate" required>
@@ -76,9 +76,9 @@
         
         <div class="d-flex justify-content-center">
             <a type="button" class="btn btn-secondary w-25 mr-4" href="{% url 'teacher'%}">
-                <span>Back</span>
+                <span>الغاء</span>
             </a>
-            <input type="submit" value="Add" class="btn btn-primary w-25">
+            <input type="submit" value="اضافة" class="btn btn-primary w-25">
         </div>
     </form>
 

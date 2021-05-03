@@ -1,7 +1,7 @@
 {% load static %}
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="rtl">
 
 <head>
 
@@ -27,7 +27,7 @@
     <link href="{% static 'vendor/datatables/dataTables.bootstrap4.min.css'%}" rel="stylesheet">
 
     <!-- My style-->
-    <link href="{% static 'css/my-style.css'%}" rel="stylesheet">
+    <!--<link href="{% static 'css/my-style.css'%}" rel="stylesheet">-->
 
 </head>
 
@@ -42,7 +42,7 @@
             <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{% url ''%}">
                 <div class="sidebar-brand-text mx-3">
-                    Al Iman
+                    الايمان
                 </div>
             </a>
 
@@ -53,7 +53,7 @@
             <li class="nav-item">
                 <a class="nav-link" href="{% url ''%}">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
-                    <span>Dashboard</span></a>
+                    <span>لوحة التحكم</span></a>
             </li>
 
             <!-- Divider -->
@@ -61,75 +61,75 @@
 
             <!-- Heading -->
             <div class="sidebar-heading">
-                Person
+                الاشخاص
             </div>
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'person'%}">
                     <i class="fas fa-fw fa-user"></i>
-                    <span>Persons</span></a>
+                    <span>الاشخاص</span></a>
             </li>
 
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'teacher'%}">
                     <i class="fas fa-fw fa-chalkboard-teacher"></i>
-                    <span>Teachers</span></a>
+                    <span>المدرسين</span></a>
             </li>
 
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'student'%}">
                     <i class="fas fa-fw fa-user-graduate"></i>
-                    <span>Students</span></a>
+                    <span>الطلاب</span></a>
             </li>
 
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'graduate'%}">
                     <i class="fas fa-fw fa-graduation-cap"></i>
-                    <span>Graduated</span></a>
+                    <span>المتخرجين</span></a>
             </li>
 
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'wait_list'%}">
                     <i class="fas fa-fw fa-clock"></i>
-                    <span>Wait List</span></a>
+                    <span>قائمة الانتظار</span></a>
             </li>
             <!-- Divider -->
             <hr class="sidebar-divider">
 
             <!-- Heading -->
             <div class="sidebar-heading">
-                Session
+                ادارة الجلسات
             </div>
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'session'%}">
                     <i class="fas fa-fw fa-users"></i>
-                    <span>Sessions</span></a>
+                    <span>الجلسات</span></a>
                 <a class="nav-link" href="{% url 'session_student' 1 %}">
                     <i class="fas fa-fw fa-users"></i>
-                    <span>Sessions Students</span></a>
+                    <span>الطلاب في الجلسات</span></a>
                 <a class="nav-link" href="{% url 'view_session_student'%}">
                     <i class="fas fa-fw fa-users"></i>
-                    <span>View Sessions Students</span></a>
+                    <span>عرض الطلاب في الجلسات</span></a>
                 <a class="nav-link" href="{% url 'attendance'%}">
                     <i class="fas fa-fw fa-calendar"></i>
-                    <span>Attendances</span></a>
+                    <span>الحضور</span></a>
                 <a class="nav-link" href="{% url 'exam'%}">
                     <i class="fas fa-fw fa-chart-area"></i>
-                    <span>Exams</span></a>
+                    <span>الاختبارات</span></a>
                 <a class="nav-link" href="{% url 'result'%}">
                     <i class="fas fa-fw fa-chart-area"></i>
-                    <span>Results</span></a>
+                    <span>النتائج</span></a>
             </li>
             <!-- Divider -->
             <hr class="sidebar-divider">
 
             <!-- Heading -->
             <div class="sidebar-heading">
-                Course
+                ادارة الدورات
             </div>
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'course'%}">
                     <i class="fas fa-fw fa-book"></i>
-                    <span>Courses</span></a>
+                    <span>الدورات</span></a>
             </li>
             <!-- Divider -->
             <hr class="sidebar-divider">
@@ -192,7 +192,7 @@
                             <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                 aria-labelledby="alertsDropdown">
                                 <h6 class="dropdown-header">
-                                    Alerts Center
+                                    مركز الاشعارات
                                 </h6>
                                 <a class="dropdown-item d-flex align-items-center" href="#">
                                     <div class="mr-3">
@@ -202,7 +202,7 @@
                                     </div>
                                     <div>
                                         <div class="small text-gray-500">December 1, 2021</div>
-                                        <span class="font-weight-bold">A new monthly report is ready to download!</span>
+                                        <span class="font-weight-bold">التقرير الشهري جاهز للتنزيل!</span>
                                     </div>
                                 </a>
                             </div>
@@ -223,7 +223,7 @@
                                 aria-labelledby="userDropdown">
                                 <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Logout
+                                    تسجيل الخروج
                                 </a>
                             </div>
                         </li>
@@ -273,15 +273,15 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">هل أنت متأكد من تسجيل الخروج؟</h5>
                     <button class="close" type="button" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">×</span>
                     </button>
                 </div>
-                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+                <div class="modal-body">اختر "تسجيل الخروج" اذا كنت تريد الخروج من هذه الجلسة.</div>
                 <div class="modal-footer">
-                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-primary" href="{% url 'logout'%}">Logout</a>
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">الغاء</button>
+                    <a class="btn btn-primary" href="{% url 'logout'%}">تسجيل الخروج</a>
                 </div>
             </div>
         </div>
