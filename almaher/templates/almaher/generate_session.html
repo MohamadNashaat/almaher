@@ -1,0 +1,59 @@
+{% extends 'almaher/base_card_dml.html'%}
+
+{% block pg_head %}
+    انشاء الجلسات
+{% endblock %}
+
+{% block card_body %}
+    <div class="row">
+        <!-- Earnings (Monthly) Card Example -->
+        {% for item, count in zip_list %}
+        <div class="col-xl-2 col-md-6 my-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="font-weight-bold text-primary text-uppercase mb-1">
+                                {{item}}</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ c_teacher }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <span class="text-dark">{{count}}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    <dvi>
+
+    <form action="{% url 'generate_session'%}" method="post">
+        {% csrf_token %}
+        <div class="form-group row my-4">
+            <div class="col-sm-6 mb-3">
+                <label for="exampleInputEmail1" class="form-label">عدد الطلاب "المستمرين" في كل جلسة</label>
+                <input type="number" min="1" value="4" class="form-control"  name="count_student_1" required>
+            </div>
+            <div class="col-sm-6 mb-3">
+                <label for="exampleInputEmail1" class="form-label">عدد الطلاب "غير معروف" في كل جلسة</label>
+                <input value="2" class="form-control" name="count_student_2" required>
+            </div>
+        </div>
+
+        <div class="form-group row my-4">
+            {% for item in level %}
+                <div class="col-md-4 col-sm-6 mb-3">
+                    <label for="exampleInputEmail1" class="form-label">عدد الجلسات للمستوى <span class="font-weight-bold">{{item.level_name}}</span></label>
+                    <input type="number" min="1" value="1" class="form-control" name="{{item.level_name}}" id="{{item.level_name}}" required>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="d-flex justify-content-center">
+            <a type="button" class="m-0  btn btn-secondary w-25 mr-4" href="{% url 'session'%}">
+                <span>الغاء</span>
+            </a>
+            <button type="submit" class="btn btn-primary w-25">انشاء</button>
+        </div>
+    </form>
+{% endblock %}

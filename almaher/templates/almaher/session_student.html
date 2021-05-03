@@ -17,73 +17,77 @@
     <!-- DataTales Example -->
     <div class="card shadow mb-4">
         <div class="card-header py-2">
-            <div class="d-flex bd-highlight">
-                <div class="me-auto p-2 bd-highlight">
+            <div class="form-group row my-4">
+                <div class="col-sm-3 mb-3">
                     {% if f_session.session_id == session.session_id %}
                         <a href="{% url 'session_student' to_previous %}" class="btn btn-primary disabled">
-                            <i class="fas fa-arrow-left"></i>
-                            <span>Previous</span>
+                            <i class="fas fa-arrow-right"></i>
+                            <span>السابق</span>
                         </a>
                     {% else %}
                         <a href="{% url 'session_student' to_previous %}" class="btn btn-primary">
-                            <i class="fas fa-arrow-left"></i>
-                            <span>Previous</span>
+                            <i class="fas fa-arrow-right"></i>
+                            <span>السابق</span>
                         </a>
                     {% endif %}
                 </div>
-
-                <div class="me-auto p-2 bd-highlight">
+                <div class="col-sm-6 mb-3">
                     <form class="user" action="{% url 'session_student' 1 %}" method="post">
                     {% csrf_token %}
                         <div class="input-group mb-3">
-                            <input type="number" class="form-control" placeholder="Session number" 
+                            <input type="number" class="form-control mx-2" placeholder=" رقم الجلسة " 
                                 aria-label="Recipient's username" aria-describedby="button-addon2"
                                 id="snumber" name="snumber" min="1" max="135">
-                            <button class="btn btn-outline-secondary" type="submit" id="button-addon2">Go</button>
+                            <button class="btn btn-outline-secondary" type="submit" id="button-addon2">اذهب</button>
                         </div>
                     </form>
                 </div>
-
-                <div class="p-2 bd-highlight">
-                {% if l_session.session_id == session.session_id %}
+                <div class="col-sm-2 mb-3">
+                </div>
+                <div class="col-sm-1 mb-3">
+                    {% if l_session.session_id == session.session_id %}
                     <a href="{% url 'session_student' to_next %}" class="btn btn-primary disabled">
-                        <i class="fas fa-arrow-right"></i>
-                        <span>Next</span>
+                        <span>التالي</span>
+                        <i class="fas fa-arrow-left"></i>
                     </a>
-                {% else %}
-                    <a href="{% url 'session_student' to_next %}" class="btn btn-primary">
-                        <i class="fas fa-arrow-right"></i>
-                        <span>Next</span>
-                    </a>
-                {% endif %}                    
+                    {% else %}
+                        <a href="{% url 'session_student' to_next %}" class="btn btn-primary">
+                            <span>التالي</span>
+                            <i class="fas fa-arrow-left"></i>
+                        </a>
+                    {% endif %} 
                 </div>
             </div>
         </div>
         <div class="card-header py-2">
-            <div class="d-flex bd-highlight mb-auto">
-                <div class="me-auto p-2 bd-highlight"><h5>Session Number: {{session.session_number}}</h5></div>
-                <div class="p-2 bd-highlight"><h5>Level: {{session.level_id}}</h5></div>
-            </div>
-            <div class="d-flex bd-highlight mb-auto">
-                <div class="me-auto p-2 bd-highlight">
-                    <h5>
-                        <labelclass="form-label">Teacher</label>
-                        <select class="form-control form-select rounded-pill w-100">
-                            {% if session.teacher_id %}
-                                <option selected value="{{session.teacher_id.person_id}}" onclick="set_teacher({{session.session_id}},{{session.teacher_id.person_id}})">{{session.teacher_id}}</option>
-                            {% else %}
-                                <option selected value="{{session.teacher_id.person_id}}" onclick="set_teacher({{session.session_id}},-1)">{{session.teacher_id}}</option>
-                            {% endif %}
-                            {% for item in teacher %}
-                                {% if session.teacher_id.person_id != item.person_id %}
-                                    <option value="{{item.person_id}}" onclick="set_teacher({{session.session_id}},{{item.person_id}})">{{item.first_name}} {{item.last_name}}</option>
-                                {% endif %}
-                            {% endfor %}
-                        </select>
-                    </h5>
-                    
+            <div class="form-group row my-4">
+                <div class="col-sm-3 mb-3">
+                    <label class="form-label">رقم الجلسة</label>
+                    <input type="text" value="{{session.session_number}}" class="form-control"  name="count_student_1" readonly>
                 </div>
-                <div class="p-2 bd-highlight"><h5>Position: {{session.position_id}}</h5></div>
+                <div class="col-sm-3 mb-3">
+                    <label class="form-label">المستوى</label>
+                    <input type="text" value="{{session.level_id}}" class="form-control"  name="count_student_1" readonly>
+                </div>
+                <div class="col-sm-3 mb-3">
+                    <label class="form-label">المكان</label>
+                    <input type="text" value="{{session.position_id}}" class="form-control"  name="count_student_1" readonly>
+                </div>    
+                <div class="col-sm-3 mb-3">
+                    <label class="form-label">المدرس</label>
+                    <select class="form-control form-select w-100">
+                        {% if session.teacher_id %}
+                            <option selected value="{{session.teacher_id.person_id}}" onclick="set_teacher({{session.session_id}},{{session.teacher_id.person_id}})">{{session.teacher_id}}</option>
+                        {% else %}
+                            <option selected value="{{session.teacher_id.person_id}}" onclick="set_teacher({{session.session_id}},-1)">{{session.teacher_id}}</option>
+                        {% endif %}
+                        {% for item in teacher %}
+                            {% if session.teacher_id.person_id != item.person_id %}
+                                <option value="{{item.person_id}}" onclick="set_teacher({{session.session_id}},{{item.person_id}})">{{item.first_name}} {{item.last_name}}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>            
             </div>
         </div>
         <div class="card-body">
