@@ -7,8 +7,9 @@
 {% block card_body %}
     <div class="row">
         <!-- Earnings (Monthly) Card Example -->
+        <h4 class="text-dark">مجموع الطلاب في كل مستوى</h4>
         {% for item, count in zip_list %}
-        <div class="col-xl-2 col-md-6 my-4">
+        <div class="col-xl-2 col-md-6 mt-2 mb-4">
             <div class="card border-left-success shadow h-100 py-2">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
@@ -27,9 +28,10 @@
         {% endfor %}
     <dvi>
 
+    <h4 class="text-dark mt-4">اختر العدد المطلوب للطلاب في كل جلسة</h4>
     <form action="{% url 'generate_session'%}" method="post">
         {% csrf_token %}
-        <div class="form-group row my-4">
+        <div class="form-group row mt-2 mb-4">
             <div class="col-sm-6 mb-3">
                 <label for="exampleInputEmail1" class="form-label">عدد الطلاب "المستمرين" في كل جلسة</label>
                 <input type="number" min="1" value="4" class="form-control"  name="count_student_1" required>
@@ -40,7 +42,8 @@
             </div>
         </div>
 
-        <div class="form-group row my-4">
+        <h4 class="text-dark mt-4">اختر العدد المطلوب للجلسات في كل مستوى</h4>
+        <div class="form-group row mt-2 mb-4">
             {% for item in level %}
                 <div class="col-md-4 col-sm-6 mb-3">
                     <label for="exampleInputEmail1" class="form-label">عدد الجلسات للمستوى <span class="font-weight-bold">{{item.level_name}}</span></label>

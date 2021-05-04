@@ -28,7 +28,6 @@
 
     <!-- My style-->
     <!--<link href="{% static 'css/my-style.css'%}" rel="stylesheet">-->
-
 </head>
 
 <body id="page-top">
@@ -42,7 +41,7 @@
             <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{% url ''%}">
                 <div class="sidebar-brand-text mx-3">
-                    الايمان
+                    <span style="font-size: 120%;">دورة الماهر</span>
                 </div>
             </a>
 
@@ -53,83 +52,76 @@
             <li class="nav-item">
                 <a class="nav-link" href="{% url ''%}">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
-                    <span>لوحة التحكم</span></a>
+                    <span style="font-size: 110%;">لوحة التحكم</span></a>
             </li>
 
             <!-- Divider -->
             <hr class="sidebar-divider">
 
-            <!-- Heading -->
-            <div class="sidebar-heading">
-                الاشخاص
-            </div>
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'person'%}">
                     <i class="fas fa-fw fa-user"></i>
-                    <span>الاشخاص</span></a>
+                    <span style="font-size: 110%;">الاشخاص</span></a>
             </li>
 
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'teacher'%}">
                     <i class="fas fa-fw fa-chalkboard-teacher"></i>
-                    <span>المدرسين</span></a>
+                    <span style="font-size: 110%;">المدرسين</span></a>
             </li>
 
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'student'%}">
                     <i class="fas fa-fw fa-user-graduate"></i>
-                    <span>الطلاب</span></a>
+                    <span style="font-size: 110%;">الطلاب</span></a>
             </li>
 
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'graduate'%}">
                     <i class="fas fa-fw fa-graduation-cap"></i>
-                    <span>المتخرجين</span></a>
+                    <span style="font-size: 110%;">المتخرجين</span></a>
             </li>
 
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'wait_list'%}">
                     <i class="fas fa-fw fa-clock"></i>
-                    <span>قائمة الانتظار</span></a>
+                    <span style="font-size: 110%;">قائمة الانتظار</span></a>
             </li>
             <!-- Divider -->
             <hr class="sidebar-divider">
 
             <!-- Heading -->
-            <div class="sidebar-heading">
-                ادارة الجلسات
-            </div>
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'session'%}">
                     <i class="fas fa-fw fa-users"></i>
-                    <span>الجلسات</span></a>
+                    <span style="font-size: 110%;">الجلسات</span></a>
+
                 <a class="nav-link" href="{% url 'session_student' 1 %}">
                     <i class="fas fa-fw fa-users"></i>
-                    <span>الطلاب في الجلسات</span></a>
+                    <span style="font-size: 110%;">ادارة جلسات الطلاب</span></a>
+
                 <a class="nav-link" href="{% url 'view_session_student'%}">
                     <i class="fas fa-fw fa-users"></i>
-                    <span>عرض الطلاب في الجلسات</span></a>
+                    <span style="font-size: 110%;">عرض جلسات الطلاب</span></a>
+
                 <a class="nav-link" href="{% url 'attendance'%}">
                     <i class="fas fa-fw fa-calendar"></i>
-                    <span>الحضور</span></a>
+                    <span style="font-size: 110%;">الحضور</span></a>
+
                 <a class="nav-link" href="{% url 'exam'%}">
                     <i class="fas fa-fw fa-chart-area"></i>
-                    <span>الاختبارات</span></a>
+                    <span style="font-size: 110%;">الاختبارات</span></a>
+
                 <a class="nav-link" href="{% url 'result'%}">
                     <i class="fas fa-fw fa-chart-area"></i>
-                    <span>النتائج</span></a>
+                    <span style="font-size: 110%;">النتائج</span></a>
             </li>
             <!-- Divider -->
             <hr class="sidebar-divider">
-
-            <!-- Heading -->
-            <div class="sidebar-heading">
-                ادارة الدورات
-            </div>
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'course'%}">
                     <i class="fas fa-fw fa-book"></i>
-                    <span>الدورات</span></a>
+                    <span style="font-size: 110%;">الدورات</span></a>
             </li>
             <!-- Divider -->
             <hr class="sidebar-divider">
