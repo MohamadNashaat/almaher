@@ -43,9 +43,8 @@ urlpatterns = [
     path('session/student/<int:pk>', views.session_student, name='session_student'),
     path('session/student/add/<int:pk>/<int:num>', views.add_session_student, name='add_session_student'),
     path('session/student/del/<int:pk>/<int:num>', views.del_session_student, name='del_session_student'),
-
-    # Urls View_Session_Student
     path('view/session/student', views.view_session_student, name='view_session_student'),
+    path('session/wait/list', views.wait_list_session, name='wait_list_session'),
 
     # Urls Attendance
     path('select/attendance', views.select_attendance, name='attendance'),
@@ -58,6 +57,7 @@ urlpatterns = [
     path('ajax/change_status_false', views.change_status_false, name='change_status_false'),
 
     path('ajax/set_teacher', views.set_teacher, name='set_teacher'),
+    path('ajax/set_student', views.set_student, name='set_student'),
 
     # Urls Exam
     path('select/exam', views.select_exam, name='select_exam'),

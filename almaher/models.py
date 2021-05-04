@@ -61,7 +61,7 @@ class Session(models.Model):
     level_id = models.ForeignKey(Level, on_delete=models.CASCADE)
     position_id = models.ForeignKey(Position, on_delete=models.CASCADE)
     time_id = models.ForeignKey(Time, on_delete=models.CASCADE)
-    teacher_id = models.ForeignKey(Person, null=True, on_delete=models.SET_NULL)
+    teacher_id = models.ForeignKey(Person, null=True, on_delete=models.CASCADE)
     create_date = models.DateField(auto_now_add=True, null=True)
     def __str__(self):
         return f'{self.session_id}'

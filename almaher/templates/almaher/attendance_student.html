@@ -15,21 +15,13 @@
 {% endblock %}
 
 {% block pg_head %}
-    Student Attendances
-{% endblock %}
-
-{% block export %}
-<a href="{% url 'export_excel_attendance_student' %}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
-    <i class="fas fa-download fa-sm text-white">
-    <span>Export attendance students to excel</span>
-    </i>
-</a>
+    حضور الطلاب
 {% endblock %}
 
 {% block th_table %}
-    <th>Session</th>
-    <th>First Name</th>
-    <th>Last Name</th>
+    <th>رقم الدرس</th>
+    <th>الاسم</th>
+    <th>الكنية</th>
     {% for item in day_attendance %}
         <th>{{item}}</th>
     {% endfor %}
