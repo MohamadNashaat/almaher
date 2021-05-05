@@ -40,6 +40,7 @@
     <th>اسم الاب</th>
     <th>تاريخ الميلاد</th>
     <th>المستوى</th>
+    <th>الاولوية</th>
     <th>الحالة</th>
     <th>تعديل</th>
     <th>حذف</th>
@@ -54,6 +55,7 @@
         <td>{{item.father_name}}</td>
         <td>{{item.bdate}}</td>
         <td>{{item.level_id}}</td>
+        <td>{{item.priority_id}}</td>
         <td>
             <div class="d-flex justify-content-center">
                 <a href="{% url 'lock_person' item.person_id %}" class="btn btn-danger btn-circle btn-sm">

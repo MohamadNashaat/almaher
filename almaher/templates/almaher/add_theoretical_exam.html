@@ -15,7 +15,7 @@
 {% endblock %}
 
 {% block pg_head %}
-    Add Theoretical Exam
+    اضافة اختبار نظري
 {% endblock %}
 
 {% block card_body %}
@@ -23,7 +23,7 @@
         {% csrf_token %}
         <div class="form-group row">
             <div class="col-sm-6 mb-3 mb-sm-0">
-                <label class="form-label">Time</label>
+                <label class="form-label">الوقت</label>
                 <select class="form-control form-select rounded-pill" aria-label="Default select example" name="time" id="time" required>
                     <option value="الامتحان الأول">الامتحان الأول</option>
                     <option value="التكميلي">التكميلي</option>
@@ -31,7 +31,7 @@
                 </select>
             </div>
             <div class="col-sm-6">
-                <label class="form-label">Student</label>
+                <label class="form-label">اسم الطالب</label>
                 <select class="form-control form-select rounded-pill" aria-label="Default select example" name="student" id="student" required>
                     {% for item in student%}
                     <option value="{{item.person_id}}">{{item.first_name}} {{item.last_name}}</option>
@@ -42,9 +42,9 @@
 
         <div class="form-group row">
             <div class="col-sm-6 mb-3 mb-sm-0">
-                <label class="form-label">Mark</label>
+                <label class="form-label">العلامة</label>
                 <input type="number" class="form-control form-control-user" id="mark" name="mark"
-                    placeholder="Mark" min="1" max="100" required>
+                    placeholder="العلامة" min="1" max="100" required>
             </div>
             <div class="col-sm-6">
                 
@@ -53,9 +53,9 @@
         
         <div class="d-flex justify-content-center">
             <a type="button" class="btn btn-secondary w-25 mr-4" href="{% url 'exam'%}">
-                <span>Back</span>
+                <span>الغاء</span>
             </a>
-            <input type="submit" value="Add" class="btn btn-primary w-25">
+            <input type="submit" value="اضافة" class="btn btn-primary w-25">
         </div>
     </form>
 {% endblock %}

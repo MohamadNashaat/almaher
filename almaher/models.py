@@ -50,6 +50,7 @@ class Course(models.Model):
     course_name = models.CharField(max_length=120)
     start_date = models.DateField(null=True)
     end_date = models.DateField(null=True)
+    num_of_session = models.IntegerField(null=True)
     create_date = models.DateField(auto_now_add=True, null=True)
     def __str__(self):
         return self.course_name

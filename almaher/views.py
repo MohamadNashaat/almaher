@@ -9,6 +9,10 @@ from datetime import datetime, timedelta
 from django.db.models import Max
 from django.db.models import Q
 import xlwt
+import tempfile
+from django.template.loader import render_to_string
+from weasyprint import HTML
+from weasyprint.fonts import FontConfiguration
 
 # Create your views here.
 
@@ -57,12 +61,27 @@ def index(request):
     c_graduate = Person.objects.all().filter(type_id='Graduate').count()
     c_course = Course.objects.all().count()
     c_session = Session.objects.filter(course_id=get_course_id).count()
+
+    level = Level.objects.all()
+    student_count = []
+    teacher_count = []
+    level_list = level.values_list('level_name', flat=True)
+    for level_loop in level_list:
+        s_count = Person.objects.filter(type_id='Student' ,level_id=level_loop).count()
+        t_count = Person.objects.filter(type_id__in=('Teacher', 'Graduate') ,level_id=level_loop, status=True).count()
+        student_count.append(s_count)
+        teacher_count.append(t_count)
+    zip_list = zip(level_list, student_count)
+    zip_list2 = zip(level_list, teacher_count)
+
     context = {'c_teacher': c_teacher, 
                 'c_student': c_student,
                 'c_graduate': c_graduate,
                 'c_course': c_course,
                 'c_session': c_session,
                 'get_course_id': get_course_id,
+                'zip_list': zip_list,
+                'zip_list2': zip_list2,
                 }
     return render(request, 'almaher/index.html', context)
 
@@ -314,9 +333,9 @@ def generate_session(request):
 
     level = Level.objects.all()
     student_count = []
-    level_list = Level.objects.all().values_list('level_name', flat=True)
+    level_list = level.values_list('level_name', flat=True)
     for level_loop in level_list:
-        l_count = Person.objects.filter(level_id=level_loop).count()
+        l_count = Person.objects.filter(type_id='Student' ,level_id=level_loop).count()
         student_count.append(l_count)
     zip_list = zip(level_list, student_count)
 
@@ -661,19 +680,20 @@ def session_student(request, pk):
     get_course_id = request.session['get_course_id']
     get_course_id = Course.objects.get(pk=get_course_id)
 
-    c_session = Session.objects.all().filter(course_id=get_course_id).count()
+    session = Session.objects.filter(course_id=get_course_id)
+    c_session = session.count()
 
     if request.method =='POST':
-            get_snumber = int(request.POST['snumber'])
-            session = Session.objects.get(course_id=get_course_id, session_number=get_snumber)
-            return redirect('session_student', session.session_id)
+        get_snumber = int(request.POST['snumber'])
+        session = Session.objects.get(course_id=get_course_id, session_number=get_snumber)
+        return redirect('session_student', session.session_id)
 
     elif c_session != 0:
         global new_pk
         #global to_next 
         #global to_previous
-        f_session = Session.objects.first()
-        l_session = Session.objects.last()
+        f_session = session.first()
+        l_session = session.last()
 
         if pk == 1:
             new_pk = f_session.session_id
@@ -828,60 +848,61 @@ def attendance_generater(request):
     get_course_id = request.session['get_course_id']
     get_course_id = Course.objects.get(pk=get_course_id)
 
-    course = Course.objects.all()
-    if request.method =='POST':
-        get_sdate = get_course_id.start_date
-        get_num = int(request.POST['num'])
-        new_date = []
-        for i in range(get_num):
-            new_date.append(get_sdate)
-            get_sdate = get_sdate + timedelta(days=7)
-        # Get course id
-        session = Session.objects.all().filter(course_id=get_course_id)
-        session_list = session.values_list('session_id', flat=True)
-        # Check if teacher or student are in attendance
-        person_in_attandance = Attendance.objects.filter(session_id__in=session_list).values_list('person_id' ,flat=True)
-        ###
-        person_list = Person.objects.all().values_list('person_id' ,flat=True)
-        teacher = session.filter(teacher_id__in=person_list).filter(~Q(teacher_id__in=person_in_attandance)).values_list('teacher_id', flat=True)
-        session_student = Session_Student.objects.all().filter(session_id__in=session_list)
-        student = session_student.filter(~Q(student_id__in=person_in_attandance)).values_list('student_id', flat=True)
-        ###
+    #course = Course.objects.all()
+    #if request.method =='POST':
+    #get_num = int(request.POST['num'])
+    get_sdate = get_course_id.start_date
+    get_num = get_course_id.num_of_session
+    new_date = []
+    for i in range(get_num):
+        new_date.append(get_sdate)
+        get_sdate = get_sdate + timedelta(days=7)
+    # Get course id
+    session = Session.objects.all().filter(course_id=get_course_id)
+    session_list = session.values_list('session_id', flat=True)
+    # Check if teacher or student are in attendance
+    person_in_attandance = Attendance.objects.filter(session_id__in=session_list).values_list('person_id' ,flat=True)
+    ###
+    person_list = Person.objects.all().values_list('person_id' ,flat=True)
+    teacher = session.filter(teacher_id__in=person_list).filter(~Q(teacher_id__in=person_in_attandance)).values_list('teacher_id', flat=True)
+    session_student = Session_Student.objects.all().filter(session_id__in=session_list)
+    student = session_student.filter(~Q(student_id__in=person_in_attandance)).values_list('student_id', flat=True)
+    ###
 
-        # Add teacher to attendance
-        for item in teacher:
-            get_teacher = Person.objects.get(pk=item)
-            get_session = session.get(teacher_id=get_teacher)
-            count_index = Attendance.objects.all().count()
-            if count_index == 0:
-                count_index = 1
-            else:
-                count_index = Attendance.objects.all().aggregate(Max('attendance_id'))['attendance_id__max']
-                count_index += 1
-            for x in range(get_num):
-                Attendance.objects.create(attendance_id=count_index, person_id=get_teacher, session_id=get_session, day=new_date[x], status=False)
-                count_index += 1
+    # Add teacher to attendance
+    for item in teacher:
+        get_teacher = Person.objects.get(pk=item)
+        get_session = session.get(teacher_id=get_teacher)
+        count_index = Attendance.objects.all().count()
+        if count_index == 0:
+            count_index = 1
+        else:
+            count_index = Attendance.objects.all().aggregate(Max('attendance_id'))['attendance_id__max']
+            count_index += 1
+        for x in range(get_num):
+            Attendance.objects.create(attendance_id=count_index, person_id=get_teacher, session_id=get_session, day=new_date[x], status=False)
+            count_index += 1
 
-        # Add student to attendance
-        for item in student:
-            get_student = Person.objects.get(pk=item)
-            get_session_student = session_student.get(student_id=get_student)
-            count_index = Attendance.objects.all().count()
-            if count_index == 0:
-                count_index = 1
-            else:
-                count_index = Attendance.objects.all().aggregate(Max('attendance_id'))['attendance_id__max']
-                count_index += 1
-            for x in range(get_num):
-                Attendance.objects.create(attendance_id=count_index, person_id=get_student, session_id=get_session_student.session_id, day=new_date[x], status=False)
-                count_index += 1
-        
-        messages.success(request, 'Add success!')
-        return HttpResponseRedirect(reverse('attendance'))
-    context = {'course': course,
-                
-                }
-    return render(request, 'almaher/attendance_generater.html', context)
+    # Add student to attendance
+    for item in student:
+        get_student = Person.objects.get(pk=item)
+        get_session_student = session_student.get(student_id=get_student)
+        count_index = Attendance.objects.all().count()
+        if count_index == 0:
+            count_index = 1
+        else:
+            count_index = Attendance.objects.all().aggregate(Max('attendance_id'))['attendance_id__max']
+            count_index += 1
+        for x in range(get_num):
+            Attendance.objects.create(attendance_id=count_index, person_id=get_student, session_id=get_session_student.session_id, day=new_date[x], status=False)
+            count_index += 1
+    
+    messages.success(request, 'Add success!')
+    return HttpResponseRedirect(reverse('attendance'))
+    #context = {'course': course,
+    #            
+    #            }
+    #return render(request, 'almaher/attendance_generater.html', context)
 
 @login_required(login_url='login')
 def attendance_teacher(request):
@@ -1266,4 +1287,50 @@ def export_excel_attendance_teacher(request):
             ws.write(row_num, col_num, row[col_num], font_style)
 
     wb.save(response)
+    return response
+
+
+def export_session_pdf(request):   
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'inline; attachment; filename="session.pdf"'
+    response['Content-Transform-Encoding'] = 'binary'
+    
+    if not request.session.get('get_course_id', False):
+        return redirect('select_course')
+    get_course_id = request.session['get_course_id']
+    get_course_id = Course.objects.get(pk=get_course_id)
+
+    num_of_session = get_course_id.num_of_session
+    num_of_session_list = []
+    for i in range(num_of_session):
+        num_of_session_list.append(i)
+    num_of_session += 2
+    num_of_session_list2 = []
+    for i in range(num_of_session):
+        num_of_session_list2.append(i)
+
+    session = Session.objects.filter(course_id=get_course_id).order_by('session_id')
+    session_list = session.values_list('session_id', flat=True)
+    student = Session_Student.objects.filter(session_id__in=session_list)
+    c_session = session.count()
+    day = Attendance.objects.filter(session_id__in=session_list).order_by('day').distinct('day').values_list('day', flat=True)
+    context = {'session': session,
+                'student': student,
+                'num_of_session': num_of_session,
+                'num_of_session_list': num_of_session_list,
+                'num_of_session_list2': num_of_session_list2,
+                'course_name': get_course_id.course_name,
+                'day': day,
+                }
+
+    html_string = render_to_string('almaher/pdf_output.html', context)
+    html = HTML(string=html_string)
+    result = html.write_pdf()
+
+    with tempfile.NamedTemporaryFile(delete=True) as output:
+        output.write(result)
+        output.flush()
+        output = open(output.name, 'rb')
+        response.write(output.read())
+
     return response

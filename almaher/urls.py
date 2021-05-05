@@ -18,6 +18,8 @@ urlpatterns = [
 
     path('graduate', views.graduate, name='graduate'),
 
+    path('wait/list', views.wait_list, name='wait_list'),
+
     # Urls Teachers
     path('teacher', views.teacher, name='teacher'),
     path('teacher/add', views.add_teacher, name='add_teacher'),
@@ -30,7 +32,9 @@ urlpatterns = [
     path('course', views.course, name='course'),
     path('course/add', views.add_course, name='add_course'),
     path('course/del/<int:pk>', views.del_course, name='del_course'),
-
+    
+    # Urls Select Course for session
+    path('select/course', views.select_course, name='select_course'),
 
     # Urls Sessions
     path('session', views.session, name='session'),
@@ -55,7 +59,6 @@ urlpatterns = [
     # JSON
     path('ajax/change_status_true', views.change_status_true, name='change_status_true'),
     path('ajax/change_status_false', views.change_status_false, name='change_status_false'),
-
     path('ajax/set_teacher', views.set_teacher, name='set_teacher'),
     path('ajax/set_student', views.set_student, name='set_student'),
 
@@ -65,19 +68,14 @@ urlpatterns = [
     path('exam/theoretical/add', views.add_theoretical_exam, name='add_theoretical_exam'),
     path('exam/practical/add', views.add_practical_exam, name='add_practical_exam'),
 
-    # Urls Exam
+    # Urls Result
     path('result', views.result, name='result'),
 
     # Urls Export to *
     path('export/excel/student', views.export_excel_student, name='export_excel_student'),
     path('export/excel/teacher', views.export_excel_teacher, name='export_excel_teacher'),
+    path('export/pdf/session', views.export_session_pdf, name='export_session_pdf'),
     path('export/excel/attendance/student', views.export_excel_attendance_student, name='export_excel_attendance_student'),
     path('export/excel/attendance/teacher', views.export_excel_attendance_teacher, name='export_excel_attendance_teacher'),
-    
-    
-    path('wait', views.wait_list, name='wait_list'),
-
-    # Urls Select Course for session
-    path('select/course', views.select_course, name='select_course'),
 
 ]

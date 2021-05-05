@@ -15,27 +15,33 @@
 {% endblock %}
 
 {% block pg_head %}
-    Result
+    النتائج
 {% endblock %}
 
 {% block export %}
-<a href="{% url 'export_excel_student' %}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+<a href="" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
     <i class="fas fa-download fa-sm text-white">
-    <span>Export result to excel</span>
+    <span>استخراج البيانات لـ Excel</span>
     </i>
 </a>
 {% endblock %}
 
+{% block url_1 %}
+    <a type="button" class="m-0 btn btn-success mr-4 my-1" href="">
+        <i class="fas fa-fw fa-plus-circle"></i>
+        <span>تحضير النتائج</span>
+    </a>
+{% endblock %}
 
 {% block th_table %}
     <th>#</th>
-    <th>Student</th>
-    <th>Course</th>
-    <th>Session</th>
-    <th>Attendance</th>
-    <th>Theoretical</th>
-    <th>Practical</th>
-    <th>Result</th>
+    <th>الطالب</th>
+    <th>الدورة</th>
+    <th>الجلسة</th>
+    <th>الحضور</th>
+    <th>علامة النظري</th>
+    <th>علامة العملي</th>
+    <th>النتيجة</th>
 {% endblock %}
 
 {% block tr_table%}

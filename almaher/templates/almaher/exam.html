@@ -15,13 +15,13 @@
 {% endblock %}
 
 {% block pg_head %}
-    Exam
+    الاختبارات
 {% endblock %}
 
 {% block export %}
-<a href="{% url 'export_excel_student' %}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+<a href="" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
     <i class="fas fa-download fa-sm text-white">
-    <span>Export exam to excel</span>
+    <span>استخراج البيانات لـ Excel</span>
     </i>
 </a>
 {% endblock %}
@@ -29,26 +29,26 @@
 {% block url_1 %}
     <a type="button" class="m-0 btn btn-success mr-4 my-1" href="{% url 'add_theoretical_exam' %}">
         <i class="fas fa-fw fa-plus-circle"></i>
-        <span>Add theoretical</span>
+        <span>اضافة اختبار نظري</span>
     </a>
 {% endblock %}
 
 {% block url_2 %}
     <a type="button" class="m-0  btn btn-success mr-4 my-1" href="{% url 'add_practical_exam' %}">
         <i class="fas fa-fw fa-plus-circle"></i>
-        <span>Add practical<span>
+        <span>اضافة اختبار عملي<span>
     </a>
 {% endblock %}
 
 {% block th_table %}
     <th>#</th>
-    <th>Student</th>
-    <th>Course</th>
-    <th>Session</th>
-    <th>Teacher</th>
-    <th>Type</th>
-    <th>Time</th>
-    <th>Mark</th>
+    <th>الاسم</th>
+    <th>الدورة</th>
+    <th>رقم الجلسة</th>
+    <th>اسم المختبر</th>
+    <th>النوع</th>
+    <th>الوقت</th>
+    <th>العلامة</th>
 {% endblock %}
 
 {% block tr_table%}

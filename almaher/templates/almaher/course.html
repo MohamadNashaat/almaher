@@ -15,21 +15,22 @@
 {% endblock %}
 
 {% block pg_head %}
-    Courses
+    الدورات
 {% endblock %}
 
 {% block url_1 %}
     <a type="button" class="m-0 btn btn-success mr-4" href="{% url 'add_course' %}">
         <i class="fas fa-fw fa-plus-circle"></i>
-        <span>Add Course</span>
+        <span>اضافة دورة</span>
     </a>
 {% endblock %}
 
 {% block th_table %}
     <th>#</th>
-    <th>Course Name</th>
-    <th>Start Date</th>
-    <th>End Date</th>
+    <th>اسم الدورة</th>
+    <th>عدد الجلسات</th>
+    <th>تاريخ البداية</th>
+    <th>تاريخ النهاية</th>
     <!--<th></th>-->
 {% endblock %}
 
@@ -38,6 +39,7 @@
     <tr>
         <td>{{item.course_id}}</td>
         <td>{{item.course_name}}</td>
+        <td>{{item.num_of_session}}</td>
         <td>{{item.start_date}}</td>
         <td>{{item.end_date}}</td>
         <!--<td>

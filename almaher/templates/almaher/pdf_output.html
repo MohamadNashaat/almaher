@@ -1,0 +1,103 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" dir="rtl">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>session pdf</title>
+    <style>
+        body{
+            font-size: 18px;
+        }
+        table, td, th {
+            border: 1px solid black;
+            text-align: center;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .td-p{
+            padding: 14px;
+        }
+        .clear {
+        clear: both;
+        }
+        .clear div {
+            width: 20%;
+            display: inline-block;
+        }
+        #col1 {
+            float: right;
+        }
+        div{
+            margin-bottom: 16px;
+        }
+        @page {
+        size: "A4";
+        margin: 2cm 1.5cm 3.5cm 1.5cm;
+        size: landscape;
+            @top-center {
+                font-size: 20px;
+                content: "{{course_name}}";
+            }
+            @bottom-right {
+                font-size: 14px;
+                content: "Page " counter(page) " of " counter(pages); 
+            }
+        }
+    </style>
+  </head>
+  <body>
+    {% for item in session %}
+        <div class="clear">
+            <div id="col1">رقم الدرس: {{item.session_number}}</div>
+            <div id="col1">المدرس: {{item.teacher_id.first_name}}</div>
+            <div id="col1">المستوى: {{item.level_id}}</div>
+            <div id="col1">المكان: {{item.position_id}}</div>
+            <div id="col1">التوقيت: {{item.time_id}}</div>
+        </div>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>الاسم</th>
+                    {% for att_day in day %}
+                        <td style="font-size: 14px;">{{att_day}}</td>
+                    {% endfor %}  
+                </tr>
+            </thead>
+            <tbody>
+                {% for item2 in student %}
+                    {% if item2.session_id.session_id == item.session_id %}
+                    <tr>
+                        <td style="font-size: 14px;">{{item2.student_id.person_id}}</td>
+                        <td>{{item2.student_id}}</td>
+                        {% for i in num_of_session_list %}
+                            <td></td>
+                        {% endfor %}                    
+                    </tr>
+                    {% endif %}
+                {% endfor %}
+                {% for i in '012'|make_list %}
+                <tr>
+                    {% for i in num_of_session_list2 %}
+                        <td class="td-p"></td>
+                    {% endfor %}  
+                </tr>
+                {% endfor %}
+                <tr>
+                    <td colspan="{{num_of_session}}">ملاحظات</td>
+                </tr>
+                {% for i in '012'|make_list %}
+                <tr>
+                    <td  colspan="{{num_of_session}}" class="td-p"></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <p style="page-break-before: always" ></p>
+        {% endfor %}
+  </body>
+</html>

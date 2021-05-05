@@ -19,7 +19,7 @@
 {% endblock %}
 
 {% block export %}
-<a href="{% url 'export_excel_teacher' %}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+<a href="" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
     <i class="fas fa-download fa-sm text-white">
     <span>استخراج البيانات لـ Excel</span>
     </i>
@@ -46,7 +46,7 @@
         <td>{{item.bdate}}</td>
         <td>{{item.level_id}}</td>
         <td>
-            <select class="form-control form-select w-100">
+            <select class="form-control form-select">
                 <option selected>None</option>
                 {% for item2 in session %}
                     {% if item2.level_id == item.level_id %}
