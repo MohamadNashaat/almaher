@@ -55,7 +55,16 @@
         <td>{{item.father_name}}</td>
         <td>{{item.bdate}}</td>
         <td>{{item.level_id}}</td>
-        <td>{{item.priority_id}}</td>
+        <td>
+            <select class="form-control form-select">
+                <option selected value="{{item.priority_id}}" onclick="set_priority({{item.person_id}},{{item.priority_id}})">{{item.priority_id}}</option>
+                {% if item.priority_id != "مستمر" %}
+                <option  value="مستمر" onclick="set_priority({{item.person_id}}, 'مستمر')">مستمر</option>
+                {% else %}
+                <option value="غير معروف" onclick="set_priority({{item.person_id}}, 'غير معروف')">غير معروف</option>
+                {% endif %}
+            </select>
+        </td>
         <td>
             <div class="d-flex justify-content-center">
                 <a href="{% url 'lock_person' item.person_id %}" class="btn btn-danger btn-circle btn-sm">
@@ -79,4 +88,21 @@
         </td>
     </tr>
     {% endfor %}
+{% endblock %}
+
+{% block javaScript %}
+<script>
+    function set_priority(std_id, prio_id){
+        let student_id = std_id;
+        let priority_id = prio_id;
+        $.ajax({
+        url: "{% url 'set_priority' %}",
+        data:{
+            'priority_id':priority_id,
+            'student_id':student_id,
+            },
+        dataType: 'json',
+        });
+    };
+</script>
 {% endblock %}

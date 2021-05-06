@@ -61,6 +61,7 @@ urlpatterns = [
     path('ajax/change_status_false', views.change_status_false, name='change_status_false'),
     path('ajax/set_teacher', views.set_teacher, name='set_teacher'),
     path('ajax/set_student', views.set_student, name='set_student'),
+    path('ajax/set_priority', views.set_priority, name='set_priority'),
 
     # Urls Exam
     path('select/exam', views.select_exam, name='select_exam'),

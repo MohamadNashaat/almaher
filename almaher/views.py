@@ -237,10 +237,11 @@ def add_student(request):
         ad = request.POST['address']
         bd = request.POST['bdate']
         level = request.POST['level']
+        priority = request.POST['priority']
         level = Level.objects.get(pk=level)
         Person.objects.create(person_id=count_index, type_id='Student', first_name=fname, last_name=lname,
                         father_name=father_n, home_number=hn, phone_number=pn,
-                        job=j, address=ad, bdate=bd, level_id=level)
+                        job=j, address=ad, bdate=bd, level_id=level, priority_id=priority)
         messages.success(request, 'Add success!')
         return HttpResponseRedirect(reverse('add_student'))
     context = {'level': level,
@@ -789,7 +790,7 @@ def wait_list_session(request):
     return render(request, 'almaher/wait_list_session.html', context)
 
 
-# Ajax Session
+# Ajax Views
 def set_teacher(request):   
     teacher_id = request.GET.get('teacher_id')
     session_id = request.GET.get('session_id')
@@ -821,6 +822,18 @@ def set_student(request):
         get_student = Person.objects.get(pk=student_id)
         Session_Student.objects.create(id=count_index_s_student, session_id=get_session, student_id=get_student)
         count_index_s_student += 1
+    context = {}
+    return JsonResponse(context)
+
+def set_priority(request):   
+    student_id = request.GET.get('student_id')
+    priority_id = request.GET.get('priority_id')
+    if Person.objects.filter(pk=student_id).exists():
+        get_student = Person.objects.get(pk=student_id)
+        get_student.priority_id = priority_id
+        get_student.save()
+        print(student_id)
+        print(priority_id)
     context = {}
     return JsonResponse(context)
 

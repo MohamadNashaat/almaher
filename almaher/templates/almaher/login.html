@@ -68,15 +68,16 @@
                                         </div>
                                         <div class="form-group">
                                             <input type="password" class="form-control form-control-user"
-                                                name="password" placeholder="كلمة المرور">
+                                                name="password" id="password" placeholder="كلمة المرور">
                                         </div>
-                                        <!--<div class="form-group">
-                                            <div class="custom-control custom-checkbox small">
-                                                <input type="checkbox" class="custom-control-input" id="customCheck">
-                                                <label class="custom-control-label" for="customCheck">Remember
-                                                    Me</label>
+                                        <div class="form-group m-4">
+                                            <div class="custom-control custom-checkbox m-0">
+                                                <input type="checkbox" class="custom-control-input" id="customCheck" onclick="myFunction()">
+                                                <label class="custom-control-label" for="customCheck">
+                                                    اظهر كلمة المرور
+                                                </label>
                                             </div>
-                                        </div>-->
+                                        </div>
                                         <div class="d-flex justify-content-center mt-4">
                                             <input type="submit" value="تسجيل الدخول" class="btn btn-primary btn-user btn-block w-50">                                        
                                         </div>
@@ -107,3 +108,13 @@
 </body>
 
 </html>
+<script>
+ function myFunction() {
+  var x = document.getElementById("password");
+  if (x.type === "password") {
+    x.type = "text";
+  } else {
+    x.type = "password";
+  }
+} 
+</script>
