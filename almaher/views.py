@@ -204,7 +204,7 @@ def add_teacher(request):
         Person.objects.create(person_id=count_index, type_id='Teacher', first_name=fname, last_name=lname,
                             father_name=father_n, home_number=hn, phone_number=pn,
                             job=j, address=ad, bdate=bd, level_id=level)
-        messages.success(request, 'Add success!')
+        messages.success(request, 'Add success')
         return HttpResponseRedirect(reverse('add_teacher'))
     context = {'level': level,
                 }
@@ -242,7 +242,7 @@ def add_student(request):
         Person.objects.create(person_id=count_index, type_id='Student', first_name=fname, last_name=lname,
                         father_name=father_n, home_number=hn, phone_number=pn,
                         job=j, address=ad, bdate=bd, level_id=level, priority_id=priority)
-        messages.success(request, 'Add success!')
+        messages.success(request, 'Add success')
         return HttpResponseRedirect(reverse('add_student'))
     context = {'level': level,
                 }
@@ -287,7 +287,7 @@ def add_course(request):
         sdate = request.POST['sdate']
         edate = request.POST['edate']
         Course.objects.create(course_id=count_index, course_name=ncourse, start_date=sdate, end_date=edate)
-        messages.success(request, 'Add success!')
+        messages.success(request, 'Add success')
         return HttpResponseRedirect(reverse('course'))
     context = {}
     return render(request, 'almaher/add_course.html', context)
@@ -623,7 +623,7 @@ def add_session(request):
         time = request.POST['time']
         Session.objects.create(session_id=count_index, level_id=level, course_id=get_course_id,
                              position_id=position, time_id=time, session_number=snumber, teacher_id=teacher)
-        messages.success(request, 'Add success!')
+        messages.success(request, 'Add success')
         return HttpResponseRedirect(reverse('add_session'))
     context = {'teacher': teacher,
                 }
@@ -861,9 +861,6 @@ def attendance_generater(request):
     get_course_id = request.session['get_course_id']
     get_course_id = Course.objects.get(pk=get_course_id)
 
-    #course = Course.objects.all()
-    #if request.method =='POST':
-    #get_num = int(request.POST['num'])
     get_sdate = get_course_id.start_date
     get_num = get_course_id.num_of_session
     new_date = []
@@ -876,8 +873,8 @@ def attendance_generater(request):
     # Check if teacher or student are in attendance
     person_in_attandance = Attendance.objects.filter(session_id__in=session_list).values_list('person_id' ,flat=True)
     ###
-    person_list = Person.objects.all().values_list('person_id' ,flat=True)
-    teacher = session.filter(teacher_id__in=person_list).filter(~Q(teacher_id__in=person_in_attandance)).values_list('teacher_id', flat=True)
+    #person_list = Person.objects.all().values_list('person_id' ,flat=True)
+    teacher = session.filter(~Q(teacher_id_id=None)).filter(~Q(teacher_id__in=person_in_attandance)).values_list('teacher_id', flat=True)
     session_student = Session_Student.objects.all().filter(session_id__in=session_list)
     student = session_student.filter(~Q(student_id__in=person_in_attandance)).values_list('student_id', flat=True)
     ###
@@ -910,12 +907,8 @@ def attendance_generater(request):
             Attendance.objects.create(attendance_id=count_index, person_id=get_student, session_id=get_session_student.session_id, day=new_date[x], status=False)
             count_index += 1
     
-    messages.success(request, 'Add success!')
+    messages.success(request, 'Add success')
     return HttpResponseRedirect(reverse('attendance'))
-    #context = {'course': course,
-    #            
-    #            }
-    #return render(request, 'almaher/attendance_generater.html', context)
 
 @login_required(login_url='login')
 def attendance_teacher(request):
@@ -925,14 +918,20 @@ def attendance_teacher(request):
     get_course_id = request.session['get_course_id']
     get_course_id = Course.objects.get(pk=get_course_id)
 
-    teacher = Person.objects.all().filter(type_id='Teacher').values_list('person_id', flat=True)
+    teacher = Person.objects.all().filter(type_id__in=('Teacher', 'Graduate')).values_list('person_id', flat=True)
     session = Session.objects.all().filter(course_id=get_course_id).values_list('session_id', flat=True)
-    name_attendance = Attendance.objects.all().filter(person_id__in=teacher, session_id__in=session).distinct('person_id')
     day_attendance = Attendance.objects.all().filter(person_id__in=teacher, session_id__in=session).values_list('day', flat=True).order_by('day').distinct()
-    status_attendance = Attendance.objects.all().filter(person_id__in=teacher, session_id__in=session).order_by('day')
-    context = {'name_attendance': name_attendance,
-                'day_attendance': day_attendance,
-                'status_attendance': status_attendance,
+    get_attendance = Attendance.objects.all().filter(person_id__in=teacher, session_id__in=session).distinct('person_id')
+
+    attendance = []
+    for all_person in get_attendance:
+        status_attendance = Attendance.objects.all().filter(person_id=all_person.person_id, session_id__in=session).values_list('status', flat=True).order_by('day')
+        id_attendance = Attendance.objects.all().filter(person_id=all_person.person_id, session_id__in=session).values_list('attendance_id', flat=True).order_by('day')
+        zip_id_day = zip(status_attendance, id_attendance)
+        dic_attendance = {'person_id': all_person.person_id, 'session_number': all_person.session_id.session_number , 'first_name': all_person.person_id.first_name, 'last_name': all_person.person_id.last_name, 'zip_id_day': zip_id_day}
+        attendance.append(dic_attendance)
+    context = {'day_attendance': day_attendance,
+                'attendance': attendance,
                 }
     return render(request, 'almaher/attendance_teacher.html', context)
 
@@ -946,12 +945,18 @@ def attendance_student(request):
 
     student = Person.objects.all().filter(type_id='Student').values_list('person_id', flat=True)
     session = Session.objects.all().filter(course_id=get_course_id).values_list('session_id', flat=True)
-    name_attendance = Attendance.objects.all().filter(person_id__in=student, session_id__in=session).distinct('person_id')
     day_attendance = Attendance.objects.all().filter(person_id__in=student, session_id__in=session).values_list('day', flat=True).order_by('day').distinct()
-    status_attendance = Attendance.objects.all().filter(person_id__in=student, session_id__in=session).order_by('day')
-    context = {'name_attendance': name_attendance,
-                'day_attendance': day_attendance,
-                'status_attendance': status_attendance,
+    get_attendance = Attendance.objects.all().filter(person_id__in=student, session_id__in=session).distinct('person_id')
+
+    attendance = []
+    for all_person in get_attendance:
+        status_attendance = Attendance.objects.all().filter(person_id=all_person.person_id, session_id__in=session).values_list('status', flat=True).order_by('day')
+        id_attendance = Attendance.objects.all().filter(person_id=all_person.person_id, session_id__in=session).values_list('attendance_id', flat=True).order_by('day')
+        zip_id_day = zip(status_attendance, id_attendance)
+        dic_attendance = {'person_id': all_person.person_id, 'session_number': all_person.session_id.session_number , 'first_name': all_person.person_id.first_name, 'last_name': all_person.person_id.last_name, 'zip_id_day': zip_id_day}
+        attendance.append(dic_attendance)
+    context = {'day_attendance': day_attendance,
+                'attendance': attendance,
                 }
     return render(request, 'almaher/attendance_student.html', context)
 
@@ -1042,7 +1047,7 @@ def add_theoretical_exam(request):
         Exam.objects.create(exam_id=count_index, type_id='نظري', time_id=get_time, 
         student_id=student, session_id=session.session_id, mark=mark)
         
-        messages.success(request, 'Add success!')
+        messages.success(request, 'Add success')
         return HttpResponseRedirect(reverse('add_theoretical_exam')) 
     context = {'student': student,
                 'teacher': teacher,
@@ -1082,7 +1087,7 @@ def add_practical_exam(request):
         Exam.objects.create(exam_id=count_index, type_id='عملي', time_id=get_time, 
         student_id=student, teacher_id=teacher, session_id=session.session_id, mark=mark)
         
-        messages.success(request, 'Add success!')
+        messages.success(request, 'Add success')
         return HttpResponseRedirect(reverse('add_practical_exam'))
     context = {'student': student,
                 'teacher': teacher,

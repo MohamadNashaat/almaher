@@ -42,16 +42,14 @@
                         </div>
                     </form>
                 </div>
-                <div class="col-sm-2 mb-3">
-                </div>
-                <div class="col-sm-1 mb-3">
+                <div class="col-sm-3 mb-3">
                     {% if l_session.session_id == session.session_id %}
-                    <a href="{% url 'session_student' to_next %}" class="btn btn-primary disabled">
+                    <a href="{% url 'session_student' to_next %}" class="btn btn-primary disabled float-left">
                         <span>التالي</span>
                         <i class="fas fa-arrow-left"></i>
                     </a>
                     {% else %}
-                        <a href="{% url 'session_student' to_next %}" class="btn btn-primary">
+                        <a href="{% url 'session_student' to_next %}" class="btn btn-primary float-left">
                             <span>التالي</span>
                             <i class="fas fa-arrow-left"></i>
                         </a>
@@ -75,18 +73,18 @@
                 </div>    
                 <div class="col-sm-3 mb-3">
                     <label class="form-label">المدرس</label>
-                    <select class="form-control form-select">
-                        {% if session.teacher_id %}
-                            <option selected value="{{session.teacher_id.person_id}}" onclick="set_teacher({{session.session_id}},{{session.teacher_id.person_id}})">{{session.teacher_id}}</option>
-                        {% else %}
-                            <option selected value="{{session.teacher_id.person_id}}" onclick="set_teacher({{session.session_id}},-1)">{{session.teacher_id}}</option>
-                        {% endif %}
-                        {% for item in teacher %}
-                            {% if session.teacher_id.person_id != item.person_id %}
-                                <option value="{{item.person_id}}" onclick="set_teacher({{session.session_id}},{{item.person_id}})">{{item.first_name}} {{item.last_name}}</option>
+                        <select class="form-control form-select" onchange="set_teacher({{session.session_id}})" id="{{session.session_id}}">
+                            {% if session.teacher_id %}
+                                <option selected value="{{session.teacher_id.person_id}}" onclick1="set_teacher({{session.session_id}},{{session.teacher_id.person_id}})">{{session.teacher_id}}</option>
+                            {% else %}
+                                <option selected value="{{session.teacher_id.person_id}}" onclick1="set_teacher({{session.session_id}},-1)">{{session.teacher_id}}</option>
                             {% endif %}
-                        {% endfor %}
-                    </select>
+                            {% for item in teacher %}
+                                {% if session.teacher_id.person_id != item.person_id %}
+                                    <option value="{{item.person_id}}" onclick1="set_teacher({{session.session_id}},{{item.person_id}})">{{item.first_name}} {{item.last_name}}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
                 </div>            
             </div>
         </div>
@@ -113,7 +111,7 @@
                             <td>{{item.student_id.last_name}}</td>
                             <td>{{item.student_id.father_name}}</td>
                             <td>{{item.student_id.bdate}}</td>
-                            <td>{{item.student_id.level_id}}</td>
+                            <td>{{session.level_id}}</td>
                             <td></td>
                             <td>
                                 <a href="{% url 'del_session_student' session.session_id item.id %}" class="btn btn-danger btn-circle btn-sm">
@@ -174,9 +172,9 @@
         $('table.display').DataTable();
     } );
 
-    function set_teacher(s_id, t_id){
-        let session_id = s_id;
-        let teacher_id = t_id;
+    function set_teacher(get_session_id){
+        let session_id = get_session_id
+        let teacher_id = document.getElementById(get_session_id).value;
         $.ajax({
         url: "{% url 'set_teacher' %}",
         data:{

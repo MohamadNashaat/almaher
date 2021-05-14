@@ -52,7 +52,7 @@
     {% for item in session %}
         <div class="clear">
             <div id="col1">رقم الدرس: {{item.session_number}}</div>
-            <div id="col1">المدرس: {{item.teacher_id.first_name}}</div>
+            <div id="col1">المدرس: {{item.teacher_id}}</div>
             <div id="col1">المستوى: {{item.level_id}}</div>
             <div id="col1">المكان: {{item.position_id}}</div>
             <div id="col1">التوقيت: {{item.time_id}}</div>
