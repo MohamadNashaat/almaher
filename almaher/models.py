@@ -98,8 +98,8 @@ class Exam(models.Model):
     exam_id = models.IntegerField(primary_key=True)
     type_id = models.CharField(max_length=50, null=True, choices=exam_type)
     time_id = models.CharField(max_length=50, null=True, choices=exam_time)
-    student_id = models.ForeignKey(Person, on_delete=models.CASCADE, related_name='student_id')
-    teacher_id = models.ForeignKey(Person, on_delete=models.CASCADE, related_name='teacher_id', null=True)
+    student_id = models.ForeignKey(Person, on_delete=models.CASCADE)
+    #teacher_id = models.ForeignKey(Person, on_delete=models.CASCADE, related_name='teacher_id', null=True)
     session_id = models.ForeignKey(Session, on_delete=models.CASCADE)
     mark = models.FloatField(null=True)
     create_date = models.DateField(auto_now_add=True, null=True)
@@ -107,10 +107,10 @@ class Exam(models.Model):
         return f'{self.mark}'
 
 class Result(models.Model):
-    result = (
-        ('إعادة','إعادة'),
+    result_type = (
         ('ناجح','ناجح'),
-        ('نجاح شرطي','نجاح شرطي')
+        ('نجاح شرطي','نجاح شرطي'),
+        ('إعادة','إعادة'),
     )
     result_id = models.IntegerField(primary_key=True)
     student_id = models.ForeignKey(Person, on_delete=models.CASCADE)
@@ -118,7 +118,7 @@ class Result(models.Model):
     attendance = models.FloatField(null=True)
     theoretical_mark = models.FloatField(null=True)
     practical_mark = models.FloatField(null=True)
-    result = models.CharField(max_length=50, null=True, choices=result)
+    result = models.CharField(max_length=50, null=True, choices=result_type)
     create_date = models.DateField(auto_now_add=True, null=True)
     def __str__(self):
         return f'{self.result}'

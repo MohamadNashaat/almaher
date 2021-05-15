@@ -1015,6 +1015,49 @@ def exam(request):
                 }
     return render(request, 'almaher/exam.html', context)
 
+# Generate exam for all students
+@login_required(login_url='login')
+def generate_exam(request):
+    # Check request session
+    if not request.session.get('get_course_id', False):
+        return redirect('select_course')
+    get_course_id = request.session['get_course_id']
+    get_course_id = Course.objects.get(pk=get_course_id)            
+
+    # get all students on session in this course and generate 3 type_time and 2 type_exam for each students
+    session = Session.objects.all().filter(course_id=get_course_id)
+    session_list = session.values_list('session_id', flat=True)
+    # Check if student are in exam
+    person_in_exam = Exam.objects.filter(session_id__in=session_list).values_list('student_id' ,flat=True)
+    session_student = Session_Student.objects.all().filter(session_id__in=session_list)
+    student = session_student.filter(~Q(student_id__in=person_in_exam)).values_list('student_id', flat=True)
+
+    # Add student to attendance
+    for item in student:
+        get_student = Person.objects.get(pk=item)
+        get_session_student = session_student.get(student_id=get_student)
+        count_index = Exam.objects.all().count()
+        if count_index == 0:
+            count_index = 1
+        else:
+            count_index = Exam.objects.all().aggregate(Max('exam_id'))['exam_id__max']
+            count_index += 1
+        # Add 3
+        Exam.objects.create(exam_id=count_index, type_id='نظري', time_id='الامتحان الأول', student_id=get_student, session_id=get_session_student.session_id , mark=0)
+        count_index += 1
+        Exam.objects.create(exam_id=count_index, type_id='نظري', time_id='التكميلي' , student_id=get_student, session_id=get_session_student.session_id, mark=0)
+        count_index += 1
+        Exam.objects.create(exam_id=count_index, type_id='نظري', time_id='الاعادة' , student_id=get_student, session_id=get_session_student.session_id, mark=0)
+        count_index += 1
+        #
+        Exam.objects.create(exam_id=count_index, type_id='عملي', time_id='الامتحان الأول' , student_id=get_student , session_id=get_session_student.session_id, mark=0)
+        count_index += 1
+        Exam.objects.create(exam_id=count_index, type_id='عملي', time_id='التكميلي' , student_id=get_student , session_id=get_session_student.session_id, mark=0)
+        count_index += 1
+        Exam.objects.create(exam_id=count_index, type_id='عملي', time_id='الاعادة' , student_id=get_student , session_id=get_session_student.session_id, mark=0)
+        count_index += 1
+    messages.success(request, 'Add success')
+    return HttpResponseRedirect(reverse('exam'))
 
 @login_required(login_url='login')
 def add_theoretical_exam(request):

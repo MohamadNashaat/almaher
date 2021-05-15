@@ -46,11 +46,11 @@
         <td>{{item.bdate}}</td>
         <td>{{item.level_id}}</td>
         <td>
-            <select class="form-control form-select">
+            <select class="form-control form-select" onchange="set_student({{item.person_id}})" id="{{item.person_id}}">
                 <option selected>None</option>
                 {% for item2 in session %}
                     {% if item2.level_id == item.level_id %}
-                        <option value="{{item2.session_id}}" onclick="set_student({{item2.session_id}},{{item.person_id}})">{{item2.session_number}}</option>
+                        <option value="{{item2.session_id}}">{{item2.session_number}}</option>
                     {% endif %}
                 {% endfor %}
             </select>
@@ -61,9 +61,9 @@
 
 {% block javaScript %}
 <script>
-    function set_student(s_id, std_id){
-        let session_id = s_id;
+    function set_student(std_id){
         let student_id = std_id;
+        let session_id = document.getElementById(std_id).value;
         $.ajax({
         url: "{% url 'set_student' %}",
         data:{

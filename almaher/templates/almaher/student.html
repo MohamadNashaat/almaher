@@ -56,12 +56,12 @@
         <td>{{item.bdate}}</td>
         <td>{{item.level_id}}</td>
         <td>
-            <select class="form-control form-select">
-                <option selected value="{{item.priority_id}}" onclick="set_priority({{item.person_id}},{{item.priority_id}})">{{item.priority_id}}</option>
+            <select class="form-control form-select" onchange="set_priority({{item.person_id}})" id="{{item.person_id}}">
+                <option selected value="{{item.priority_id}}">{{item.priority_id}}</option>
                 {% if item.priority_id != "مستمر" %}
-                <option  value="مستمر" onclick="set_priority({{item.person_id}}, 'مستمر')">مستمر</option>
+                <option  value="مستمر">مستمر</option>
                 {% else %}
-                <option value="غير معروف" onclick="set_priority({{item.person_id}}, 'غير معروف')">غير معروف</option>
+                <option value="غير معروف">غير معروف</option>
                 {% endif %}
             </select>
         </td>
@@ -92,9 +92,9 @@
 
 {% block javaScript %}
 <script>
-    function set_priority(std_id, prio_id){
+    function set_priority(std_id){
         let student_id = std_id;
-        let priority_id = prio_id;
+        let priority_id = document.getElementById(std_id).value;
         $.ajax({
         url: "{% url 'set_priority' %}",
         data:{

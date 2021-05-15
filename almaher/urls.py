@@ -68,6 +68,7 @@ urlpatterns = [
     path('exam', views.exam, name='exam'),
     path('exam/theoretical/add', views.add_theoretical_exam, name='add_theoretical_exam'),
     path('exam/practical/add', views.add_practical_exam, name='add_practical_exam'),
+    path('exam/generate', views.generate_exam, name='generate_exam'),
 
     # Urls Result
     path('result', views.result, name='result'),

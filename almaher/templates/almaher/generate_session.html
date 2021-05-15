@@ -31,12 +31,12 @@
         {% csrf_token %}
         <div class="form-group row mt-2 mb-4">
             <div class="col-sm-6 mb-3">
-                <label for="exampleInputEmail1" class="form-label">عدد الطلاب "المستمرين" في كل جلسة</label>
+                <label  class="form-label">عدد الطلاب "المستمرين" في كل جلسة</label>
                 <input type="number" min="1" value="4" class="form-control"  name="count_student_1" required>
             </div>
             <div class="col-sm-6 mb-3">
-                <label for="exampleInputEmail1" class="form-label">عدد الطلاب "غير معروف" في كل جلسة</label>
-                <input value="2" class="form-control" name="count_student_2" required>
+                <label  class="form-label">عدد الطلاب "غير معروف" في كل جلسة</label>
+                <input type="number" min="1" value="2" class="form-control" name="count_student_2" required>
             </div>
         </div>
 
@@ -44,7 +44,7 @@
         <div class="form-group row mt-2 mb-4">
             {% for item in level %}
                 <div class="col-md-4 col-sm-6 mb-3">
-                    <label for="exampleInputEmail1" class="form-label">عدد الجلسات للمستوى <span class="font-weight-bold">{{item.level_name}}</span></label>
+                    <label  class="form-label">عدد الجلسات للمستوى <span class="font-weight-bold">{{item.level_name}}</span></label>
                     <input type="number" min="1" value="1" class="form-control" name="{{item.level_name}}" id="{{item.level_name}}" required>
                 </div>
             {% endfor %}

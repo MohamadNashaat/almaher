@@ -99,9 +99,7 @@
 
 {% block javaScript %}
 <script>
-    //function set_teacher(s_id, t_id){
     function set_teacher(get_session_id){
-        //let session_id = s_id;
         let session_id = get_session_id
         let teacher_id = document.getElementById(get_session_id).value;
         $.ajax({
