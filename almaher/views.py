@@ -1061,7 +1061,50 @@ def result(request):
                 }
     return render(request, 'almaher/result.html', context)
 
-
+# Generate exam for all students
+@login_required(login_url='login')
+def generate_result(request):
+    # Check request session
+    if not request.session.get('get_course_id', False):
+        return redirect('select_course')
+    get_course_id = request.session['get_course_id']
+    get_course_id = Course.objects.get(pk=get_course_id)
+    # get all students on session in this course and generate 3 type_time and 2 type_exam for each students
+    session = Session.objects.all().filter(course_id=get_course_id)
+    session_list = session.values_list('session_id', flat=True)
+    # Check if student are in exam
+    person_in_result = Result.objects.filter(session_id__in=session_list).values_list('student_id' ,flat=True)
+    session_student = Session_Student.objects.all().filter(session_id__in=session_list)
+    student = session_student.filter(~Q(student_id__in=person_in_result)).values_list('student_id', flat=True)
+    # Add student to attendance
+    for item in student:
+        get_student = Person.objects.get(pk=item)
+        get_session_student = session_student.get(student_id=get_student)
+        get_theoretical_mark = Exam.objects.filter(student_id=get_student, session_id=get_session_student.session_id, type_id='نظري').aggregate(Max('mark'))['mark__max']
+        get_practical_mark = Exam.objects.filter(student_id=get_student, session_id=get_session_student.session_id, type_id='عملي').aggregate(Max('mark'))['mark__max']
+        get_attendance = Attendance.objects.filter(person_id=get_student, session_id=get_session_student.session_id, status=True).count()
+        get_result = (get_theoretical_mark + get_practical_mark) / 2
+        get_result_type = 'ناجح'
+        if get_result < 80:
+            get_result_type = 'إعادة'
+        count_index = Result.objects.all().count()
+        if count_index == 0:
+            count_index = 1
+        else:
+            count_index = Result.objects.all().aggregate(Max('result_id'))['result_id__max']
+            count_index += 1
+        # Add result
+        Result.objects.create(result_id= count_index,
+                                student_id= get_student,
+                                session_id= get_session_student.session_id,
+                                attendance= get_attendance,
+                                theoretical_mark= get_theoretical_mark,
+                                practical_mark= get_practical_mark,
+                                result= get_result,
+                                result_type= get_result_type)
+        count_index += 1
+    messages.success(request, 'تم الانشاء بنجاح')
+    return HttpResponseRedirect(reverse('result'))
 
 
 

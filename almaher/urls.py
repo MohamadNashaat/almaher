@@ -62,6 +62,7 @@ urlpatterns = [
 
     # Urls Result
     path('result', views.result, name='result'),
+    path('result/generate', views.generate_result, name='generate_result'),   
 
     # Urls Export to *
     path('export/excel/student', views.export_excel_student, name='export_excel_student'),
@@ -69,5 +70,5 @@ urlpatterns = [
     path('export/pdf/session', views.export_session_pdf, name='export_session_pdf'),
     path('export/excel/attendance/student', views.export_excel_attendance_student, name='export_excel_attendance_student'),
     path('export/excel/attendance/teacher', views.export_excel_attendance_teacher, name='export_excel_attendance_teacher'),
-
+    
 ]

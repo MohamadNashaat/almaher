@@ -115,10 +115,11 @@ class Result(models.Model):
     result_id = models.IntegerField(primary_key=True)
     student_id = models.ForeignKey(Person, on_delete=models.CASCADE)
     session_id = models.ForeignKey(Session, on_delete=models.CASCADE)
-    attendance = models.FloatField(null=True)
-    theoretical_mark = models.FloatField(null=True)
-    practical_mark = models.FloatField(null=True)
-    result = models.CharField(max_length=50, null=True, choices=result_type)
+    attendance = models.IntegerField(null=True)
+    theoretical_mark = models.IntegerField(null=True)
+    practical_mark = models.IntegerField(null=True)
+    result = models.IntegerField(null=True)
+    result_type = models.CharField(max_length=50, null=True, choices=result_type)
     create_date = models.DateField(auto_now_add=True, null=True)
     def __str__(self):
         return f'{self.result}'
