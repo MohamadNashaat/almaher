@@ -61,13 +61,13 @@
         <td>
             <select class="form-control form-select" onchange="set_teacher({{item.session_id}})" id="{{item.session_id}}">
                 {% if item.teacher_id %}
-                    <option selected value="{{item.teacher_id.person_id}}" onclick1="set_teacher({{item.session_id}},{{item.teacher_id.person_id}})">{{item.teacher_id}}</option>
+                    <option selected value="{{item.teacher_id.person_id}}">{{item.teacher_id}}</option>
                 {% else %}
-                    <option selected value="{{session.teacher_id.person_id}}" onclick1="set_teacher({{item.session_id}},-1)">{{item.teacher_id}}</option>
+                    <option selected value="{{session.teacher_id.person_id}}">{{item.teacher_id}}</option>
                 {% endif %}
                 {% for item2 in teacher %}
                     {% if item.teacher_id.person_id != item2.person_id %}
-                        <option value="{{item2.person_id}}" onclick1="set_teacher({{item.session_id}},{{item2.person_id}})">{{item2.first_name}} {{item2.last_name}}</option>
+                        <option value="{{item2.person_id}}">{{item2.first_name}} {{item2.last_name}}</option>
                     {% endif %}
                 {% endfor %}
             </select>

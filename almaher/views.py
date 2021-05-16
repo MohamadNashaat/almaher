@@ -974,30 +974,8 @@ def change_status_false(request):
     attendance.status = False
     attendance.save()
     context = {}
-    return JsonResponse(context)
-
-
-# Views exam
-@login_required(login_url='login')
-def select_exam(request):
-    # Check request session
-    if not request.session.get('get_course_id', False):
-        return redirect('select_course')
-    get_course_id = request.session['get_course_id']
-    get_course_id = Course.objects.get(pk=get_course_id)
-
-    course = Course.objects.all()
-    if request.method =='POST':
-        get_type = request.POST['type']
-        get_time = request.POST['time']
-        request.session['exam_type'] = get_type
-        request.session['exam_time'] = get_time
-        return redirect('exam')
-    context = {'course': course,
-                }
-    return render(request, 'almaher/exam_select.html', context)        
+    return JsonResponse(context)    
     
-
 @login_required(login_url='login')
 def exam(request):
     # Check request session
@@ -1005,12 +983,15 @@ def exam(request):
         return redirect('select_course')
     get_course_id = request.session['get_course_id']
     get_course_id = Course.objects.get(pk=get_course_id)
-
-    #get_type = request.session['exam_type']
-    #get_time = request.session['exam_time']
-    
     in_session = Session.objects.filter(course_id=get_course_id).values_list('session_id', flat=True)
-    exam = Exam.objects.filter(session_id__in=in_session) #, time_id=get_time, type_id=get_type)
+    get_exam = Exam.objects.filter(session_id__in=in_session)
+    student_exam = get_exam.values_list('student_id', flat=True).distinct()
+    exam = []
+    for all_person in student_exam:
+        first_exam = get_exam.filter(student_id=all_person).first()
+        all_exam = get_exam.filter(student_id=all_person).values('exam_id', 'type_id', 'time_id', 'mark').order_by('exam_id')
+        dic_exam = {'student_id': first_exam.student_id, 'session_id':first_exam.session_id , 'exams': all_exam}
+        exam.append(dic_exam)    
     context = {'exam': exam,
                 }
     return render(request, 'almaher/exam.html', context)
@@ -1022,8 +1003,7 @@ def generate_exam(request):
     if not request.session.get('get_course_id', False):
         return redirect('select_course')
     get_course_id = request.session['get_course_id']
-    get_course_id = Course.objects.get(pk=get_course_id)            
-
+    get_course_id = Course.objects.get(pk=get_course_id)
     # get all students on session in this course and generate 3 type_time and 2 type_exam for each students
     session = Session.objects.all().filter(course_id=get_course_id)
     session_list = session.values_list('session_id', flat=True)
@@ -1031,7 +1011,6 @@ def generate_exam(request):
     person_in_exam = Exam.objects.filter(session_id__in=session_list).values_list('student_id' ,flat=True)
     session_student = Session_Student.objects.all().filter(session_id__in=session_list)
     student = session_student.filter(~Q(student_id__in=person_in_exam)).values_list('student_id', flat=True)
-
     # Add student to attendance
     for item in student:
         get_student = Person.objects.get(pk=item)
@@ -1042,102 +1021,33 @@ def generate_exam(request):
         else:
             count_index = Exam.objects.all().aggregate(Max('exam_id'))['exam_id__max']
             count_index += 1
-        # Add 3
+        # Add 3 Theoretical
         Exam.objects.create(exam_id=count_index, type_id='نظري', time_id='الامتحان الأول', student_id=get_student, session_id=get_session_student.session_id , mark=0)
         count_index += 1
         Exam.objects.create(exam_id=count_index, type_id='نظري', time_id='التكميلي' , student_id=get_student, session_id=get_session_student.session_id, mark=0)
         count_index += 1
         Exam.objects.create(exam_id=count_index, type_id='نظري', time_id='الاعادة' , student_id=get_student, session_id=get_session_student.session_id, mark=0)
         count_index += 1
-        #
+        # Add 3 Practical
         Exam.objects.create(exam_id=count_index, type_id='عملي', time_id='الامتحان الأول' , student_id=get_student , session_id=get_session_student.session_id, mark=0)
         count_index += 1
         Exam.objects.create(exam_id=count_index, type_id='عملي', time_id='التكميلي' , student_id=get_student , session_id=get_session_student.session_id, mark=0)
         count_index += 1
         Exam.objects.create(exam_id=count_index, type_id='عملي', time_id='الاعادة' , student_id=get_student , session_id=get_session_student.session_id, mark=0)
         count_index += 1
-    messages.success(request, 'Add success')
+    messages.success(request, 'تم الانشاء بنجاح')
     return HttpResponseRedirect(reverse('exam'))
 
-@login_required(login_url='login')
-def add_theoretical_exam(request):
-    # Check request session
-    if not request.session.get('get_course_id', False):
-        return redirect('select_course')
-    get_course_id = request.session['get_course_id']
-    get_course_id = Course.objects.get(pk=get_course_id)
+def set_exam_mark(request):   
+    exam_id = request.GET.get('exam_id')
+    exam_value = request.GET.get('exam_value')
+    exam = Exam.objects.get(pk=exam_id)
+    exam.mark = exam_value
+    exam.save()
+    context = {}
+    return JsonResponse(context)
 
-    get_session = Session.objects.all().filter(course_id=get_course_id).values_list('session_id', flat=True)
-    in_session = Session_Student.objects.all().filter(session_id__in=get_session).values_list('student_id', flat=True)
-    student = Person.objects.filter(pk__in=in_session, type_id='Student', status=True)
-    teacher = Person.objects.all().filter(type_id__in=('Teacher', 'Graduate'), status=True)   
-    
-    if request.method == 'POST':
-        count_index = Exam.objects.all().count()
-        if count_index == 0:
-            count_index = 1
-        else:
-            count_index = Exam.objects.all().aggregate(Max('exam_id'))['exam_id__max']
-            count_index += 1
-        get_time = request.POST['time']
-        mark = request.POST['mark']
-        student = request.POST['student']
-        student = Person.objects.get(pk=student)
-
-        in_session = Session.objects.filter(course_id=get_course_id).values_list('session_id', flat=True)
-        session = Session_Student.objects.get(session_id__in=in_session, student_id=student)
-
-        Exam.objects.create(exam_id=count_index, type_id='نظري', time_id=get_time, 
-        student_id=student, session_id=session.session_id, mark=mark)
-        
-        messages.success(request, 'Add success')
-        return HttpResponseRedirect(reverse('add_theoretical_exam')) 
-    context = {'student': student,
-                'teacher': teacher,
-                }
-    return render(request, 'almaher/add_theoretical_exam.html', context)
-
-@login_required(login_url='login')
-def add_practical_exam(request):
-    # Check request session
-    if not request.session.get('get_course_id', False):
-        return redirect('select_course')
-    get_course_id = request.session['get_course_id']
-    get_course_id = Course.objects.get(pk=get_course_id)
-
-    get_session = Session.objects.all().filter(course_id=get_course_id).values_list('session_id', flat=True)
-    in_session = Session_Student.objects.all().filter(session_id__in=get_session).values_list('student_id', flat=True)
-    student = Person.objects.filter(pk__in=in_session, type_id='Student', status=True)
-    teacher = Person.objects.all().filter(type_id__in=('Teacher', 'Graduate'), status=True)   
-    
-    if request.method == 'POST':
-        count_index = Exam.objects.all().count()
-        if count_index == 0:
-            count_index = 1
-        else:
-            count_index = Exam.objects.all().aggregate(Max('exam_id'))['exam_id__max']
-            count_index += 1
-        get_time = request.POST['time']
-        mark = request.POST['mark']
-        student = request.POST['student']
-        student = Person.objects.get(pk=student)
-        teacher = request.POST['teacher']
-        teacher = Person.objects.get(pk=teacher)
-
-        in_session = Session.objects.filter(course_id=get_course_id).values_list('session_id', flat=True)
-        session = Session_Student.objects.get(session_id__in=in_session, student_id=student)
-
-        Exam.objects.create(exam_id=count_index, type_id='عملي', time_id=get_time, 
-        student_id=student, teacher_id=teacher, session_id=session.session_id, mark=mark)
-        
-        messages.success(request, 'Add success')
-        return HttpResponseRedirect(reverse('add_practical_exam'))
-    context = {'student': student,
-                'teacher': teacher,
-                }
-    return render(request, 'almaher/add_practical_exam.html', context)
-
-
+# Manage results
 @login_required(login_url='login')
 def result(request):
     # Check request session
@@ -1145,17 +1055,11 @@ def result(request):
         return redirect('select_course')
     get_course_id = request.session['get_course_id']
     get_course_id = Course.objects.get(pk=get_course_id)
-
     in_session = Session.objects.filter(course_id=get_course_id).values_list('session_id', flat=True)
     result = Result.objects.filter(session_id__in=in_session)
     context = {'result': result,
                 }
     return render(request, 'almaher/result.html', context)
-
-
-
-
-
 
 
 

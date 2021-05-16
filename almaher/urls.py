@@ -12,29 +12,22 @@ urlpatterns = [
     path('person', views.person, name='person'),
     path('person/edit/<int:pk>', views.edit_person, name='edit_person'),
     path('person/del/<int:pk>', views.del_person, name='del_person'),
-
     path('person/lock/<int:pk>', views.lock_person, name='lock_person'),
     path('person/unlock/<int:pk>', views.unlock_person, name='unlock_person'),
-
     path('graduate', views.graduate, name='graduate'),
-
     path('wait/list', views.wait_list, name='wait_list'),
-
     # Urls Teachers
     path('teacher', views.teacher, name='teacher'),
     path('teacher/add', views.add_teacher, name='add_teacher'),
-    
     # Urls Students
     path('student', views.student, name='student'),
     path('student/add', views.add_student, name='add_student'),
 
     # Urls Courses
     path('course', views.course, name='course'),
-    path('course/add', views.add_course, name='add_course'),
-    path('course/del/<int:pk>', views.del_course, name='del_course'),
-    
-    # Urls Select Course for session
     path('select/course', views.select_course, name='select_course'),
+    path('course/add', views.add_course, name='add_course'),
+    path('course/del/<int:pk>', views.del_course, name='del_course'),    
 
     # Urls Sessions
     path('session', views.session, name='session'),
@@ -42,7 +35,6 @@ urlpatterns = [
     path('session/add', views.add_session, name='add_session'),
     path('session/edit/<int:pk>', views.edit_session, name='edit_session'),
     path('session/del/<int:pk>', views.del_session, name='del_session'),
-
     # Urls Sessions_Students
     path('session/student/<int:pk>', views.session_student, name='session_student'),
     path('session/student/add/<int:pk>/<int:num>', views.add_session_student, name='add_session_student'),
@@ -62,12 +54,10 @@ urlpatterns = [
     path('ajax/set_teacher', views.set_teacher, name='set_teacher'),
     path('ajax/set_student', views.set_student, name='set_student'),
     path('ajax/set_priority', views.set_priority, name='set_priority'),
+    path('ajax/set_exam_mark', views.set_exam_mark, name='set_exam_mark'),
 
     # Urls Exam
-    path('select/exam', views.select_exam, name='select_exam'),
     path('exam', views.exam, name='exam'),
-    path('exam/theoretical/add', views.add_theoretical_exam, name='add_theoretical_exam'),
-    path('exam/practical/add', views.add_practical_exam, name='add_practical_exam'),
     path('exam/generate', views.generate_exam, name='generate_exam'),
 
     # Urls Result

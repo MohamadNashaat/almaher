@@ -68,37 +68,37 @@
         <br>
         الاعادة
     </th>  
-    <th>المحصلة</th>
 {% endblock %}
 
 {% block tr_table%}
     {% for item in exam %}
     <tr>
-        <td>{{item.exam_id}}</td>
+        <td>{{item.student_id.person_id}}</td>
         <td>{{item.student_id}}</td>
         <td>{{item.session_id.session_number}}</td>
         <td>{{item.session_id.level_id}}</td>
-        <td>
-            <input type="number" class="form-control form-control-user" min="0" max="100" value="{{item.mark}}">
-        </td>
-        <td>
-            <input type="number" class="form-control form-control-user" min="0" max="100" value="{{item.mark}}">
-        </td>
-        <td>
-            <input type="number" class="form-control form-control-user" min="0" max="100" value="{{item.mark}}">
-        </td>
-        <td>
-            <input type="number" class="form-control form-control-user" min="0" max="100" value="{{item.mark}}">
-        </td>
-        <td>
-            <input type="number" class="form-control form-control-user" min="0" max="100" value="{{item.mark}}">
-        </td>
-        <td>
-            <input type="number" class="form-control form-control-user" min="0" max="100" value="{{item.mark}}">
-        </td>
-        <td>
-            <input type="text" class="form-control form-control-user" value="100" disabled>
-        </td>
+        {% for item2 in item.exams %}
+            <td>
+                <input type="number" class="form-control form-control-user" min="0" max="100" value="{{item2.mark}}" id="{{item2.exam_id}}" onchange="set_exam_mark({{item2.exam_id}})">
+            </td>
+        {% endfor %}
     </tr>
     {% endfor %}
+{% endblock %}
+
+{% block javaScript %}
+<script>
+    function set_exam_mark(get_exam_id){
+        let exam_id = get_exam_id
+        let exam_value = document.getElementById(get_exam_id).value;
+        $.ajax({
+        url: "{% url 'set_exam_mark' %}",
+        data:{
+            'exam_id': exam_id,
+            'exam_value':exam_value,
+            },
+        dataType: 'json',
+        });
+    };
+</script>
 {% endblock %}

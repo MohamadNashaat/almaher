@@ -101,7 +101,7 @@ class Exam(models.Model):
     student_id = models.ForeignKey(Person, on_delete=models.CASCADE)
     #teacher_id = models.ForeignKey(Person, on_delete=models.CASCADE, related_name='teacher_id', null=True)
     session_id = models.ForeignKey(Session, on_delete=models.CASCADE)
-    mark = models.FloatField(null=True)
+    mark = models.IntegerField(null=True)
     create_date = models.DateField(auto_now_add=True, null=True)
     def __str__(self):
         return f'{self.mark}'
