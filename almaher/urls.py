@@ -65,10 +65,11 @@ urlpatterns = [
     path('result/generate', views.generate_result, name='generate_result'),   
 
     # Urls Export to *
+    path('export/excel/person', views.export_excel_person, name='export_excel_person'),
     path('export/excel/student', views.export_excel_student, name='export_excel_student'),
     path('export/excel/teacher', views.export_excel_teacher, name='export_excel_teacher'),
+    path('export/excel/graduate', views.export_excel_graduate, name='export_excel_graduate'),
     path('export/pdf/session', views.export_session_pdf, name='export_session_pdf'),
-    path('export/excel/attendance/student', views.export_excel_attendance_student, name='export_excel_attendance_student'),
-    path('export/excel/attendance/teacher', views.export_excel_attendance_teacher, name='export_excel_attendance_teacher'),
+    path('export/excel/attendance', views.export_excel_attendance, name='export_excel_attendance'),
     
 ]

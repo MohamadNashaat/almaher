@@ -18,6 +18,14 @@
     اختر الحضور
 {% endblock %}
 
+{% block export %}
+<a href="" class="btn btn-sm btn-primary shadow-sm">
+    <i class="fas fa-download fa-sm text-white">
+    <span>استخراج البيانات لـ Excel</span>
+    </i>
+</a>
+{% endblock %}
+
 {% block card_header %}
     <div class="card-header py-3">
         <a type="button" class="m-0  btn btn-success" href="{% url 'attendance_generater' %}">

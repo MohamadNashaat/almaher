@@ -19,7 +19,7 @@
 {% endblock %}
 
 {% block export %}
-<a href="" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+<a href="" class="btn btn-sm btn-primary shadow-sm">
     <i class="fas fa-download fa-sm text-white">
     <span>استخراج البيانات لـ Excel</span>
     </i>
@@ -37,6 +37,7 @@
     <th>#</th>
     <th>الطالب</th>
     <th>الدورة</th>
+    <th>لمستوى</th>
     <th>الجلسة</th>
     <th>الحضور</th>
     <th>علامة النظري</th>
@@ -51,6 +52,7 @@
         <td>{{item.result_id}}</td>
         <td>{{item.student_id}}</td>
         <td>{{item.session_id.course_id}}</td>
+        <td>{{item.session_id.level_id}}</td>
         <td>{{item.session_id.session_number}}</td>
         <td>{{item.attendance}}</td>
         <td>{{item.theoretical_mark}}</td>

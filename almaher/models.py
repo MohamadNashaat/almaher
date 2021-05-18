@@ -38,7 +38,7 @@ class Person(models.Model):
     job = models.CharField(max_length=120, null=True)
     address = models.CharField(max_length=120, null=True)
     bdate = models.DateField(null=True)
-    level_id = models.ForeignKey(Level, on_delete=models.CASCADE)
+    level_id = models.ForeignKey(Level, on_delete=models.CASCADE, null=True)
     priority_id = models.CharField(max_length=50, null=True, choices=priority)
     status = models.BooleanField(default=True, null=True)
     create_date = models.DateField(auto_now_add=True, null=True)
@@ -47,7 +47,7 @@ class Person(models.Model):
 
 class Course(models.Model):
     course_id = models.IntegerField(primary_key=True)
-    course_name = models.CharField(max_length=120)
+    course_name = models.CharField(max_length=120, null=True)
     start_date = models.DateField(null=True)
     end_date = models.DateField(null=True)
     num_of_session = models.IntegerField(null=True)
@@ -57,11 +57,11 @@ class Course(models.Model):
 
 class Session(models.Model):
     session_id = models.IntegerField(primary_key=True)
-    session_number = models.IntegerField()
-    course_id = models.ForeignKey(Course, on_delete=models.CASCADE)
-    level_id = models.ForeignKey(Level, on_delete=models.CASCADE)
-    position_id = models.ForeignKey(Position, on_delete=models.CASCADE)
-    time_id = models.ForeignKey(Time, on_delete=models.CASCADE)
+    session_number = models.IntegerField(null=True)
+    course_id = models.ForeignKey(Course, on_delete=models.CASCADE, null=True)
+    level_id = models.ForeignKey(Level, on_delete=models.CASCADE, null=True)
+    position_id = models.ForeignKey(Position, on_delete=models.CASCADE, null=True)
+    time_id = models.ForeignKey(Time, on_delete=models.CASCADE, null=True)
     teacher_id = models.ForeignKey(Person, null=True, on_delete=models.CASCADE)
     create_date = models.DateField(auto_now_add=True, null=True)
     def __str__(self):
@@ -69,18 +69,18 @@ class Session(models.Model):
 
 class Session_Student(models.Model):
     id = models.IntegerField(primary_key=True)
-    session_id = models.ForeignKey(Session, on_delete=models.CASCADE)
-    student_id = models.ForeignKey(Person, on_delete=models.CASCADE)
+    session_id = models.ForeignKey(Session, on_delete=models.CASCADE, null=True)
+    student_id = models.ForeignKey(Person, on_delete=models.CASCADE, null=True)
     create_date = models.DateField(auto_now_add=True, null=True)
     def __str__(self):
         return f'{self.id}'
 
 class Attendance(models.Model):
     attendance_id = models.IntegerField(primary_key=True)
-    person_id = models.ForeignKey(Person, on_delete=models.CASCADE)
-    session_id = models.ForeignKey(Session, on_delete=models.CASCADE)
-    day = models.DateField()
-    status = models.BooleanField()
+    person_id = models.ForeignKey(Person, on_delete=models.CASCADE, null=True)
+    session_id = models.ForeignKey(Session, on_delete=models.CASCADE, null=True)
+    day = models.DateField(null=True)
+    status = models.BooleanField(null=True)
     create_date = models.DateField(auto_now_add=True, null=True)
     def __str__(self):
         return f'{self.day}'
@@ -98,9 +98,9 @@ class Exam(models.Model):
     exam_id = models.IntegerField(primary_key=True)
     type_id = models.CharField(max_length=50, null=True, choices=exam_type)
     time_id = models.CharField(max_length=50, null=True, choices=exam_time)
-    student_id = models.ForeignKey(Person, on_delete=models.CASCADE)
+    student_id = models.ForeignKey(Person, on_delete=models.CASCADE, null=True)
     #teacher_id = models.ForeignKey(Person, on_delete=models.CASCADE, related_name='teacher_id', null=True)
-    session_id = models.ForeignKey(Session, on_delete=models.CASCADE)
+    session_id = models.ForeignKey(Session, on_delete=models.CASCADE, null=True)
     mark = models.IntegerField(null=True)
     create_date = models.DateField(auto_now_add=True, null=True)
     def __str__(self):
@@ -113,8 +113,8 @@ class Result(models.Model):
         ('إعادة','إعادة'),
     )
     result_id = models.IntegerField(primary_key=True)
-    student_id = models.ForeignKey(Person, on_delete=models.CASCADE)
-    session_id = models.ForeignKey(Session, on_delete=models.CASCADE)
+    student_id = models.ForeignKey(Person, on_delete=models.CASCADE, null=True)
+    session_id = models.ForeignKey(Session, on_delete=models.CASCADE, null=True)
     attendance = models.IntegerField(null=True)
     theoretical_mark = models.IntegerField(null=True)
     practical_mark = models.IntegerField(null=True)

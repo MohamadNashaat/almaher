@@ -7,18 +7,18 @@
     <title>session pdf</title>
     <style>
         body{
-            font-size: 18px;
+            font-size: 16px;
         }
         table, td, th {
             border: 1px solid black;
             text-align: center;
         }
-        table {
+        table{
             width: 100%;
             border-collapse: collapse;
         }
         .td-p{
-            padding: 14px;
+            padding: 12px;
         }
         .clear {
         clear: both;
@@ -33,16 +33,32 @@
         div{
             margin-bottom: 16px;
         }
+        .table-2{
+            position: fixed;
+            bottom: 0;
+        }
+        .w-25{
+            width: 25%;
+        }
+        .w-5{
+            width: 5%;
+        }
+        .w-4{
+            width: 4%;
+        }
+        .w-2{
+            width: 2%;
+        }
         @page {
         size: "A4";
-        margin: 2cm 1.5cm 3.5cm 1.5cm;
+        margin: 2cm 1.5cm 1.5cm 1.5cm;
         size: landscape;
             @top-center {
                 font-size: 20px;
                 content: "{{course_name}}";
             }
             @bottom-right {
-                font-size: 14px;
+                font-size: 12px;
                 content: "Page " counter(page) " of " counter(pages); 
             }
         }
@@ -61,43 +77,62 @@
         <table>
             <thead>
                 <tr>
-                    <th>#</th>
-                    <th>الاسم</th>
+                    <td class="w-4">#</td>
+                    <td>الاسم</td>
                     {% for att_day in day %}
-                        <td style="font-size: 14px;">{{att_day}}</td>
-                    {% endfor %}  
+                        <td class="w-4" style="font-size: 12px;">{{att_day}}</td>
+                    {% endfor %}
+                    {% for i in '123'|make_list %}
+                        <td class="w-5" style="font-size: 12px;">تقييم المدرس {{i}}</td> 
+                    {% endfor %}
                 </tr>
             </thead>
             <tbody>
                 {% for item2 in student %}
                     {% if item2.session_id.session_id == item.session_id %}
                     <tr>
-                        <td style="font-size: 14px;">{{item2.student_id.person_id}}</td>
+                        <td style="font-size: 12px;">{{item2.student_id.person_id}}</td>
                         <td>{{item2.student_id}}</td>
                         {% for i in num_of_session_list %}
                             <td></td>
-                        {% endfor %}                    
+                        {% endfor %}
+                        {% for i in '123'|make_list %}
+                            <td class="td-p"></td> 
+                        {% endfor %}
                     </tr>
                     {% endif %}
                 {% endfor %}
-                {% for i in '012'|make_list %}
+                {% for i in '12'|make_list %}
                 <tr>
                     {% for i in num_of_session_list2 %}
                         <td class="td-p"></td>
                     {% endfor %}  
-                </tr>
-                {% endfor %}
-                <tr>
-                    <td colspan="{{num_of_session}}">ملاحظات</td>
-                </tr>
-                {% for i in '012'|make_list %}
-                <tr>
-                    <td  colspan="{{num_of_session}}" class="td-p"></td>
+                    {% for i in '123'|make_list %}
+                        <td class="td-p"></td> 
+                    {% endfor %}
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
-        <p style="page-break-before: always" ></p>
+
+        <table class="table-2">
+            <thead>
+                <tr>
+                    <td class="w-25">التاريخ</td>
+                    <td>الملاحظات</td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i in '012'|make_list %}
+                <tr>
+                    <td class="td-p"></td>
+                    <td class="td-p"></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <p style="page-break-after: always" ></p>
         {% endfor %}
   </body>
 </html>

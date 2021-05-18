@@ -261,7 +261,7 @@ def select_course(request):
         # Set session course_id
         request.session['get_course_id'] = get_course.course_id
         return redirect('')
-    course = Course.objects.all()
+    course = Course.objects.all().order_by('pk')
     context = {'course': course,
                 }
     return render(request, 'almaher/select_course.html', context)
@@ -1110,204 +1110,320 @@ def generate_result(request):
 
 
 
+
+
+
 # Export to *
-def export_excel_student(request):
+def export_excel_person(request):
     response = HttpResponse(content_type='application/ms-excel')
-    response['Content-Disposition'] = 'attachment; filename="students.xls"'
-
+    response['Content-Disposition'] = 'attachment; filename="persons.xls"'
     wb = xlwt.Workbook(encoding='utf-8')
-    ws = wb.add_sheet('Students')
-
+    ws = wb.add_sheet('Persons')
     # Sheet header, first row
     row_num = 0
-
     font_style = xlwt.XFStyle()
     font_style.font.bold = True
-
-    columns = ['Person id', 'First name', 'Last name', 'Father name', 'Home number',
-                'Phone number', 'Level_id', 'Birth date', 'Job', 'Address']
-
+    columns = ['id', 'First name', 'Last name', 'Father name', 'Home number',
+                'Phone number', 'Level', 'Birth date', 'Job', 'Address', 'priority', 'status']
     for col_num in range(len(columns)):
         ws.write(row_num, col_num, columns[col_num], font_style)
-
     # Sheet body, remaining rows
     font_style = xlwt.XFStyle()
-
     rows = []
-
-    persons = Person.objects.all().filter(type_id='Student')
-    
+    persons = Person.objects.all().order_by('pk')
     for person in persons:
-        person_bd = person.bdate
-        person_bd = person_bd.strftime('%m/%d/%Y')
-        vlues = [person.person_id, person.first_name, person.last_name, person.father_name, 
-            person.home_number, person.phone_number, person.level_id, person_bd,
-            person.job, person.address]
+        id = ''
+        fname = ''
+        lname = ''
+        father_name = ''
+        hnumber = ''
+        pnumber = ''
+        level = ''
+        bdate = ''
+        job = ''
+        address = ''
+        priority = ''
+        status = ''
+        # Check all values if none
+        if person.person_id is not None:
+            id = person.person_id
+        if person.first_name is not None:
+            fname = person.first_name
+        if person.last_name is not None:
+            lname = person.last_name
+        if person.father_name is not None:
+            father_name = person.father_name
+        if person.home_number is not None:
+            hnumber = person.home_number
+        if person.phone_number is not None:
+            pnumber = person.phone_number
+        if person.level_id is not None:
+            level = str(person.level_id)
+        if person.bdate is not None:
+            bdate = person.bdate
+            bdate = bdate.strftime('%m/%d/%Y')
+        if person.job is not None:
+            job = person.job
+        if person.address is not None:
+            address = person.address
+        if person.priority_id is not None:
+            priority = person.priority_id
+        if person.status is not None: 
+            status = str(person.status)
+        vlues = [id, fname, lname, father_name, hnumber, pnumber,
+                 level, bdate, job, address, priority, status]
         rows.append(vlues)
-
     for row in rows:
         row_num += 1
         for col_num in range(len(row)):
             ws.write(row_num, col_num, row[col_num], font_style)
+    wb.save(response)
+    return response
 
+def export_excel_student(request):
+    response = HttpResponse(content_type='application/ms-excel')
+    response['Content-Disposition'] = 'attachment; filename="students.xls"'
+    wb = xlwt.Workbook(encoding='utf-8')
+    ws = wb.add_sheet('Students')
+    # Sheet header, first row
+    row_num = 0
+    font_style = xlwt.XFStyle()
+    font_style.font.bold = True
+    columns = ['id', 'First name', 'Last name', 'Father name', 'Home number',
+                'Phone number', 'Level', 'Birth date', 'Job', 'Address', 'priority', 'status']
+    for col_num in range(len(columns)):
+        ws.write(row_num, col_num, columns[col_num], font_style)
+    # Sheet body, remaining rows
+    font_style = xlwt.XFStyle()
+    rows = []
+    persons = Person.objects.all().filter(type_id='Student').order_by('pk')
+    for person in persons:
+        id = ''
+        fname = ''
+        lname = ''
+        father_name = ''
+        hnumber = ''
+        pnumber = ''
+        level = ''
+        bdate = ''
+        job = ''
+        address = ''
+        priority = ''
+        status = ''
+        # Check all values if none
+        if person.person_id is not None:
+            id = person.person_id
+        if person.first_name is not None:
+            fname = person.first_name
+        if person.last_name is not None:
+            lname = person.last_name
+        if person.father_name is not None:
+            father_name = person.father_name
+        if person.home_number is not None:
+            hnumber = person.home_number
+        if person.phone_number is not None:
+            pnumber = person.phone_number
+        if person.level_id is not None:
+            level = str(person.level_id)
+        if person.bdate is not None:
+            bdate = person.bdate
+            bdate = bdate.strftime('%m/%d/%Y')
+        if person.job is not None:
+            job = person.job
+        if person.address is not None:
+            address = person.address
+        if person.priority_id is not None:
+            priority = person.priority_id
+        if person.status is not None: 
+            status = str(person.status)
+        vlues = [id, fname, lname, father_name, hnumber, pnumber,
+                 level, bdate, job, address, priority, status]
+        rows.append(vlues)
+    for row in rows:
+        row_num += 1
+        for col_num in range(len(row)):
+            ws.write(row_num, col_num, row[col_num], font_style)
     wb.save(response)
     return response
 
 def export_excel_teacher(request):
     response = HttpResponse(content_type='application/ms-excel')
-    response['Content-Disposition'] = 'attachment; filename="teacher.xls"'
-
+    response['Content-Disposition'] = 'attachment; filename="teachers.xls"'
     wb = xlwt.Workbook(encoding='utf-8')
-    ws = wb.add_sheet('Students')
-
+    ws = wb.add_sheet('Teachers')
     # Sheet header, first row
     row_num = 0
-
     font_style = xlwt.XFStyle()
     font_style.font.bold = True
-
-    columns = ['Person id', 'First name', 'Last name', 'Father name', 'Home number',
-                'Phone number', 'Birth date', 'Job', 'Address']
-
+    columns = ['id', 'First name', 'Last name', 'Father name', 'Home number',
+                'Phone number', 'Level', 'Birth date', 'Job', 'Address', 'priority', 'status']
     for col_num in range(len(columns)):
         ws.write(row_num, col_num, columns[col_num], font_style)
-
     # Sheet body, remaining rows
     font_style = xlwt.XFStyle()
-
     rows = []
-
-    persons = Person.objects.all().filter(type_id='Teacher')
-    
+    persons = Person.objects.all().filter(type_id='Teacher').order_by('pk')
     for person in persons:
-        person_bd = person.bdate
-        person_bd = person_bd.strftime('%m/%d/%Y')
-        vlues = [person.person_id, person.first_name, person.last_name, person.father_name, 
-            person.home_number, person.phone_number, person_bd,
-            person.job, person.address]
+        id = ''
+        fname = ''
+        lname = ''
+        father_name = ''
+        hnumber = ''
+        pnumber = ''
+        level = ''
+        bdate = ''
+        job = ''
+        address = ''
+        priority = ''
+        status = ''
+        # Check all values if none
+        if person.person_id is not None:
+            id = person.person_id
+        if person.first_name is not None:
+            fname = person.first_name
+        if person.last_name is not None:
+            lname = person.last_name
+        if person.father_name is not None:
+            father_name = person.father_name
+        if person.home_number is not None:
+            hnumber = person.home_number
+        if person.phone_number is not None:
+            pnumber = person.phone_number
+        if person.level_id is not None:
+            level = str(person.level_id)
+        if person.bdate is not None:
+            bdate = person.bdate
+            bdate = bdate.strftime('%m/%d/%Y')
+        if person.job is not None:
+            job = person.job
+        if person.address is not None:
+            address = person.address
+        if person.priority_id is not None:
+            priority = person.priority_id
+        if person.status is not None: 
+            status = str(person.status)
+        vlues = [id, fname, lname, father_name, hnumber, pnumber,
+                 level, bdate, job, address, priority, status]
         rows.append(vlues)
-
     for row in rows:
         row_num += 1
         for col_num in range(len(row)):
             ws.write(row_num, col_num, row[col_num], font_style)
-
     wb.save(response)
     return response
 
-def export_excel_attendance_student(request):
+def export_excel_graduate(request):
     response = HttpResponse(content_type='application/ms-excel')
-    response['Content-Disposition'] = 'attachment; filename="attendance_student.xls"'
-
+    response['Content-Disposition'] = 'attachment; filename="graduates.xls"'
     wb = xlwt.Workbook(encoding='utf-8')
-    ws = wb.add_sheet('Students')
-
+    ws = wb.add_sheet('Graduates')
     # Sheet header, first row
     row_num = 0
-
     font_style = xlwt.XFStyle()
     font_style.font.bold = True
-
-    student = Person.objects.all().filter(type_id='Student').values_list('person_id', flat=True)
-    get_course_id = request.session['get_course_id']
-    session = Session.objects.all().filter(course_id=get_course_id).values_list('session_id', flat=True)
-    day_attendance = Attendance.objects.all().filter(person_id__in=student, session_id__in=session).order_by('day').distinct('day')
-
-    columns = ['Session number', 'First name', 'Last name']
-
-    for day in day_attendance:
-        get_day = day.day
-        get_day = get_day.strftime('%m/%d/%Y')
-        columns.append(get_day)
-
+    columns = ['id', 'First name', 'Last name', 'Father name', 'Home number',
+                'Phone number', 'Level', 'Birth date', 'Job', 'Address', 'priority', 'status']
     for col_num in range(len(columns)):
         ws.write(row_num, col_num, columns[col_num], font_style)
-
     # Sheet body, remaining rows
     font_style = xlwt.XFStyle()
-
     rows = []
-
-    name_attendance = Attendance.objects.all().filter(person_id__in=student, session_id__in=session).distinct('person_id')
-    status_attendance = Attendance.objects.all().filter(person_id__in=student, session_id__in=session).order_by('day')
-        
-    for attendance in name_attendance:
-        value = [attendance.session_id.session_number, attendance.person_id.first_name, attendance.person_id.last_name]
-        for s_attendance in status_attendance:
-            if attendance.person_id == s_attendance.person_id:
-                value.append(str(s_attendance.status))
-        rows.append(value)
-
+    persons = Person.objects.all().filter(type_id='Graduate').order_by('pk')
+    for person in persons:
+        id = ''
+        fname = ''
+        lname = ''
+        father_name = ''
+        hnumber = ''
+        pnumber = ''
+        level = ''
+        bdate = ''
+        job = ''
+        address = ''
+        priority = ''
+        status = ''
+        # Check all values if none
+        if person.person_id is not None:
+            id = person.person_id
+        if person.first_name is not None:
+            fname = person.first_name
+        if person.last_name is not None:
+            lname = person.last_name
+        if person.father_name is not None:
+            father_name = person.father_name
+        if person.home_number is not None:
+            hnumber = person.home_number
+        if person.phone_number is not None:
+            pnumber = person.phone_number
+        if person.level_id is not None:
+            level = str(person.level_id)
+        if person.bdate is not None:
+            bdate = person.bdate
+            bdate = bdate.strftime('%m/%d/%Y')
+        if person.job is not None:
+            job = person.job
+        if person.address is not None:
+            address = person.address
+        if person.priority_id is not None:
+            priority = person.priority_id
+        if person.status is not None: 
+            status = str(person.status)
+        vlues = [id, fname, lname, father_name, hnumber, pnumber,
+                 level, bdate, job, address, priority, status]
+        rows.append(vlues)
     for row in rows:
         row_num += 1
         for col_num in range(len(row)):
             ws.write(row_num, col_num, row[col_num], font_style)
-
     wb.save(response)
     return response
 
-
-def export_excel_attendance_teacher(request):    
+def export_excel_attendance(request):    
     response = HttpResponse(content_type='application/ms-excel')
     response['Content-Disposition'] = 'attachment; filename="attendance_teacher.xls"'
-
     wb = xlwt.Workbook(encoding='utf-8')
     ws = wb.add_sheet('Students')
-
     # Sheet header, first row
     row_num = 0
-
     font_style = xlwt.XFStyle()
     font_style.font.bold = True
-
     teacher = Person.objects.all().filter(type_id='Teacher').values_list('person_id', flat=True)
     get_course_id = request.session['get_course_id']
     session = Session.objects.all().filter(course_id=get_course_id).values_list('session_id', flat=True)
     day_attendance = Attendance.objects.all().filter(person_id__in=teacher, session_id__in=session).order_by('day').distinct('day')
     columns = ['Session number', 'First name', 'Last name']
-
     for day in day_attendance:
         get_day = day.day
         get_day = get_day.strftime('%m/%d/%Y')
         columns.append(get_day)
-
     for col_num in range(len(columns)):
         ws.write(row_num, col_num, columns[col_num], font_style)
-
     # Sheet body, remaining rows
     font_style = xlwt.XFStyle()
-
     rows = []
-
     name_attendance = Attendance.objects.all().filter(person_id__in=teacher, session_id__in=session).distinct('person_id')
     status_attendance = Attendance.objects.all().filter(person_id__in=teacher, session_id__in=session).order_by('day')
-    
     for attendance in name_attendance:
         value = [attendance.session_id.session_number, attendance.person_id.first_name, attendance.person_id.last_name]
         for s_attendance in status_attendance:
             if attendance.person_id == s_attendance.person_id:
                 value.append(str(s_attendance.status))
         rows.append(value)
-
     for row in rows:
         row_num += 1
         for col_num in range(len(row)):
             ws.write(row_num, col_num, row[col_num], font_style)
-
     wb.save(response)
     return response
-
 
 def export_session_pdf(request):   
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = 'inline; attachment; filename="session.pdf"'
     response['Content-Transform-Encoding'] = 'binary'
-    
     if not request.session.get('get_course_id', False):
         return redirect('select_course')
     get_course_id = request.session['get_course_id']
     get_course_id = Course.objects.get(pk=get_course_id)
-
     num_of_session = get_course_id.num_of_session
     num_of_session_list = []
     for i in range(num_of_session):
@@ -1316,7 +1432,6 @@ def export_session_pdf(request):
     num_of_session_list2 = []
     for i in range(num_of_session):
         num_of_session_list2.append(i)
-
     session = Session.objects.filter(course_id=get_course_id).order_by('session_id')
     session_list = session.values_list('session_id', flat=True)
     student = Session_Student.objects.filter(session_id__in=session_list)
@@ -1330,15 +1445,12 @@ def export_session_pdf(request):
                 'course_name': get_course_id.course_name,
                 'day': day,
                 }
-
     html_string = render_to_string('almaher/pdf_output.html', context)
     html = HTML(string=html_string)
     result = html.write_pdf()
-
     with tempfile.NamedTemporaryFile(delete=True) as output:
         output.write(result)
         output.flush()
         output = open(output.name, 'rb')
         response.write(output.read())
-
     return response

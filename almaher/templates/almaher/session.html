@@ -19,9 +19,19 @@
 {% endblock %}
 
 {% block export %}
-<a href="{% url 'export_session_pdf' %}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+<a href="{% url 'export_session_pdf' %}" target="_blank" class="btn btn-sm btn-primary shadow-sm mb-1 mx-2">
     <i class="fas fa-download fa-sm text-white">
-    <span>استخراج البيانات لـ Pdf</span>
+    <span>استخراج الجلسات لـ Pdf</span>
+    </i>
+</a>
+<a href="" target="_blank" class="btn btn-sm btn-primary shadow-sm mb-1 mx-2">
+    <i class="fas fa-download fa-sm text-white">
+    <span>استخراج المدرسين لـ Pdf</span>
+    </i>
+</a>
+<a href="" target="_blank" class="btn btn-sm btn-primary shadow-sm mb-1 mx-2">
+    <i class="fas fa-download fa-sm text-white">
+    <span>استخراج الطلاب لـ Pdf</span>
     </i>
 </a>
 {% endblock %}
