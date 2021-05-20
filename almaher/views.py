@@ -204,7 +204,7 @@ def add_teacher(request):
         Person.objects.create(person_id=count_index, type_id='Teacher', first_name=fname, last_name=lname,
                             father_name=father_n, home_number=hn, phone_number=pn,
                             job=j, address=ad, bdate=bd, level_id=level)
-        messages.success(request, 'Add success')
+        messages.success(request, 'تم الاضافة بنجاح')
         return HttpResponseRedirect(reverse('add_teacher'))
     context = {'level': level,
                 }
@@ -242,7 +242,7 @@ def add_student(request):
         Person.objects.create(person_id=count_index, type_id='Student', first_name=fname, last_name=lname,
                         father_name=father_n, home_number=hn, phone_number=pn,
                         job=j, address=ad, bdate=bd, level_id=level, priority_id=priority)
-        messages.success(request, 'Add success')
+        messages.success(request, 'تم الاضافة بنجاح')
         return HttpResponseRedirect(reverse('add_student'))
     context = {'level': level,
                 }
@@ -287,7 +287,7 @@ def add_course(request):
         sdate = request.POST['sdate']
         edate = request.POST['edate']
         Course.objects.create(course_id=count_index, course_name=ncourse, start_date=sdate, end_date=edate)
-        messages.success(request, 'Add success')
+        messages.success(request, 'تم الاضافة بنجاح')
         return HttpResponseRedirect(reverse('course'))
     context = {}
     return render(request, 'almaher/add_course.html', context)
@@ -623,7 +623,7 @@ def add_session(request):
         time = request.POST['time']
         Session.objects.create(session_id=count_index, level_id=level, course_id=get_course_id,
                              position_id=position, time_id=time, session_number=snumber, teacher_id=teacher)
-        messages.success(request, 'Add success')
+        messages.success(request, 'تم الاضافة بنجاح')
         return HttpResponseRedirect(reverse('add_session'))
     context = {'teacher': teacher,
                 }
@@ -907,7 +907,7 @@ def attendance_generater(request):
             Attendance.objects.create(attendance_id=count_index, person_id=get_student, session_id=get_session_student.session_id, day=new_date[x], status=False)
             count_index += 1
     
-    messages.success(request, 'Add success')
+    messages.success(request, 'تم الانشاء بنجاح')
     return HttpResponseRedirect(reverse('attendance'))
 
 @login_required(login_url='login')
@@ -1446,6 +1446,64 @@ def export_session_pdf(request):
                 'day': day,
                 }
     html_string = render_to_string('almaher/pdf_output.html', context)
+    html = HTML(string=html_string)
+    result = html.write_pdf()
+    with tempfile.NamedTemporaryFile(delete=True) as output:
+        output.write(result)
+        output.flush()
+        output = open(output.name, 'rb')
+        response.write(output.read())
+    return response
+
+def export_students_session_pdf(request):
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'inline; attachment; filename="session.pdf"'
+    response['Content-Transform-Encoding'] = 'binary'
+    if not request.session.get('get_course_id', False):
+        return redirect('select_course')
+    get_course_id = request.session['get_course_id']
+    get_course_id = Course.objects.get(pk=get_course_id)
+    session = Session.objects.filter(course_id=get_course_id).order_by('session_id')
+    session_list = session.values_list('session_id', flat=True)
+    student = Session_Student.objects.filter(session_id__in=session_list)
+    c_session_std = int(student.count())
+    c_session_std += 1
+    count = []
+    for i in range(1, c_session_std):
+        count.append(i)
+    student = zip(student, count)
+    context = {'student': student,
+                'course_name': get_course_id.course_name,
+                }
+    html_string = render_to_string('almaher/pdf_session_student.html', context)
+    html = HTML(string=html_string)
+    result = html.write_pdf()
+    with tempfile.NamedTemporaryFile(delete=True) as output:
+        output.write(result)
+        output.flush()
+        output = open(output.name, 'rb')
+        response.write(output.read())
+    return response
+
+def export_teacher_session_pdf(request):
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'inline; attachment; filename="session.pdf"'
+    response['Content-Transform-Encoding'] = 'binary'
+    if not request.session.get('get_course_id', False):
+        return redirect('select_course')
+    get_course_id = request.session['get_course_id']
+    get_course_id = Course.objects.get(pk=get_course_id)
+    session = Session.objects.filter(course_id=get_course_id).order_by('session_id')
+    c_session = int(session.count())
+    c_session += 1
+    count = []
+    for i in range(1, c_session):
+        count.append(i)
+    session = zip(session, count)
+    context = {'session': session,
+                'course_name': get_course_id.course_name,
+                }
+    html_string = render_to_string('almaher/pdf_session_teacher.html', context)
     html = HTML(string=html_string)
     result = html.write_pdf()
     with tempfile.NamedTemporaryFile(delete=True) as output:
