@@ -308,18 +308,25 @@ def session(request):
     get_course_id = Course.objects.get(pk=get_course_id)
 
     session = Session.objects.all().filter(course_id=get_course_id)
+    session_list_students = session.values_list('session_id', flat=True)
     session_list = session.filter(~Q(teacher_id=None)).values_list('session_id', flat=True)
     in_session_teacher = Session.objects.all().filter(pk__in=session_list).values_list('teacher_id', flat=True)
     teacher = Person.objects.filter(type_id__in=('Teacher', 'Graduate'), status=True).filter(~Q(pk__in=in_session_teacher)).order_by('first_name')
-    c_session = session.count()
-    session_list = []
-    if c_session != 0:
-        for s_loop in range(1, c_session + 1):
-            get_session = session.get(session_number=s_loop)
+    end_session = []
+    for s_loop in session_list_students:
+            get_session = Session.objects.all().get(pk=s_loop)
             c_student = Session_Student.objects.filter(session_id=get_session).count()
-            session_list.append(c_student)
-    zip_list = zip(session, session_list)
-    context = {'zip_list': zip_list,
+            dic_session = {
+                'session_id': get_session.session_id,
+                'session_number': get_session.session_number,
+                'course_id': get_session.course_id,
+                'level_id': get_session.level_id,
+                'position_id': get_session.position_id,
+                'time_id': get_session.time_id,
+                'teacher_id': get_session.teacher_id,
+                'count': c_student,}
+            end_session.append(dic_session)
+    context = {'end_session': end_session,
                 'teacher': teacher,
                 }
     return render(request, 'almaher/session.html', context)
@@ -716,13 +723,14 @@ def session_student(request, pk):
 
         session = Session.objects.get(session_id=new_pk)
         session_student = Session_Student.objects.all().filter(session_id=new_pk)
+        list_1 = session_student.values_list('student_id', flat=True)
         # Get student not Enrolment in sessions
         get_session = Session.objects.all().filter(course_id=get_course_id).values_list('session_id', flat=True)
         in_session = Session_Student.objects.all().filter(session_id__in=get_session).values_list('student_id', flat=True)
         # Q objects can be negated with the ~ operator
         student = Person.objects.filter(type_id='Student', level_id=session.level_id, status=True).filter(~Q(pk__in=in_session))
         in_session_teacher = Session.objects.all().filter(pk__in=get_session).filter(~Q(teacher_id=None)).values_list('teacher_id', flat=True)
-        teacher = Person.objects.filter(type_id__in=('Teacher', 'Graduate'), level_id=session.level_id, status=True).filter(~Q(pk__in=in_session_teacher)).order_by('first_name')
+        teacher = Person.objects.filter(type_id__in=('Teacher', 'Graduate'), level_id=session.level_id, status=True).filter(~Q(pk__in=in_session_teacher)).order_by('first_name')            
         context = {'session': session,
                 'session_student': session_student,
                 'student': student,
@@ -836,6 +844,28 @@ def set_priority(request):
         print(priority_id)
     context = {}
     return JsonResponse(context)
+
+# Test
+def get_teacher(request):   
+    # Check request session
+    if not request.session.get('get_course_id', False):
+        return redirect('select_course')
+    get_course_id = request.session['get_course_id']
+    get_course_id = Course.objects.get(pk=get_course_id)
+    teacher_name = ''
+    student_id = request.GET.get('student_id')
+    student_id = Person.objects.get(pk=student_id)
+    get_session = Session.objects.filter(course_id=get_course_id)
+    list_session = get_session.values_list('session_id', flat=True)
+    # Check person in session
+    if Session_Student.objects.get(session_id__in=list_session, student_id=student_id).exists():
+        session_student = Session_Student.objects.get(session_id__in=list_session, student_id=student_id)
+        session_student = session_student.first()
+        t_name = Session.objects.get(session_id=session_student.session_id)
+        #teacher_name = str(t_name.teacher_id)
+    print(teacher_name)
+    data = {'teacher_name': teacher_name}
+    return JsonResponse(data)
 
 # View attendance
 @login_required(login_url='login')

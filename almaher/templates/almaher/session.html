@@ -63,8 +63,8 @@
     <th></th>-->
 {% endblock %}
 
-{% block tr_table%}
-    {% for item, count in zip_list%}
+{% block tr_table %}
+    {% for item in end_session %}
     <tr>
         <td>{{item.session_number}}</td>
         <td>{{item.course_id.course_name}}</td>
@@ -85,7 +85,7 @@
         <td>{{item.level_id}}</td>
         <td>{{item.position_id}}</td>
         <td>{{item.time_id}}</td>
-        <td>{{count}}</td>
+        <td>{{item.count}}</td>
         <td>
             <div class="d-flex justify-content-center">
                 <a href="{% url 'session_student' item.session_id %}" class="btn btn-success btn-circle btn-sm">
@@ -110,7 +110,7 @@
 {% block javaScript %}
 <script>
     function set_teacher(get_session_id){
-        let session_id = get_session_id
+        let session_id = get_session_id;
         let teacher_id = document.getElementById(get_session_id).value;
         $.ajax({
         url: "{% url 'set_teacher' %}",
