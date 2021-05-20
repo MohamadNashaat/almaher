@@ -21,9 +21,53 @@
     
     <!-- Content Row -->
     <div class="row">
+        <h4 class="text-dark mt-4">مجموع الدورات والجلسات</h4>
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class=" font-weight-bold text-primary text-uppercase mb-1">
+                                عدد الدورات
+                            </div>
+                            <div class="row no-gutters align-items-center">
+                                <div class="col-auto">
+                                    <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">{{c_course}}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-book fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pending Requests Card Example -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class=" font-weight-bold text-primary text-uppercase mb-1">
+                                عدد الجلسات في الدورة الحالية</div>
+                            <div class="h5 mb-0  text-gray-800">{{c_session}}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-users fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Row -->
+    <div class="row">
         <h4 class="text-dark mt-4">مجموع الطلاب والمدرسين</h4>
         <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card border-left-info shadow h-100 py-2">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
@@ -40,11 +84,11 @@
         </div>
 
         <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-success shadow h-100 py-2">
+            <div class="card border-left-info shadow h-100 py-2">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
-                            <div class=" font-weight-bold text-success text-uppercase mb-1">
+                            <div class=" font-weight-bold text-primary text-uppercase mb-1">
                                 عدد الطلاب</div>
                             <div class="h5 mb-0  text-gray-800">{{ c_student }}</div>
                         </div>
@@ -57,11 +101,11 @@
         </div>
 
         <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-success shadow h-100 py-2">
+            <div class="card border-left-info shadow h-100 py-2">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
-                            <div class=" font-weight-bold text-success text-uppercase mb-1">
+                            <div class=" font-weight-bold text-primary text-uppercase mb-1">
                                 عدد المتخرجين</div>
                             <div class="h5 mb-0  text-gray-800">{{ c_graduate }}</div>
                         </div>
@@ -79,7 +123,7 @@
         <h4 class="text-dark mt-4">مجموع المدرسين في كل مستوى</h4>
         {% for item, count in zip_list2 %}
         <div class="col-xl-2 col-md-6 mt-2 mb-4">
-            <div class="card border-left-success shadow h-100 py-2">
+            <div class="card border-left-info shadow h-100 py-2">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
@@ -101,7 +145,7 @@
         <h4 class="text-dark mt-4">مجموع الطلاب في كل مستوى</h4>
         {% for item, count in zip_list %}
         <div class="col-xl-2 col-md-6 mt-2 mb-4">
-            <div class="card border-left-success shadow h-100 py-2">
+            <div class="card border-left-info shadow h-100 py-2">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
@@ -118,49 +162,6 @@
         {% endfor %}
     <dvi>
 
-    <!-- Content Row -->
-    <div class="row">
-        <h4 class="text-dark mt-4">مجموع الدورات والجلسات</h4>
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-info shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class=" font-weight-bold text-info text-uppercase mb-1">
-                                عدد الدورات
-                            </div>
-                            <div class="row no-gutters align-items-center">
-                                <div class="col-auto">
-                                    <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">{{c_course}}</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-book fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Pending Requests Card Example -->
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-warning shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class=" font-weight-bold text-warning text-uppercase mb-1">
-                                عدد الجلسات في الدورة الحالية</div>
-                            <div class="h5 mb-0  text-gray-800">{{c_session}}</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-users fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
     
 {% endblock %}
