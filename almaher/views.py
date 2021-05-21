@@ -286,7 +286,12 @@ def add_course(request):
         ncourse = request.POST['ncourse']
         sdate = request.POST['sdate']
         edate = request.POST['edate']
-        Course.objects.create(course_id=count_index, course_name=ncourse, start_date=sdate, end_date=edate)
+        count_of_session = request.POST['count_of_session']
+        Course.objects.create(course_id=count_index, 
+                                course_name=ncourse, 
+                                start_date=sdate, 
+                                end_date=edate,
+                                num_of_session=count_of_session)
         messages.success(request, 'تم الاضافة بنجاح')
         return HttpResponseRedirect(reverse('course'))
     context = {}
@@ -1099,24 +1104,57 @@ def generate_result(request):
         return redirect('select_course')
     get_course_id = request.session['get_course_id']
     get_course_id = Course.objects.get(pk=get_course_id)
-    # get all students on session in this course and generate 3 type_time and 2 type_exam for each students
     session = Session.objects.all().filter(course_id=get_course_id)
     session_list = session.values_list('session_id', flat=True)
-    # Check if student are in exam
-    person_in_result = Result.objects.filter(session_id__in=session_list).values_list('student_id' ,flat=True)
+    # Check if student are in result
+    result = Result.objects.filter(session_id__in=session_list)
+    person_in_result = result.values_list('student_id' ,flat=True)
     session_student = Session_Student.objects.all().filter(session_id__in=session_list)
     student = session_student.filter(~Q(student_id__in=person_in_result)).values_list('student_id', flat=True)
-    # Add student to attendance
+    # Check if any student is not in exam
+    session_student_count = session_student.values_list('student_id', flat=True).distinct('student_id')
+    chk_exam = Exam.objects.filter(session_id__in=session_list).values_list('student_id', flat=True).distinct('student_id')
+    if len(session_student_count) != len(chk_exam):
+        messages.error(request, 'الرجاء انشاء الاختبارات ثم انشاء النتائج')
+        return HttpResponseRedirect(reverse('result'))
+    # Update students on result
+    for item in person_in_result:
+        get_student = Person.objects.get(pk=item)
+        get_result_id = result.get(student_id=get_student)
+        get_theoretical_mark = Exam.objects.filter(student_id=get_student, session_id=get_result_id.session_id, type_id='نظري').aggregate(Max('mark'))['mark__max']
+        get_practical_mark = Exam.objects.filter(student_id=get_student, session_id=get_result_id.session_id, type_id='عملي').aggregate(Max('mark'))['mark__max']
+        get_attendance = Attendance.objects.filter(person_id=get_student, session_id=get_result_id.session_id, status=True).count()
+        get_result = (get_theoretical_mark + get_practical_mark) /2
+        get_result_type = 'إعادة'
+        if get_practical_mark >= 80:
+            if get_theoretical_mark >= 80:
+                get_result_type = 'ناجح'
+            if get_theoretical_mark < 80:
+                if get_theoretical_mark >= 70:
+                    get_result_type = 'نجاح شرطي'
+        # Edit result
+        get_result_id.attendance= get_attendance
+        get_result_id.theoretical_mark= get_theoretical_mark
+        get_result_id.practical_mark= get_practical_mark
+        get_result_id.result= get_result
+        get_result_id.result_type= get_result_type
+        get_result_id.save()
+    # Add students to result
     for item in student:
         get_student = Person.objects.get(pk=item)
         get_session_student = session_student.get(student_id=get_student)
         get_theoretical_mark = Exam.objects.filter(student_id=get_student, session_id=get_session_student.session_id, type_id='نظري').aggregate(Max('mark'))['mark__max']
         get_practical_mark = Exam.objects.filter(student_id=get_student, session_id=get_session_student.session_id, type_id='عملي').aggregate(Max('mark'))['mark__max']
         get_attendance = Attendance.objects.filter(person_id=get_student, session_id=get_session_student.session_id, status=True).count()
-        get_result = (get_theoretical_mark + get_practical_mark) / 2
-        get_result_type = 'ناجح'
-        if get_result < 80:
-            get_result_type = 'إعادة'
+        get_result = (get_theoretical_mark + get_practical_mark) /2
+        get_result_type = 'إعادة'
+        if get_practical_mark >= 80:
+            if get_theoretical_mark >= 80:
+                get_result_type = 'ناجح'
+            if get_theoretical_mark < 80:
+                if get_theoretical_mark >= 70:
+                    get_result_type = 'نجاح شرطي'
+
         count_index = Result.objects.all().count()
         if count_index == 0:
             count_index = 1
@@ -1135,8 +1173,6 @@ def generate_result(request):
         count_index += 1
     messages.success(request, 'تم الانشاء بنجاح')
     return HttpResponseRedirect(reverse('result'))
-
-
 
 
 
@@ -1465,6 +1501,13 @@ def export_session_pdf(request):
     session = Session.objects.filter(course_id=get_course_id).order_by('session_id')
     session_list = session.values_list('session_id', flat=True)
     student = Session_Student.objects.filter(session_id__in=session_list)
+    # Check if any student is not in attendance
+    session_student_count = student.values_list('student_id', flat=True).distinct('student_id')
+    chk_attendance = Attendance.objects.filter(session_id__in=session_list).values_list('person_id', flat=True).distinct('person_id')
+    if len(session_student_count) != len(chk_attendance):
+        messages.error(request, 'الرجاء انشاء الحضور اولا')
+        return HttpResponseRedirect(reverse('session'))
+
     c_session = session.count()
     day = Attendance.objects.filter(session_id__in=session_list).order_by('day').distinct('day').values_list('day', flat=True)
     context = {'session': session,
