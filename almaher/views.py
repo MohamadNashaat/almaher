@@ -803,75 +803,6 @@ def wait_list_session(request):
     return render(request, 'almaher/wait_list_session.html', context)
 
 
-# Ajax Views
-def set_teacher(request):   
-    teacher_id = request.GET.get('teacher_id')
-    session_id = request.GET.get('session_id')
-    get_session = Session.objects.get(pk=session_id)
-
-    if Person.objects.filter(pk=teacher_id).exists():
-        get_teacher = Person.objects.get(pk=teacher_id)
-        get_session.teacher_id = get_teacher
-    else:
-        get_session.teacher_id = None
-    get_session.save()
-    context = {}
-    return JsonResponse(context)
-
-def set_student(request):
-    # Get index id session student
-    count_index_s_student = Session_Student.objects.all().count()
-    if count_index_s_student == 0:
-        count_index_s_student = 1
-    else:
-        count_index_s_student = Session_Student.objects.all().aggregate(Max('id'))['id__max']
-        count_index_s_student += 1
-
-    student_id = request.GET.get('student_id')
-    session_id = request.GET.get('session_id')
-    get_session = Session.objects.get(pk=session_id)
-
-    if Person.objects.filter(pk=student_id).exists():
-        get_student = Person.objects.get(pk=student_id)
-        Session_Student.objects.create(id=count_index_s_student, session_id=get_session, student_id=get_student)
-        count_index_s_student += 1
-    context = {}
-    return JsonResponse(context)
-
-def set_priority(request):   
-    student_id = request.GET.get('student_id')
-    priority_id = request.GET.get('priority_id')
-    if Person.objects.filter(pk=student_id).exists():
-        get_student = Person.objects.get(pk=student_id)
-        get_student.priority_id = priority_id
-        get_student.save()
-        print(student_id)
-        print(priority_id)
-    context = {}
-    return JsonResponse(context)
-
-# Test
-def get_teacher(request):   
-    # Check request session
-    if not request.session.get('get_course_id', False):
-        return redirect('select_course')
-    get_course_id = request.session['get_course_id']
-    get_course_id = Course.objects.get(pk=get_course_id)
-    teacher_name = ''
-    student_id = request.GET.get('student_id')
-    student_id = Person.objects.get(pk=student_id)
-    get_session = Session.objects.filter(course_id=get_course_id)
-    list_session = get_session.values_list('session_id', flat=True)
-    # Check person in session
-    if Session_Student.objects.get(session_id__in=list_session, student_id=student_id).exists():
-        session_student = Session_Student.objects.get(session_id__in=list_session, student_id=student_id)
-        session_student = session_student.first()
-        t_name = Session.objects.get(session_id=session_student.session_id)
-        #teacher_name = str(t_name.teacher_id)
-    print(teacher_name)
-    data = {'teacher_name': teacher_name}
-    return JsonResponse(data)
-
 # View attendance
 @login_required(login_url='login')
 def select_attendance(request):
@@ -1173,6 +1104,162 @@ def generate_result(request):
         count_index += 1
     messages.success(request, 'تم الانشاء بنجاح')
     return HttpResponseRedirect(reverse('result'))
+
+@login_required(login_url='login')
+def student_pass(request):
+    # Check request session
+    if not request.session.get('get_course_id', False):
+        return redirect('select_course')
+    get_course_id = request.session['get_course_id']
+    get_course_id = Course.objects.get(pk=get_course_id)
+    session = Session.objects.all().filter(course_id=get_course_id)
+    session_list = session.values_list('session_id', flat=True)
+    # Check if student are in result
+    result = Result.objects.filter(session_id__in=session_list)
+    person_in_result = result.values_list('student_id' ,flat=True)
+    # Check if any student is not in exam
+    result_count = result.count()
+    if result_count == 0:
+        messages.error(request, 'الرجاء انشاء النتائج اولا')
+        return HttpResponseRedirect(reverse('result'))
+    # Get all students and pass them to next level
+    advanced_b = Level.objects.get(pk='متقدم ب')
+    advanced_a = Level.objects.get(pk='متقدم أ')
+    intermediate_b = Level.objects.get(pk='متوسط ب')
+    intermediate_a = Level.objects.get(pk='متوسط أ')
+    beginner_b = Level.objects.get(pk='مبتدئ ب')
+    beginner_a = Level.objects.get(pk='مبتدئ أ')
+    for item in person_in_result:
+        get_student = Person.objects.get(pk=item)
+        get_result_id = result.get(student_id=get_student)
+        this_level = str(get_result_id.session_id.level_id)
+        # Check result
+        if get_result_id.result_type == 'ناجح':
+            if this_level == 'مبتدئ أ':
+                get_student.level_id = beginner_b
+                get_student.save()
+            elif this_level == 'مبتدئ ب':
+                get_student.level_id = intermediate_a
+                get_student.save()
+            elif this_level == 'متوسط أ':
+                get_student.level_id = intermediate_b
+                get_student.save()
+            elif this_level == 'متوسط ب':
+                get_student.level_id = advanced_a
+                get_student.save()
+            elif this_level == 'متقدم أ':
+                get_student.level_id = advanced_b
+                get_student.save()
+            elif this_level == 'متقدم ب':
+                get_student.type_id = 'Graduate'
+                get_student.status = False
+                get_student.save()
+            
+        elif get_result_id.result_type == 'نجاح شرطي':
+            if this_level == 'مبتدئ أ':
+                get_student.level_id = beginner_b
+                get_student.save()
+            elif this_level == 'مبتدئ ب':
+                get_student.level_id = intermediate_a
+                get_student.save()
+            elif this_level == 'متوسط أ':
+                get_student.level_id = intermediate_b
+                get_student.save()
+            elif this_level == 'متوسط ب':
+                get_student.level_id = advanced_a
+                get_student.save()
+            elif this_level == 'متقدم أ':
+                get_student.level_id = advanced_b
+                get_student.save()
+            elif this_level == 'متقدم ب':
+                get_student.type_id = 'Graduate'
+                get_student.status = False
+                get_student.save()
+
+        elif get_result_id.result_type == 'إعادة':
+            get_student.level_id = get_result_id.session_id.level_id
+            get_student.save()
+    messages.success(request, 'تم الترحيل بنجاح')
+    return HttpResponseRedirect(reverse('result'))
+
+# Ajax Views
+def set_teacher(request):   
+    teacher_id = request.GET.get('teacher_id')
+    session_id = request.GET.get('session_id')
+    get_session = Session.objects.get(pk=session_id)
+
+    if Person.objects.filter(pk=teacher_id).exists():
+        get_teacher = Person.objects.get(pk=teacher_id)
+        get_session.teacher_id = get_teacher
+    else:
+        get_session.teacher_id = None
+    get_session.save()
+    context = {}
+    return JsonResponse(context)
+
+def set_student(request):
+    # Get index id session student
+    count_index_s_student = Session_Student.objects.all().count()
+    if count_index_s_student == 0:
+        count_index_s_student = 1
+    else:
+        count_index_s_student = Session_Student.objects.all().aggregate(Max('id'))['id__max']
+        count_index_s_student += 1
+
+    student_id = request.GET.get('student_id')
+    session_id = request.GET.get('session_id')
+    get_session = Session.objects.get(pk=session_id)
+
+    if Person.objects.filter(pk=student_id).exists():
+        get_student = Person.objects.get(pk=student_id)
+        Session_Student.objects.create(id=count_index_s_student, session_id=get_session, student_id=get_student)
+        count_index_s_student += 1
+    context = {}
+    return JsonResponse(context)
+
+def set_priority(request):   
+    student_id = request.GET.get('student_id')
+    priority_id = request.GET.get('priority_id')
+    if Person.objects.filter(pk=student_id).exists():
+        get_student = Person.objects.get(pk=student_id)
+        get_student.priority_id = priority_id
+        get_student.save()
+    context = {}
+    return JsonResponse(context)
+
+def set_result_type(request):
+    result_id = request.GET.get('result_id')
+    result_type = request.GET.get('result_type')
+    if Result.objects.filter(pk=result_id).exists():
+        get_result = Result.objects.get(pk=result_id)
+        get_result.result_type = result_type
+        get_result.save()
+    print(result_id)
+    print(result_type)
+    context = {}
+    return JsonResponse(context)
+
+# Test
+def get_teacher(request):   
+    # Check request session
+    if not request.session.get('get_course_id', False):
+        return redirect('select_course')
+    get_course_id = request.session['get_course_id']
+    get_course_id = Course.objects.get(pk=get_course_id)
+    teacher_name = ''
+    student_id = request.GET.get('student_id')
+    student_id = Person.objects.get(pk=student_id)
+    get_session = Session.objects.filter(course_id=get_course_id)
+    list_session = get_session.values_list('session_id', flat=True)
+    # Check person in session
+    if Session_Student.objects.get(session_id__in=list_session, student_id=student_id).exists():
+        session_student = Session_Student.objects.get(session_id__in=list_session, student_id=student_id)
+        session_student = session_student.first()
+        t_name = Session.objects.get(session_id=session_student.session_id)
+        #teacher_name = str(t_name.teacher_id)
+    print(teacher_name)
+    data = {'teacher_name': teacher_name}
+    return JsonResponse(data)
 
 
 

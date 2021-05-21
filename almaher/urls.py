@@ -51,11 +51,13 @@ urlpatterns = [
     # JSON
     path('ajax/change_status_true', views.change_status_true, name='change_status_true'),
     path('ajax/change_status_false', views.change_status_false, name='change_status_false'),
+    path('ajax/get_teacher', views.get_teacher, name='get_teacher'),
     path('ajax/set_teacher', views.set_teacher, name='set_teacher'),
     path('ajax/set_student', views.set_student, name='set_student'),
     path('ajax/set_priority', views.set_priority, name='set_priority'),
     path('ajax/set_exam_mark', views.set_exam_mark, name='set_exam_mark'),
-    path('ajax/get_teacher', views.get_teacher, name='get_teacher'),
+    path('ajax/set_result_type', views.set_result_type, name='set_result_type'),
+    
 
     # Urls Exam
     path('exam', views.exam, name='exam'),
@@ -63,7 +65,9 @@ urlpatterns = [
 
     # Urls Result
     path('result', views.result, name='result'),
-    path('result/generate', views.generate_result, name='generate_result'),   
+    path('result/generate', views.generate_result, name='generate_result'),  
+    path('result/pass', views.student_pass, name='student_pass'),  
+     
 
     # Urls Export to *
     path('export/excel/person', views.export_excel_person, name='export_excel_person'),
@@ -73,7 +77,6 @@ urlpatterns = [
     path('export/pdf/session', views.export_session_pdf, name='export_session_pdf'),
     path('export/pdf/session/student', views.export_students_session_pdf, name='export_students_session_pdf'),
     path('export/pdf/session/teacher', views.export_teacher_session_pdf, name='export_teacher_session_pdf'),
-
     path('export/excel/attendance', views.export_excel_attendance, name='export_excel_attendance'),
 
 ]
