@@ -826,7 +826,7 @@ def attendance_generater(request):
         return redirect('select_course')
     get_course_id = request.session['get_course_id']
     get_course_id = Course.objects.get(pk=get_course_id)
-
+    # Get data from form
     get_sdate = get_course_id.start_date
     get_num = get_course_id.num_of_session
     new_date = []
@@ -834,17 +834,16 @@ def attendance_generater(request):
         new_date.append(get_sdate)
         get_sdate = get_sdate + timedelta(days=7)
     # Get course id
-    session = Session.objects.all().filter(course_id=get_course_id)
+    session = Session.objects.filter(course_id=get_course_id)
     session_list = session.values_list('session_id', flat=True)
     # Check if teacher or student are in attendance
     person_in_attandance = Attendance.objects.filter(session_id__in=session_list).values_list('person_id' ,flat=True)
     ###
     #person_list = Person.objects.all().values_list('person_id' ,flat=True)
     teacher = session.filter(~Q(teacher_id_id=None)).filter(~Q(teacher_id__in=person_in_attandance)).values_list('teacher_id', flat=True)
-    session_student = Session_Student.objects.all().filter(session_id__in=session_list)
+    session_student = Session_Student.objects.filter(session_id__in=session_list)
     student = session_student.filter(~Q(student_id__in=person_in_attandance)).values_list('student_id', flat=True)
     ###
-
     # Add teacher to attendance
     for item in teacher:
         get_teacher = Person.objects.get(pk=item)
@@ -858,7 +857,6 @@ def attendance_generater(request):
         for x in range(get_num):
             Attendance.objects.create(attendance_id=count_index, person_id=get_teacher, session_id=get_session, day=new_date[x], status=False)
             count_index += 1
-
     # Add student to attendance
     for item in student:
         get_student = Person.objects.get(pk=item)
@@ -872,7 +870,6 @@ def attendance_generater(request):
         for x in range(get_num):
             Attendance.objects.create(attendance_id=count_index, person_id=get_student, session_id=get_session_student.session_id, day=new_date[x], status=False)
             count_index += 1
-    
     messages.success(request, 'تم الانشاء بنجاح')
     return HttpResponseRedirect(reverse('attendance'))
 
@@ -883,16 +880,16 @@ def attendance_teacher(request):
         return redirect('select_course')
     get_course_id = request.session['get_course_id']
     get_course_id = Course.objects.get(pk=get_course_id)
-
-    teacher = Person.objects.all().filter(type_id__in=('Teacher', 'Graduate')).values_list('person_id', flat=True)
-    session = Session.objects.all().filter(course_id=get_course_id).values_list('session_id', flat=True)
-    day_attendance = Attendance.objects.all().filter(person_id__in=teacher, session_id__in=session).values_list('day', flat=True).order_by('day').distinct()
-    get_attendance = Attendance.objects.all().filter(person_id__in=teacher, session_id__in=session).distinct('person_id')
-
+    # Get all teachers
+    session = Session.objects.filter(course_id=get_course_id)
+    teacher = session.values_list('teacher_id', flat=True)
+    session_list = session.values_list('session_id', flat=True)
+    day_attendance = Attendance.objects.all().filter(person_id__in=teacher, session_id__in=session_list).values_list('day', flat=True).order_by('day').distinct()
+    get_attendance = Attendance.objects.all().filter(person_id__in=teacher, session_id__in=session_list).distinct('person_id')
     attendance = []
     for all_person in get_attendance:
-        status_attendance = Attendance.objects.all().filter(person_id=all_person.person_id, session_id__in=session).values_list('status', flat=True).order_by('day')
-        id_attendance = Attendance.objects.all().filter(person_id=all_person.person_id, session_id__in=session).values_list('attendance_id', flat=True).order_by('day')
+        status_attendance = Attendance.objects.all().filter(person_id=all_person.person_id, session_id__in=session_list).values_list('status', flat=True).order_by('day')
+        id_attendance = Attendance.objects.all().filter(person_id=all_person.person_id, session_id__in=session_list).values_list('attendance_id', flat=True).order_by('day')
         zip_id_day = zip(status_attendance, id_attendance)
         dic_attendance = {'person_id': all_person.person_id, 'session_number': all_person.session_id.session_number , 'first_name': all_person.person_id.first_name, 'last_name': all_person.person_id.last_name, 'zip_id_day': zip_id_day}
         attendance.append(dic_attendance)
@@ -908,39 +905,23 @@ def attendance_student(request):
         return redirect('select_course')
     get_course_id = request.session['get_course_id']
     get_course_id = Course.objects.get(pk=get_course_id)
-
-    student = Person.objects.all().filter(type_id='Student').values_list('person_id', flat=True)
-    session = Session.objects.all().filter(course_id=get_course_id).values_list('session_id', flat=True)
-    day_attendance = Attendance.objects.all().filter(person_id__in=student, session_id__in=session).values_list('day', flat=True).order_by('day').distinct()
-    get_attendance = Attendance.objects.all().filter(person_id__in=student, session_id__in=session).distinct('person_id')
-
+    # Get all teachers
+    session = Session.objects.all().filter(course_id=get_course_id)
+    session_list = session.values_list('session_id', flat=True)
+    student = Session_Student.objects.filter(session_id__in=session_list).values_list('student_id', flat=True)
+    day_attendance = Attendance.objects.all().filter(person_id__in=student, session_id__in=session_list).values_list('day', flat=True).order_by('day').distinct()
+    get_attendance = Attendance.objects.all().filter(person_id__in=student, session_id__in=session_list).distinct('person_id')
     attendance = []
     for all_person in get_attendance:
-        status_attendance = Attendance.objects.all().filter(person_id=all_person.person_id, session_id__in=session).values_list('status', flat=True).order_by('day')
-        id_attendance = Attendance.objects.all().filter(person_id=all_person.person_id, session_id__in=session).values_list('attendance_id', flat=True).order_by('day')
+        status_attendance = Attendance.objects.all().filter(person_id=all_person.person_id, session_id__in=session_list).values_list('status', flat=True).order_by('day')
+        id_attendance = Attendance.objects.all().filter(person_id=all_person.person_id, session_id__in=session_list).values_list('attendance_id', flat=True).order_by('day')
         zip_id_day = zip(status_attendance, id_attendance)
         dic_attendance = {'person_id': all_person.person_id, 'session_number': all_person.session_id.session_number , 'first_name': all_person.person_id.first_name, 'last_name': all_person.person_id.last_name, 'zip_id_day': zip_id_day}
         attendance.append(dic_attendance)
     context = {'day_attendance': day_attendance,
                 'attendance': attendance,
                 }
-    return render(request, 'almaher/attendance_student.html', context)
-
-def change_status_true(request):   
-    attendance_id = request.GET.get('attendance_id')
-    attendance = Attendance.objects.get(pk=attendance_id)
-    attendance.status = True
-    attendance.save()
-    context = {}
-    return JsonResponse(context)
-
-def change_status_false(request):   
-    attendance_id = request.GET.get('attendance_id')
-    attendance = Attendance.objects.get(pk=attendance_id)
-    attendance.status = False
-    attendance.save()
-    context = {}
-    return JsonResponse(context)    
+    return render(request, 'almaher/attendance_student.html', context)    
     
 @login_required(login_url='login')
 def exam(request):
@@ -1003,15 +984,6 @@ def generate_exam(request):
         count_index += 1
     messages.success(request, 'تم الانشاء بنجاح')
     return HttpResponseRedirect(reverse('exam'))
-
-def set_exam_mark(request):   
-    exam_id = request.GET.get('exam_id')
-    exam_value = request.GET.get('exam_value')
-    exam = Exam.objects.get(pk=exam_id)
-    exam.mark = exam_value
-    exam.save()
-    context = {}
-    return JsonResponse(context)
 
 # Manage results
 @login_required(login_url='login')
@@ -1236,6 +1208,31 @@ def set_result_type(request):
         get_result.save()
     print(result_id)
     print(result_type)
+    context = {}
+    return JsonResponse(context)
+
+def set_exam_mark(request):   
+    exam_id = request.GET.get('exam_id')
+    exam_value = request.GET.get('exam_value')
+    exam = Exam.objects.get(pk=exam_id)
+    exam.mark = exam_value
+    exam.save()
+    context = {}
+    return JsonResponse(context)
+
+def change_status_true(request):   
+    attendance_id = request.GET.get('attendance_id')
+    attendance = Attendance.objects.get(pk=attendance_id)
+    attendance.status = True
+    attendance.save()
+    context = {}
+    return JsonResponse(context)
+
+def change_status_false(request):   
+    attendance_id = request.GET.get('attendance_id')
+    attendance = Attendance.objects.get(pk=attendance_id)
+    attendance.status = False
+    attendance.save()
     context = {}
     return JsonResponse(context)
 
@@ -1569,9 +1566,9 @@ def export_excel_attendance(request):
     wb.save(response)
     return response
 
-def export_session_pdf(request):   
+def export_session_pdf(request):
     response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'inline; attachment; filename="session.pdf"'
+    response['Content-Disposition'] = 'attachment; filename="session.pdf"'
     response['Content-Transform-Encoding'] = 'binary'
     if not request.session.get('get_course_id', False):
         return redirect('select_course')
@@ -1589,12 +1586,10 @@ def export_session_pdf(request):
     session_list = session.values_list('session_id', flat=True)
     student = Session_Student.objects.filter(session_id__in=session_list)
     # Check if any student is not in attendance
-    session_student_count = student.values_list('student_id', flat=True).distinct('student_id')
-    chk_attendance = Attendance.objects.filter(session_id__in=session_list).values_list('person_id', flat=True).distinct('person_id')
-    if len(session_student_count) != len(chk_attendance):
+    chk_attendance = Attendance.objects.filter(session_id__in=session_list).distinct('person_id').count()
+    if chk_attendance == 0:
         messages.error(request, 'الرجاء انشاء الحضور اولا')
         return HttpResponseRedirect(reverse('session'))
-
     c_session = session.count()
     day = Attendance.objects.filter(session_id__in=session_list).order_by('day').distinct('day').values_list('day', flat=True)
     context = {'session': session,
@@ -1617,7 +1612,7 @@ def export_session_pdf(request):
 
 def export_students_session_pdf(request):
     response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'inline; attachment; filename="session.pdf"'
+    response['Content-Disposition'] = 'attachment; filename="students_session.pdf"'
     response['Content-Transform-Encoding'] = 'binary'
     if not request.session.get('get_course_id', False):
         return redirect('select_course')
@@ -1647,7 +1642,7 @@ def export_students_session_pdf(request):
 
 def export_teacher_session_pdf(request):
     response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'inline; attachment; filename="session.pdf"'
+    response['Content-Disposition'] = 'attachment; filename="teachers_session.pdf"'
     response['Content-Transform-Encoding'] = 'binary'
     if not request.session.get('get_course_id', False):
         return redirect('select_course')
