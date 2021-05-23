@@ -99,7 +99,6 @@ class Exam(models.Model):
     type_id = models.CharField(max_length=50, null=True, choices=exam_type)
     time_id = models.CharField(max_length=50, null=True, choices=exam_time)
     student_id = models.ForeignKey(Person, on_delete=models.CASCADE, null=True)
-    #teacher_id = models.ForeignKey(Person, on_delete=models.CASCADE, related_name='teacher_id', null=True)
     session_id = models.ForeignKey(Session, on_delete=models.CASCADE, null=True)
     mark = models.IntegerField(null=True)
     create_date = models.DateField(auto_now_add=True, null=True)
