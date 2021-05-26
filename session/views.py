@@ -592,7 +592,7 @@ def export_session_pdf(request):
                 'course_name': get_course_id.course_name,
                 'day': day,
                 }
-    html_string = render_to_string('almaher/pdf_output.html', context)
+    html_string = render_to_string('session/pdf_output.html', context)
     html = HTML(string=html_string)
     result = html.write_pdf()
     with tempfile.NamedTemporaryFile(delete=True) as output:
@@ -622,7 +622,7 @@ def export_students_session_pdf(request):
     context = {'student': student,
                 'course_name': get_course_id.course_name,
                 }
-    html_string = render_to_string('almaher/pdf_session_student.html', context)
+    html_string = render_to_string('session/pdf_session_student.html', context)
     html = HTML(string=html_string)
     result = html.write_pdf()
     with tempfile.NamedTemporaryFile(delete=True) as output:
@@ -650,7 +650,7 @@ def export_teacher_session_pdf(request):
     context = {'session': session,
                 'course_name': get_course_id.course_name,
                 }
-    html_string = render_to_string('almaher/pdf_session_teacher.html', context)
+    html_string = render_to_string('session/pdf_session_teacher.html', context)
     html = HTML(string=html_string)
     result = html.write_pdf()
     with tempfile.NamedTemporaryFile(delete=True) as output:
