@@ -1,0 +1,80 @@
+{% extends 'base_card_dml.html'%}
+
+{% block mess %}
+    {% if messages %}
+    {% for message in messages %}
+    {% if message.tags %}
+    <div class="d-flex justify-content-center">
+        <div class="alert alert-success my-2 text-center w-25" role="alert">
+            {{message}}
+        </div>
+    </div>
+    {% endif %}
+    {% endfor %}
+    {% endif %}
+{% endblock %}
+
+{% block pg_head %}
+    Add Session
+{% endblock %}
+
+{% block card_body %}
+    <form class="user" action="{% url 'add_session' %}" method="post">
+        {% csrf_token %}
+        <div class="form-group row">
+            <div class="col-sm-6 mb-3 mb-sm-0">
+                <label for="exampleInputEmail1" class="form-label">Session Number</label>
+                <input type="text" class="form-control form-control-user" id="snumber" name="snumber"
+                    placeholder="Session Number" required>
+            </div>
+            <div class="col-sm-6">
+                <label for="exampleInputEmail1" class="form-label">Teacher</label>
+                <select class="form-control form-select rounded-pill" aria-label="Default select example" name="teacher" id="teacher" required>
+                    {% for item in teacher %}
+                    <option value="{{item.person_id}}">{{item.first_name}} {{item.last_name}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <div class="col-sm-6 mb-3 mb-sm-0">
+                <label for="exampleInputEmail1" class="form-label">Level</label>
+                <select class="form-control form-select rounded-pill" aria-label="Default select example" name="level" id="level">
+                    <option value="مبتدئ أ">مبتدئ أ</option>
+                    <option value="مبتدئ ب">مبتدئ ب</option>
+                    <option value="متوسط أ">متوسط أ</option>
+                    <option value="متوسط ب">متوسط ب</option>
+                    <option value="متقدم أ">متقدم أ</option>
+                    <option value="متقدم ب">متقدم ب</option>
+                </select>
+            </div>
+            <div class="col-sm-6">
+                <label for="exampleInputEmail1" class="form-label">Position</label>
+                <select class="form-control form-select rounded-pill" aria-label="Default select example" name="position" id="position" required>
+                    <option value="توسعة مكتبة">توسعة مكتبة</option>
+                    <option value="قبو">قبو</option>
+                    <option value="توسعة حرم رئيسي">توسعة حرم رئيسي</option>
+                    <option value="حرم رئيسي">حرم رئيسي</option>
+                    <option value="تحت السدة">تحت السدة</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="form-group row">
+            <div class="col-sm-6 mb-3 mb-sm-0">
+                <labelclass="form-label">Time</label>
+                <select class="form-control form-select rounded-pill" aria-label="Default select example" name="time" id="time" required>
+                    <option value="بعد جلسة الصفا">بعد جلسة الصفا</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-center">
+            <a type="button" class="btn btn-secondary w-25 mr-4" href="{% url 'session'%}">
+                <span>Back</span>
+            </a>
+            <input type="submit" value="Add" class="btn btn-primary w-25">
+        </div>
+    </form>
+{% endblock %}

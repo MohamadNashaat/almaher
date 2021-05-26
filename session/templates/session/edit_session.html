@@ -1,0 +1,77 @@
+{% extends 'base_card_dml.html'%}
+
+{% block pg_head %}
+    Edit Session
+{% endblock %}
+
+{% block card_body %}
+    <form action="{% url 'edit_session' session.session_id %}" method="post">
+            {% csrf_token %}
+            <div class="form-group row">
+                <div class="col-sm-6 mb-3 mb-sm-0">
+                    <label for="exampleInputEmail1" class="form-label">Session Number</label>
+                    <input type="text" class="form-control form-control-user" id="snumber" name="snumber"
+                        placeholder="Session Number" value="{{session.session_number}}" required>
+                </div>
+                <div class="col-sm-6">
+                    <label for="exampleInputEmail1" class="form-label">Course</label>
+                    <select class="form-control form-select rounded-pill" aria-label="Default select example" name="course" id="course">
+                        {% if session.course_id %}
+                            <option value="{{session.course_id.course_id}}" selected>{{session.course_id.course_name}}</option>
+                        {% endif %}
+                        {% for item in course%}
+                        <option value="{{item.course_id}}">{{item.course_name}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-sm-6 mb-3 mb-sm-0">
+                    <label for="exampleInputEmail1" class="form-label">Teacher</label>
+                    <select class="form-control form-select rounded-pill" aria-label="Default select example" name="teacher" id="teacher">
+                        {% if session.teacher_id %}
+                            <option value="{{session.teacher_id.person_id}}" selected>{{session.teacher_id.first_name}} {{session.teacher_id.last_name}}</option>
+                        {% endif %} 
+                        {% for item in teacher%}
+                            <option value="{{item.person_id}}">{{item.first_name}} {{item.last_name}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-sm-6">
+                    <label for="exampleInputEmail1" class="form-label">Level</label>
+                    <select class="form-control form-select rounded-pill" aria-label="Default select example" name="level" id="level">
+                        <option value="مبتدئ أ">مبتدئ أ</option>
+                    <option value="مبتدئ ب">مبتدئ ب</option>
+                    <option value="متوسط أ">متوسط أ</option>
+                    <option value="متوسط ب">متوسط ب</option>
+                    <option value="متقدم أ">متقدم أ</option>
+                    <option value="متقدم ب">متقدم ب</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-sm-6 mb-3 mb-sm-0">
+                    <label for="exampleInputEmail1" class="form-label">Position</label>
+                    <select class="form-control form-select rounded-pill" aria-label="Default select example" name="position" id="position">
+                        <option value="توسعة مكتبة">توسعة مكتبة</option>
+                        <option value="قبو">قبو</option>
+                        <option value="توسعة حرم رئيسي">توسعة حرم رئيسي</option>
+                        <option value="حرم رئيسي">حرم رئيسي</option>
+                        <option value="تحت السدة">تحت السدة</option>  
+                    </select>
+                </div>
+                <div class="col-sm-6">
+                    <labelclass="form-label">Time</label>
+                    <select class="form-control form-select rounded-pill" aria-label="Default select example" name="time" id="time">
+                        <option value="بعد جلسة الصفا">بعد جلسة الصفا</option>
+                    </select>
+                </div>
+            </div>
+            <div class="d-flex justify-content-center">
+                <a type="button" class="m-0  btn btn-secondary w-25 mr-4" href="{% url 'session'%}">
+                <span>Cancel</span>
+                </a>
+                <button type="submit" class="btn btn-primary w-25">Save</button>
+            </div>
+        </form>
+{% endblock %}
