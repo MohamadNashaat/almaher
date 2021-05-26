@@ -126,6 +126,8 @@ import os
 
 STATIC_URL = '/static/'
 
+STATIC_ROOT = '/var/www/static-root/'
+
 MEDIA_URL = '/img/'
 
 STATICFILES_DIRS = [

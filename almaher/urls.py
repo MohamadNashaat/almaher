@@ -8,7 +8,7 @@ urlpatterns = [
     path('blank', views.blank, name='blank'),
     path('404', views.pg_404, name='404'),
     
-    # Manage Person
+    # Urls Person
     path('person', views.person, name='person'),
     path('person/edit/<int:pk>', views.edit_person, name='edit_person'),
     path('person/del/<int:pk>', views.del_person, name='del_person'),
@@ -58,7 +58,6 @@ urlpatterns = [
     path('ajax/set_exam_mark', views.set_exam_mark, name='set_exam_mark'),
     path('ajax/set_result_type', views.set_result_type, name='set_result_type'),
     
-
     # Urls Exam
     path('exam', views.exam, name='exam'),
     path('exam/generate', views.generate_exam, name='generate_exam'),
@@ -68,7 +67,6 @@ urlpatterns = [
     path('result/generate', views.generate_result, name='generate_result'),  
     path('result/pass', views.student_pass, name='student_pass'),  
      
-
     # Urls Export to *
     path('export/excel/person', views.export_excel_person, name='export_excel_person'),
     path('export/excel/student', views.export_excel_student, name='export_excel_student'),
