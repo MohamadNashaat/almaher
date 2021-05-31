@@ -70,7 +70,7 @@ def generate_session(request):
     student_count = []
     level_list = level.values_list('level_name', flat=True)
     for level_loop in level_list:
-        l_count = Person.objects.filter(type_id='Student' ,level_id=level_loop).count()
+        l_count = Person.objects.filter(type_id='Student' ,level_id=level_loop, status=True).count()
         student_count.append(l_count)
     zip_list = zip(level_list, student_count)
 
