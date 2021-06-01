@@ -19,4 +19,7 @@ urlpatterns = [
     path('export/pdf/session', views.export_session_pdf, name='export_session_pdf'),
     path('export/pdf/session/student', views.export_students_session_pdf, name='export_students_session_pdf'),
     path('export/pdf/session/teacher', views.export_teacher_session_pdf, name='export_teacher_session_pdf'),
+    path('export/excel/session/student', views.export_students_session_excel, name='export_students_session_excel'),
+    path('export/excel/session/teacher', views.export_teachers_session_excel, name='export_teachers_session_excel'),
+
 ]

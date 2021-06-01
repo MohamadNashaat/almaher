@@ -14,7 +14,7 @@
             text-align: center;
         }
         table{
-            width: 80%;
+            width: 100%;
             border-collapse: collapse;
         }
         .td-p{
@@ -39,6 +39,9 @@
         }
         .w-25{
             width: 25%;
+        }
+        .w-15{
+            width: 15%;
         }
         .w-10{
             width: 10%;
@@ -73,7 +76,9 @@
                 <tr>
                     <td class="w-10">#</td>
                     <td>الاسم</td>
-                    <td class="w-25">رقم الدرس</td>
+                    <td class="w-10">رقم الدرس</td>
+                    <td class="w-15">المستوى</td>
+                    <td class="w-15">المكان</td>
                 </tr>
             </thead>
             <tbody>
@@ -82,6 +87,8 @@
                         <td style="font-size: 12px;">{{c}}</td>
                         <td>{{item.teacher_id}}</td>
                         <td>{{item.session_number}}</td>
+                        <td>{{item.level_id}}</td>
+                        <td>{{item.position_id}}</td>
                     </tr>
                 {% endfor %}
             </tbody>
