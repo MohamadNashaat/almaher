@@ -194,7 +194,7 @@ def generate_session(request):
                         break
 
             for l1 in range(count_advanced_a, count_intermediate_b):
-                new_session = Session(session_id=count_index, level_id=intermediate_b,course_id=get_course_id,session_number=l1, time_id=time, position_id=p3)
+                new_session = Session(session_id=count_index, level_id=intermediate_b,course_id=get_course_id,session_number=l1, time_id=time, position_id=p4)
                 new_session.save()
                 count_index += 1
                 # Add students => "مستمر" to sessions
@@ -227,7 +227,7 @@ def generate_session(request):
                         break
 
             for l1 in range(count_intermediate_b, count_intermediate_a):
-                new_session = Session(session_id=count_index, level_id=intermediate_a,course_id=get_course_id,session_number=l1, time_id=time, position_id=p4)
+                new_session = Session(session_id=count_index, level_id=intermediate_a,course_id=get_course_id,session_number=l1, time_id=time, position_id=p3)
                 new_session.save()
                 count_index += 1
                 # Add students => "مستمر" to sessions

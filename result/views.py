@@ -128,6 +128,7 @@ def student_pass(request):
     session_list = session.values_list('session_id', flat=True)
     # Check if student are in result
     result = Result.objects.filter(session_id__in=session_list)
+    exam = Exam.objects.filter(session_id__in=session_list)
     person_in_result = result.values_list('student_id' ,flat=True)
     # Check if any student is not in exam
     result_count = result.count()
@@ -189,8 +190,17 @@ def student_pass(request):
                 get_student.save()
 
         elif get_result_id.result_type == 'إعادة':
-            get_student.level_id = get_result_id.session_id.level_id
-            get_student.save()
+            get_student = Person.objects.get(pk=item)
+            get_theoretical_mark = exam.filter(student_id=get_student, type_id='نظري').aggregate(Max('mark'))['mark__max']
+            get_practical_mark = exam.filter(student_id=get_student, type_id='عملي').aggregate(Max('mark'))['mark__max']
+            if get_practical_mark == 0 and get_theoretical_mark == 0:
+                get_student.level_id = get_result_id.session_id.level_id
+                get_student.priority_id = 'غير معروف'
+                get_student.save()
+            else:
+                get_student.level_id = get_result_id.session_id.level_id
+                get_student.save()
+
     messages.success(request, 'تم الترحيل بنجاح')
     return HttpResponseRedirect(reverse('result'))
 
