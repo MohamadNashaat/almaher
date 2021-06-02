@@ -148,6 +148,7 @@ def student_pass(request):
         this_level = str(get_result_id.session_id.level_id)
         # Check result
         if get_result_id.result_type == 'ناجح':
+            get_student.priority_id = 'مستمر'
             if this_level == 'مبتدئ أ':
                 get_student.level_id = beginner_b
                 get_student.save()
@@ -165,11 +166,11 @@ def student_pass(request):
                 get_student.save()
             elif this_level == 'متقدم ب':
                 get_student.type_id = 'Graduate'
-                get_student.status = False
                 get_student.level_id = beginner_a
                 get_student.save()
             
         elif get_result_id.result_type == 'نجاح شرطي':
+            get_student.priority_id = 'مستمر'
             if this_level == 'مبتدئ أ':
                 get_student.level_id = beginner_b
                 get_student.save()
@@ -187,7 +188,6 @@ def student_pass(request):
                 get_student.save()
             elif this_level == 'متقدم ب':
                 get_student.type_id = 'Graduate'
-                get_student.status = False
                 get_student.level_id = beginner_a
                 get_student.save()
 

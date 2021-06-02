@@ -98,6 +98,7 @@
                             <th>الكنية</th>
                             <th>اسم الاب</th>
                             <th>تاريخ الميلاد</th>
+                            <th>الأولوية</th>
                             <th>المستوى</th>
                             <th></th>
                         </tr>
@@ -110,6 +111,7 @@
                             <td>{{item.student_id.last_name}}</td>
                             <td>{{item.student_id.father_name}}</td>
                             <td>{{item.student_id.bdate}}</td>
+                            <td>{{item.student_id.priority_id}}</td>
                             <td>{{session.level_id}}</td>
                             <td>
                                 <a href="{% url 'del_session_student' session.session_id item.id %}" class="btn btn-danger btn-circle btn-sm">
@@ -134,6 +136,7 @@
                             <th>الكنية</th>
                             <th>اسم الاب</th>
                             <th>تاريخ الميلاد</th>
+                            <th>الأولوية</th>
                             <th>المستوى</th>
                             <th></th>
                         </tr>
@@ -146,6 +149,7 @@
                             <td>{{item.last_name}}</td>
                             <td>{{item.father_name}}</td>
                             <td>{{item.bdate}}</td>
+                            <td>{{item.priority_id}}</td>
                             <td>{{item.level_id}}</td>
                             <td>
                                 <a href="{% url 'add_session_student' session.session_id item.person_id %}" class="btn btn-success btn-circle btn-sm">
