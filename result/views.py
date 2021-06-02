@@ -166,6 +166,7 @@ def student_pass(request):
             elif this_level == 'متقدم ب':
                 get_student.type_id = 'Graduate'
                 get_student.status = False
+                get_student.level_id = beginner_a
                 get_student.save()
             
         elif get_result_id.result_type == 'نجاح شرطي':
@@ -187,6 +188,7 @@ def student_pass(request):
             elif this_level == 'متقدم ب':
                 get_student.type_id = 'Graduate'
                 get_student.status = False
+                get_student.level_id = beginner_a
                 get_student.save()
 
         elif get_result_id.result_type == 'إعادة':

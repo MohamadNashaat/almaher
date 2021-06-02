@@ -669,7 +669,7 @@ def export_students_session_excel(request):
     font_style = xlwt.XFStyle()
     font_style.font.bold = True
     columns = ['id', 'First name', 'Last name', 'Home number',
-                'Phone number', 'Session', 'Level', 'Position']
+                'Phone number', 'Course', 'Session', 'Level', 'Position']
     for col_num in range(len(columns)):
         ws.write(row_num, col_num, columns[col_num], font_style)
     # Sheet body, remaining rows
@@ -689,6 +689,7 @@ def export_students_session_excel(request):
         level = ''
         session = ''
         position = ''
+        course = ''
         # Check all values if none
         if s.student_id.person_id is not None:
             id = s.student_id.person_id
@@ -706,8 +707,10 @@ def export_students_session_excel(request):
             session = s.session_id.session_number
         if s.session_id.position_id is not None:
             position = str(s.session_id.position_id)
+        if s.session_id.course_id is not None:
+            course = str(s.session_id.course_id)
         vlues = [id, fname, lname, hnumber, pnumber,
-                 level, session, position]
+                course, session, level, position]
         rows.append(vlues)
     for row in rows:
         row_num += 1
@@ -726,7 +729,7 @@ def export_teachers_session_excel(request):
     font_style = xlwt.XFStyle()
     font_style.font.bold = True
     columns = ['id', 'First name', 'Last name', 'Home number',
-                'Phone number', 'Session', 'Level', 'Position']
+                'Phone number', 'Course', 'Session', 'Level', 'Position']
     for col_num in range(len(columns)):
         ws.write(row_num, col_num, columns[col_num], font_style)
     # Sheet body, remaining rows
@@ -745,6 +748,7 @@ def export_teachers_session_excel(request):
         level = ''
         session = ''
         position = ''
+        course = ''
         # Check all values if none
         if t.teacher_id.person_id is not None:
             id = t.teacher_id.person_id
@@ -762,8 +766,10 @@ def export_teachers_session_excel(request):
             session = t.session_number
         if t.position_id is not None:
             position = str(t.position_id)
+        if t.course_id is not None:
+            course = str(t.course_id)
         vlues = [id, fname, lname, hnumber, pnumber,
-                 level, session, position]
+                course, session, level, position]
         rows.append(vlues)
     for row in rows:
         row_num += 1
