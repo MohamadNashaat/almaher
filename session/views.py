@@ -559,7 +559,7 @@ def set_student(request):
 
 def export_session_pdf(request):
     response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'attachment; filename="session.pdf"'
+    response['Content-Disposition'] = 'attachment; filename="sessions.pdf"'
     response['Content-Transform-Encoding'] = 'binary'
     if not request.session.get('get_course_id', False):
         return redirect('select_course')
@@ -583,6 +583,16 @@ def export_session_pdf(request):
         return HttpResponseRedirect(reverse('session'))
     c_session = session.count()
     day = Attendance.objects.filter(session_id__in=session_list).order_by('day').distinct('day').values_list('day', flat=True)
+    new_day = []
+    for d in day:
+        new_day.append(d)
+        if len(new_day) == 3:
+            new_day.append('تقييم 1')
+        elif len(new_day) == 8:
+            new_day.append('تقييم 2')
+        elif len(new_day) == 14:
+            new_day.append('تقييم 3')
+    day = new_day
     context = {'session': session,
                 'student': student,
                 'num_of_session': num_of_session,
@@ -611,7 +621,7 @@ def export_students_session_pdf(request):
     get_course_id = Course.objects.get(pk=get_course_id)
     session = Session.objects.filter(course_id=get_course_id).order_by('session_id')
     session_list = session.values_list('session_id', flat=True)
-    student = Session_Student.objects.filter(session_id__in=session_list)
+    student = Session_Student.objects.filter(session_id__in=session_list).order_by('session_id')
     c_session_std = int(student.count())
     c_session_std += 1
     count = []
@@ -661,7 +671,7 @@ def export_teacher_session_pdf(request):
 
 def export_students_session_excel(request):
     response = HttpResponse(content_type='application/ms-excel')
-    response['Content-Disposition'] = 'attachment; filename="session_students.xls"'
+    response['Content-Disposition'] = 'attachment; filename="students_session.xls"'
     wb = xlwt.Workbook(encoding='utf-8')
     ws = wb.add_sheet('Persons')
     # Sheet header, first row
@@ -721,7 +731,7 @@ def export_students_session_excel(request):
 
 def export_teachers_session_excel(request):
     response = HttpResponse(content_type='application/ms-excel')
-    response['Content-Disposition'] = 'attachment; filename="session_teachers.xls"'
+    response['Content-Disposition'] = 'attachment; filename="teachers_session.xls"'
     wb = xlwt.Workbook(encoding='utf-8')
     ws = wb.add_sheet('Persons')
     # Sheet header, first row
@@ -776,4 +786,55 @@ def export_teachers_session_excel(request):
         for col_num in range(len(row)):
             ws.write(row_num, col_num, row[col_num], font_style)
     wb.save(response)
+    return response
+
+def export_teacher_student_session_pdf(request):
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="sessions_data.pdf"'
+    response['Content-Transform-Encoding'] = 'binary'
+    if not request.session.get('get_course_id', False):
+        return redirect('select_course')
+    get_course_id = request.session['get_course_id']
+    get_course_id = Course.objects.get(pk=get_course_id)
+    session = Session.objects.filter(course_id=get_course_id).order_by('session_id')
+    # Get previous course
+    previous_course = Course.objects.all()
+    previous_session = Session.objects.all()
+    #previous_session_student = Session_Student.objects.all()
+    previous_result = Result.objects.all()
+    previous_course_id = int(get_course_id.course_id) - 1
+    ch_previous_course = False
+    if Course.objects.filter(pk=previous_course_id).exists():
+        ch_previous_course = True
+        previous_course = previous_course.get(pk=previous_course_id)
+        previous_session = previous_session.filter(course_id=previous_course)
+        previous_session_list = previous_session.values_list('session_id')
+        previous_result = previous_result.filter(session_id__in=previous_session_list)
+        #previous_session_student = previous_session_student.filter(session_id__in=previous_session_list)
+    ###
+    last_session = []
+    for s in session:
+        get_session_students = Session_Student.objects.filter(session_id=s.session_id)
+        list_stud = []
+        for stud in get_session_students:
+            get_result_type = 'لا يوجد'
+            if previous_result.filter(student_id=stud.student_id).exists():
+                get_previous_result = previous_result.get(student_id=stud.student_id)
+                get_result_type = get_previous_result.result_type
+            dic_stud_result = {'student': stud, 'result': get_result_type}    
+            list_stud.append(dic_stud_result)
+        dic_stud_teach = {'teach': s, 'stud': list_stud}
+        last_session.append(dic_stud_teach)
+
+    context = {'last_session': last_session,
+                'course_name': get_course_id.course_name,
+                }
+    html_string = render_to_string('session/pdf_session_teacher_student.html', context)
+    html = HTML(string=html_string)
+    result = html.write_pdf()
+    with tempfile.NamedTemporaryFile(delete=True) as output:
+        output.write(result)
+        output.flush()
+        output = open(output.name, 'rb')
+        response.write(output.read())
     return response

@@ -82,9 +82,6 @@
                     {% for att_day in day %}
                         <td class="w-4" style="font-size: 12px;">{{att_day}}</td>
                     {% endfor %}
-                    {% for i in '123'|make_list %}
-                        <td class="w-5" style="font-size: 12px;">تقييم المدرس {{i}}</td> 
-                    {% endfor %}
                 </tr>
             </thead>
             <tbody>
@@ -102,7 +99,7 @@
                     </tr>
                     {% endif %}
                 {% endfor %}
-                {% for i in '12'|make_list %}
+                {% for i in '1234'|make_list %}
                 <tr>
                     {% for i in num_of_session_list2 %}
                         <td class="td-p"></td>

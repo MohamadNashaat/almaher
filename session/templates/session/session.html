@@ -21,28 +21,34 @@
 {% block export %}
 <a href="{% url 'export_session_pdf' %}"  class="btn btn-sm btn-primary shadow-sm mb-1 mx-2">
     <i class="fas fa-download fa-sm text-white">
-    <span>استخراج الجلسات لـ Pdf</span>
+    <span>استخراج الجلسات Pdf</span>
     </i>
 </a>
+<a href="{% url 'export_teacher_student_session_pdf' %}"  class="btn btn-sm btn-primary shadow-sm mb-1 mx-2">
+    <i class="fas fa-download fa-sm text-white">
+    <span>استخراج بيانات الجلسات Pdf</span>
+    </i>
+</a>
+
 <a href="{% url 'export_teacher_session_pdf' %}"  class="btn btn-sm btn-primary shadow-sm mb-1 mx-2">
     <i class="fas fa-download fa-sm text-white">
-    <span>استخراج المدرسين لـ Pdf</span>
+    <span>استخراج المدرسين Pdf</span>
     </i>
 </a>
 <a href="{% url 'export_students_session_pdf' %}"  class="btn btn-sm btn-primary shadow-sm mb-1 mx-2">
     <i class="fas fa-download fa-sm text-white">
-    <span>استخراج الطلاب لـ Pdf</span>
+    <span>استخراج الطلاب Pdf</span>
     </i>
 </a>
 
 <a href="{% url 'export_teachers_session_excel' %}"  class="btn btn-sm btn-primary shadow-sm mb-1 mx-2">
     <i class="fas fa-download fa-sm text-white">
-    <span>استخراج المدرسين لـ Execl</span>
+    <span>استخراج المدرسين Execl</span>
     </i>
 </a>
 <a href="{% url 'export_students_session_excel' %}"  class="btn btn-sm btn-primary shadow-sm mb-1 mx-2">
     <i class="fas fa-download fa-sm text-white">
-    <span>استخراج الطلاب لـ Execl</span>
+    <span>استخراج الطلاب Execl</span>
     </i>
 </a>
 {% endblock %}
