@@ -601,7 +601,7 @@ def export_session_pdf(request):
                 'course_name': get_course_id.course_name,
                 'day': day,
                 }
-    html_string = render_to_string('session/pdf_output.html', context)
+    html_string = render_to_string('session/pdf_sessions.html', context)
     html = HTML(string=html_string)
     result = html.write_pdf()
     with tempfile.NamedTemporaryFile(delete=True) as output:
@@ -621,7 +621,7 @@ def export_students_session_pdf(request):
     get_course_id = Course.objects.get(pk=get_course_id)
     session = Session.objects.filter(course_id=get_course_id).order_by('session_id')
     session_list = session.values_list('session_id', flat=True)
-    student = Session_Student.objects.filter(session_id__in=session_list).order_by('session_id')
+    student = Session_Student.objects.filter(session_id__in=session_list).order_by('student_id__first_name')
     c_session_std = int(student.count())
     c_session_std += 1
     count = []
@@ -667,125 +667,6 @@ def export_teacher_session_pdf(request):
         output.flush()
         output = open(output.name, 'rb')
         response.write(output.read())
-    return response
-
-def export_students_session_excel(request):
-    response = HttpResponse(content_type='application/ms-excel')
-    response['Content-Disposition'] = 'attachment; filename="students_session.xls"'
-    wb = xlwt.Workbook(encoding='utf-8')
-    ws = wb.add_sheet('Persons')
-    # Sheet header, first row
-    row_num = 0
-    font_style = xlwt.XFStyle()
-    font_style.font.bold = True
-    columns = ['id', 'First name', 'Last name', 'Home number',
-                'Phone number', 'Course', 'Session', 'Level', 'Position']
-    for col_num in range(len(columns)):
-        ws.write(row_num, col_num, columns[col_num], font_style)
-    # Sheet body, remaining rows
-    font_style = xlwt.XFStyle()
-    rows = []
-    get_course_id = request.session['get_course_id']
-    get_course_id = Course.objects.get(pk=get_course_id)
-    session = Session.objects.filter(course_id=get_course_id).order_by('session_id')
-    session_list = session.values_list('session_id', flat=True)
-    student = Session_Student.objects.filter(session_id__in=session_list)
-    for s in student:
-        id = ''
-        fname = ''
-        lname = ''
-        hnumber = ''
-        pnumber = ''
-        level = ''
-        session = ''
-        position = ''
-        course = ''
-        # Check all values if none
-        if s.student_id.person_id is not None:
-            id = s.student_id.person_id
-        if s.student_id.first_name is not None:
-            fname = s.student_id.first_name
-        if s.student_id.last_name is not None:
-            lname = s.student_id.last_name
-        if s.student_id.home_number is not None:
-            hnumber = s.student_id.home_number
-        if s.student_id.phone_number is not None:
-            pnumber = s.student_id.phone_number
-        if s.session_id.level_id is not None:
-            level = str(s.session_id.level_id)
-        if s.session_id.session_number is not None:
-            session = s.session_id.session_number
-        if s.session_id.position_id is not None:
-            position = str(s.session_id.position_id)
-        if s.session_id.course_id is not None:
-            course = str(s.session_id.course_id)
-        vlues = [id, fname, lname, hnumber, pnumber,
-                course, session, level, position]
-        rows.append(vlues)
-    for row in rows:
-        row_num += 1
-        for col_num in range(len(row)):
-            ws.write(row_num, col_num, row[col_num], font_style)
-    wb.save(response)
-    return response
-
-def export_teachers_session_excel(request):
-    response = HttpResponse(content_type='application/ms-excel')
-    response['Content-Disposition'] = 'attachment; filename="teachers_session.xls"'
-    wb = xlwt.Workbook(encoding='utf-8')
-    ws = wb.add_sheet('Persons')
-    # Sheet header, first row
-    row_num = 0
-    font_style = xlwt.XFStyle()
-    font_style.font.bold = True
-    columns = ['id', 'First name', 'Last name', 'Home number',
-                'Phone number', 'Course', 'Session', 'Level', 'Position']
-    for col_num in range(len(columns)):
-        ws.write(row_num, col_num, columns[col_num], font_style)
-    # Sheet body, remaining rows
-    font_style = xlwt.XFStyle()
-    rows = []
-    get_course_id = request.session['get_course_id']
-    get_course_id = Course.objects.get(pk=get_course_id)
-    teacher = Session.objects.filter(course_id=get_course_id).order_by('session_id')
-    teacher = teacher.filter(~Q(teacher_id=None))
-    for t in teacher:
-        id = ''
-        fname = ''
-        lname = ''
-        hnumber = ''
-        pnumber = ''
-        level = ''
-        session = ''
-        position = ''
-        course = ''
-        # Check all values if none
-        if t.teacher_id.person_id is not None:
-            id = t.teacher_id.person_id
-        if t.teacher_id.first_name is not None:
-            fname = t.teacher_id.first_name
-        if t.teacher_id.last_name is not None:
-            lname = t.teacher_id.last_name
-        if t.teacher_id.home_number is not None:
-            hnumber = t.teacher_id.home_number
-        if t.teacher_id.phone_number is not None:
-            pnumber = t.teacher_id.phone_number
-        if t.level_id is not None:
-            level = str(t.level_id)
-        if t.session_number is not None:
-            session = t.session_number
-        if t.position_id is not None:
-            position = str(t.position_id)
-        if t.course_id is not None:
-            course = str(t.course_id)
-        vlues = [id, fname, lname, hnumber, pnumber,
-                course, session, level, position]
-        rows.append(vlues)
-    for row in rows:
-        row_num += 1
-        for col_num in range(len(row)):
-            ws.write(row_num, col_num, row[col_num], font_style)
-    wb.save(response)
     return response
 
 def export_teacher_student_session_pdf(request):
@@ -837,4 +718,67 @@ def export_teacher_student_session_pdf(request):
         output.flush()
         output = open(output.name, 'rb')
         response.write(output.read())
+    return response
+
+def export_sessions_excel(request):
+    response = HttpResponse(content_type='application/ms-excel')
+    response['Content-Disposition'] = 'attachment; filename="students_session.xls"'
+    wb = xlwt.Workbook(encoding='utf-8')
+    ws = wb.add_sheet('Persons')
+    # Sheet header, first row
+    row_num = 0
+    font_style = xlwt.XFStyle()
+    font_style.font.bold = True
+    columns = ['id', 'First name', 'Last name', 'Home number',
+                'Phone number', 'Course', 'Session', 'Level', 'Position', 'Teacher']
+    for col_num in range(len(columns)):
+        ws.write(row_num, col_num, columns[col_num], font_style)
+    # Sheet body, remaining rows
+    font_style = xlwt.XFStyle()
+    rows = []
+    get_course_id = request.session['get_course_id']
+    get_course_id = Course.objects.get(pk=get_course_id)
+    session = Session.objects.filter(course_id=get_course_id).order_by('session_id')
+    session_list = session.values_list('session_id', flat=True)
+    student = Session_Student.objects.filter(session_id__in=session_list)
+    for s in student:
+        id = ''
+        fname = ''
+        lname = ''
+        hnumber = ''
+        pnumber = ''
+        level = ''
+        session = ''
+        position = ''
+        course = ''
+        teacher = ''
+        # Check all values if none
+        if s.student_id.person_id is not None:
+            id = s.student_id.person_id
+        if s.student_id.first_name is not None:
+            fname = s.student_id.first_name
+        if s.student_id.last_name is not None:
+            lname = s.student_id.last_name
+        if s.student_id.home_number is not None:
+            hnumber = s.student_id.home_number
+        if s.student_id.phone_number is not None:
+            pnumber = s.student_id.phone_number
+        if s.session_id.level_id is not None:
+            level = str(s.session_id.level_id)
+        if s.session_id.session_number is not None:
+            session = s.session_id.session_number
+        if s.session_id.position_id is not None:
+            position = str(s.session_id.position_id)
+        if s.session_id.course_id is not None:
+            course = str(s.session_id.course_id)
+        if s.session_id.teacher_id is not None:
+            teacher = str(s.session_id.teacher_id)
+        vlues = [id, fname, lname, hnumber, pnumber,
+                course, session, level, position, teacher]
+        rows.append(vlues)
+    for row in rows:
+        row_num += 1
+        for col_num in range(len(row)):
+            ws.write(row_num, col_num, row[col_num], font_style)
+    wb.save(response)
     return response

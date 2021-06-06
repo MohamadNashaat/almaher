@@ -14,31 +14,17 @@
             text-align: center;
         }
         table{
-            width: 100%;
+            width: 50%;
             border-collapse: collapse;
         }
         .td-p{
             padding: 12px;
         }
-        .clear {
-        clear: both;
-        }
-        .clear div {
-            width: 20%;
-            display: inline-block;
-        }
-        #col1 {
-            float: right;
-        }
-        div{
-            margin-bottom: 16px;
-        }
-        .table-2{
-            position: fixed;
-            bottom: 0;
-        }
         .w-25{
             width: 25%;
+        }
+        .w-20{
+            width: 20%;
         }
         .w-15{
             width: 15%;
@@ -57,9 +43,9 @@
         }
         @page {
         size: "A4";
-        margin: 2cm 1.5cm 1.5cm 1.5cm;
+        margin: 1cm 0.5cm 0.5cm 1cm;
         size: portrait;
-            @top-center {
+            @top-right {
                 font-size: 20px;
                 content: "قائمة الطلاب في  {{course_name}}";
             }
@@ -76,9 +62,8 @@
                 <tr>
                     <td class="w-10">#</td>
                     <td>الاسم</td>
-                    <td class="w-10">رقم الدرس</td>
-                    <td class="w-15">المستوى</td>
-                    <td class="w-15">المكان</td>
+                    <td class="w-15">الدرس</td>
+                    <td class="w-20">المستوى</td>
                 </tr>
             </thead>
             <tbody>
@@ -88,7 +73,6 @@
                         <td>{{item.student_id}}</td>
                         <td>{{item.session_id.session_number}}</td>
                         <td>{{item.session_id.level_id}}</td>
-                        <td>{{item.session_id.position_id}}</td>
                     </tr>
                 {% endfor %}
             </tbody>

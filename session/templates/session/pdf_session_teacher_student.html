@@ -43,6 +43,9 @@
         .w-20{
             width: 20%;
         }
+        .w-10{
+            width: 10%;
+        }
         .w-5{
             width: 5%;
         }
@@ -80,20 +83,22 @@
         <table>
             <thead>
                 <tr>
-                    <td class="w-20">#</td>
                     <td class="w-20">الاسم</td>
                     <td class="w-20">رقم الهاتف</td>
                     <td class="w-20">تاريخ الميلاد</td>
+                    <td class="w-10">نتيجة النظري</td>
+                    <td class="w-10">نتيجة العملي</td>
                     <td class="w-20">النتيجة السابقة</td>
                 </tr>
             </thead>
             <tbody>
                 {% for item2 in item.stud %}
                     <tr>
-                        <td style="font-size: 12px;">{{item2.student.student_id.person_id}}</td>
                         <td>{{item2.student.student_id}}</td>
                         <td>{{item2.student.student_id.phone_number}}</td>
                         <td>{{item2.student.student_id.bdate}}</td>
+                        <td></td>
+                        <td></td>
                         <td>{{item2.result}}</td>
                     </tr>
                 {% endfor %}
