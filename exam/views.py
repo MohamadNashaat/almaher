@@ -1,4 +1,3 @@
-from .models import *
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
@@ -24,15 +23,13 @@ from exam.models import Exam
 from result.models import Result
 from attendance.models import Attendance
 
+from home.views import update_attendance, chk_request_session_course_id
+
 # Create your views here.
 
 @login_required(login_url='login')
 def exam(request):
-    # Check request session
-    if not request.session.get('get_course_id', False):
-        return redirect('select_course')
-    get_course_id = request.session['get_course_id']
-    get_course_id = Course.objects.get(pk=get_course_id)
+    get_course_id = chk_request_session_course_id(request)
     in_session = Session.objects.filter(course_id=get_course_id).values_list('session_id', flat=True)
     get_exam = Exam.objects.filter(session_id__in=in_session)
     student_exam = get_exam.values_list('student_id', flat=True).distinct()
@@ -49,11 +46,7 @@ def exam(request):
 # Generate exam for all students
 @login_required(login_url='login')
 def generate_exam(request):
-    # Check request session
-    if not request.session.get('get_course_id', False):
-        return redirect('select_course')
-    get_course_id = request.session['get_course_id']
-    get_course_id = Course.objects.get(pk=get_course_id)
+    get_course_id = chk_request_session_course_id(request)
     # get all students on session in this course and generate 3 type_time and 2 type_exam for each students
     session = Session.objects.all().filter(course_id=get_course_id)
     session_list = session.values_list('session_id', flat=True)

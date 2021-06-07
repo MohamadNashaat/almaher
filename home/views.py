@@ -1,4 +1,3 @@
-from .models import *
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
@@ -60,12 +59,7 @@ def pg_404(request):
 # Index
 @login_required(login_url='login')
 def index(request):
-    # Check request session
-    if not request.session.get('get_course_id', False):
-        return redirect('select_course')
-    get_course_id = request.session['get_course_id']
-    get_course_id = Course.objects.get(pk=get_course_id)
-
+    get_course_id = chk_request_session_course_id(request)
     c_teacher = Person.objects.all().filter(type_id='Teacher').count()
     c_student = Person.objects.all().filter(type_id='Student').count()
     c_graduate = Person.objects.all().filter(type_id='Graduate').count()
@@ -73,19 +67,6 @@ def index(request):
     session = Session.objects.filter(course_id=get_course_id)
     c_session = session.count()
     c_session_student = Session_Student.objects.filter(session_id__in=session).count()
-
-    #level = Level.objects.all()
-    #student_count = []
-    #teacher_count = []
-    #level_list = level.values_list('level_name', flat=True)
-    #for level_loop in level_list:
-    #    s_count = Person.objects.filter(type_id='Student' ,level_id=level_loop).count()
-    #    t_count = Person.objects.filter(type_id__in=('Teacher', 'Graduate') ,level_id=level_loop, status=True).count()
-    #    student_count.append(s_count)
-    #    teacher_count.append(t_count)
-    #zip_list = zip(level_list, student_count)
-    #zip_list2 = zip(level_list, teacher_count)
-
     context = {'c_teacher': c_teacher,
                 'c_student': c_student,
                 'c_graduate': c_graduate,
@@ -93,7 +74,24 @@ def index(request):
                 'c_session': c_session,
                 'c_session_student': c_session_student,
                 'get_course_id': get_course_id,            
-                #'zip_list': zip_list,
-                #'zip_list2': zip_list2,
                 }
     return render(request, 'home/index.html', context)
+
+# Base def
+def update_attendance(request, std_id, session_id):
+    get_course_id = chk_request_session_course_id(request)
+    # Update attendance
+    session_list = Session.objects.all().filter(course_id=get_course_id).values_list('session_id', flat=True)
+    all_attendance = Attendance.objects.filter(person_id=std_id, session_id__in=session_list)
+    for attendance in all_attendance:
+        get_attendance = Attendance.objects.get(pk=attendance.attendance_id)
+        get_attendance.session_id = session_id
+        get_attendance.save()
+
+def chk_request_session_course_id(request):
+    # Check request session
+    if not request.session.get('get_course_id', False):
+        return redirect('select_course')
+    get_course_id = request.session['get_course_id']
+    get_course_id = Course.objects.get(pk=get_course_id)
+    return get_course_id

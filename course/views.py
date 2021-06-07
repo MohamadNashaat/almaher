@@ -1,4 +1,3 @@
-from .models import *
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse

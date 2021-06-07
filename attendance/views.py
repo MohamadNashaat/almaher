@@ -1,4 +1,3 @@
-from .models import *
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
@@ -24,10 +23,13 @@ from exam.models import Exam
 from result.models import Result
 from attendance.models import Attendance
 
+from home.views import update_attendance, chk_request_session_course_id
+
 # Create your views here.
 
 @login_required(login_url='login')
 def select_attendance(request):
+    get_course_id = chk_request_session_course_id(request)
     course = Course.objects.all()
     if request.method =='POST':
         get_type = request.POST['type']
@@ -43,11 +45,7 @@ def select_attendance(request):
 
 @login_required(login_url='login')
 def attendance_generater(request):
-    # Check request session
-    if not request.session.get('get_course_id', False):
-        return redirect('select_course')
-    get_course_id = request.session['get_course_id']
-    get_course_id = Course.objects.get(pk=get_course_id)
+    get_course_id = chk_request_session_course_id(request)
     # Get data from form
     get_sdate = get_course_id.start_date
     get_num = get_course_id.num_of_session
@@ -97,11 +95,7 @@ def attendance_generater(request):
 
 @login_required(login_url='login')
 def attendance_teacher(request):
-    # Check request session
-    if not request.session.get('get_course_id', False):
-        return redirect('select_course')
-    get_course_id = request.session['get_course_id']
-    get_course_id = Course.objects.get(pk=get_course_id)
+    get_course_id = chk_request_session_course_id(request)
     # Get all teachers
     session = Session.objects.filter(course_id=get_course_id)
     teacher = session.values_list('teacher_id', flat=True)
@@ -122,11 +116,7 @@ def attendance_teacher(request):
 
 @login_required(login_url='login')
 def attendance_student(request):
-    # Check request session
-    if not request.session.get('get_course_id', False):
-        return redirect('select_course')
-    get_course_id = request.session['get_course_id']
-    get_course_id = Course.objects.get(pk=get_course_id)
+    get_course_id = chk_request_session_course_id(request)
     # Get all teachers
     session = Session.objects.all().filter(course_id=get_course_id)
     session_list = session.values_list('session_id', flat=True)
@@ -171,8 +161,8 @@ def export_excel_attendance(request):
     row_num = 0
     font_style = xlwt.XFStyle()
     font_style.font.bold = True
+    get_course_id = chk_request_session_course_id(request)
     teacher = Person.objects.all().filter(type_id='Teacher').values_list('person_id', flat=True)
-    get_course_id = request.session['get_course_id']
     session = Session.objects.all().filter(course_id=get_course_id).values_list('session_id', flat=True)
     day_attendance = Attendance.objects.all().filter(person_id__in=teacher, session_id__in=session).order_by('day').distinct('day')
     columns = ['Session number', 'First name', 'Last name']
