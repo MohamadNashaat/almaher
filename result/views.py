@@ -189,6 +189,7 @@ def student_pass(request):
                 get_student.priority_id = 'غير معروف'
                 get_student.save()
             else:
+                get_student.priority_id = 'مستمر'
                 get_student.level_id = get_result_id.session_id.level_id
                 get_student.save()
 
