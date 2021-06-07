@@ -162,8 +162,6 @@ def change_status_false(request):
     return JsonResponse(context)
 
 
-
-
 def export_excel_attendance(request):    
     response = HttpResponse(content_type='application/ms-excel')
     response['Content-Disposition'] = 'attachment; filename="attendance_teacher.xls"'

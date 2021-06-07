@@ -1,4 +1,3 @@
-from .models import *
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
@@ -28,11 +27,7 @@ from attendance.models import Attendance
 
 @login_required(login_url='login')
 def session(request):
-    # Check request session
-    if not request.session.get('get_course_id', False):
-        return redirect('select_course')
-    get_course_id = request.session['get_course_id']
-    get_course_id = Course.objects.get(pk=get_course_id)
+    get_course_id = chk_request_session_course_id(request)
 
     session = Session.objects.all().filter(course_id=get_course_id)
     session_list_students = session.values_list('session_id', flat=True)
@@ -413,26 +408,20 @@ def session_student(request, pk):
         return redirect('select_course')
     get_course_id = request.session['get_course_id']
     get_course_id = Course.objects.get(pk=get_course_id)
-
     session = Session.objects.filter(course_id=get_course_id)
     c_session = session.count()
-
     if request.method =='POST':
         get_snumber = int(request.POST['snumber'])
         session = Session.objects.get(course_id=get_course_id, session_number=get_snumber)
         return redirect('session_student', session.session_id)
-
     elif c_session != 0:
         global new_pk
-        
         f_session = session.first()
         l_session = session.last()
-
         if pk == 1:
             new_pk = f_session.session_id
         else:
             new_pk = pk
-
         to_next = new_pk
         to_previous = new_pk
         # set to_next & to_previous
@@ -445,7 +434,6 @@ def session_student(request, pk):
         else:
             to_next = new_pk + 1
             to_previous = new_pk - 1        
-
         session = Session.objects.get(session_id=new_pk)
         session_student = Session_Student.objects.all().filter(session_id=new_pk)
         list_1 = session_student.values_list('student_id', flat=True)
@@ -472,6 +460,7 @@ def session_student(request, pk):
 
 @login_required(login_url='login')
 def add_session_student(request, pk, num):
+    # Set student
     count_index = Session_Student.objects.all().count()
     if count_index == 0:
         count_index = 1
@@ -481,6 +470,8 @@ def add_session_student(request, pk, num):
     session = Session.objects.get(pk=pk)
     student = Person.objects.get(pk=num)
     Session_Student.objects.create(id=count_index, session_id=session, student_id=student)
+    # Update attendance
+    update_attendance(request, student, session)
     return redirect('session_student', pk)
 
 @login_required(login_url='login')
@@ -524,10 +515,11 @@ def set_teacher(request):
     teacher_id = request.GET.get('teacher_id')
     session_id = request.GET.get('session_id')
     get_session = Session.objects.get(pk=session_id)
-
     if Person.objects.filter(pk=teacher_id).exists():
         get_teacher = Person.objects.get(pk=teacher_id)
         get_session.teacher_id = get_teacher
+        # Update attendance
+        update_attendance(request, get_teacher, get_session)
     else:
         get_session.teacher_id = None
     get_session.save()
@@ -542,15 +534,15 @@ def set_student(request):
     else:
         count_index_s_student = Session_Student.objects.all().aggregate(Max('id'))['id__max']
         count_index_s_student += 1
-
     student_id = request.GET.get('student_id')
     session_id = request.GET.get('session_id')
     get_session = Session.objects.get(pk=session_id)
-
     if Person.objects.filter(pk=student_id).exists():
         get_student = Person.objects.get(pk=student_id)
         Session_Student.objects.create(id=count_index_s_student, session_id=get_session, student_id=get_student)
         count_index_s_student += 1
+        # Update attendance
+        update_attendance(request, get_student, get_session)
     context = {}
     return JsonResponse(context)
 
@@ -782,3 +774,27 @@ def export_sessions_excel(request):
             ws.write(row_num, col_num, row[col_num], font_style)
     wb.save(response)
     return response
+
+
+# Base def
+def update_attendance(request, std_id, session_id):
+     # Check request session
+    if not request.session.get('get_course_id', False):
+        return redirect('select_course')
+    get_course_id = request.session['get_course_id']
+    get_course_id = Course.objects.get(pk=get_course_id)
+    # Update attendance
+    session_list = Session.objects.all().filter(course_id=get_course_id).values_list('session_id', flat=True)
+    all_attendance = Attendance.objects.filter(person_id=std_id, session_id__in=session_list)
+    for attendance in all_attendance:
+        get_attendance = Attendance.objects.get(pk=attendance.attendance_id)
+        get_attendance.session_id = session_id
+        get_attendance.save()
+
+def chk_request_session_course_id(request):
+    # Check request session
+    if not request.session.get('get_course_id', False):
+        return redirect('select_course')
+    get_course_id = request.session['get_course_id']
+    get_course_id = Course.objects.get(pk=get_course_id)
+    return get_course_id
