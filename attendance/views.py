@@ -155,18 +155,18 @@ def change_status_false(request):
 
 def export_excel_attendance(request):    
     response = HttpResponse(content_type='application/ms-excel')
-    response['Content-Disposition'] = 'attachment; filename="attendance_teacher.xls"'
+    response['Content-Disposition'] = 'attachment; filename="attendance.xls"'
     wb = xlwt.Workbook(encoding='utf-8')
     ws = wb.add_sheet('Students')
     # Sheet header, first row
     row_num = 0
     font_style = xlwt.XFStyle()
     font_style.font.bold = True
+    ###
     get_course_id = get_request_session_course_id(request)
-    teacher = Person.objects.all().filter(type_id='Teacher').values_list('person_id', flat=True)
-    session = Session.objects.all().filter(course_id=get_course_id).values_list('session_id', flat=True)
-    day_attendance = Attendance.objects.all().filter(person_id__in=teacher, session_id__in=session).order_by('day').distinct('day')
-    columns = ['Session number', 'First name', 'Last name']
+    session_list = Session.objects.filter(course_id=get_course_id).values_list('session_id', flat=True)
+    day_attendance = Attendance.objects.all().filter(session_id__in=session_list).order_by('day').distinct('day')
+    columns = ['id', 'First name', 'Last name', 'Type', 'Priority', 'Session', 'Level']
     for day in day_attendance:
         get_day = day.day
         get_day = get_day.strftime('%m/%d/%Y')
@@ -176,14 +176,41 @@ def export_excel_attendance(request):
     # Sheet body, remaining rows
     font_style = xlwt.XFStyle()
     rows = []
-    name_attendance = Attendance.objects.all().filter(person_id__in=teacher, session_id__in=session).distinct('person_id')
-    status_attendance = Attendance.objects.all().filter(person_id__in=teacher, session_id__in=session).order_by('day')
-    for attendance in name_attendance:
-        value = [attendance.session_id.session_number, attendance.person_id.first_name, attendance.person_id.last_name]
-        for s_attendance in status_attendance:
-            if attendance.person_id == s_attendance.person_id:
-                value.append(str(s_attendance.status))
+    ###
+    get_attendance = Attendance.objects.all().filter(session_id__in=session_list).distinct('person_id')
+    for all_person in get_attendance:
+        status_attendance = Attendance.objects.all().filter(person_id=all_person.person_id, session_id__in=session_list).order_by('day')
+        id = ''
+        fname = ''
+        lname = ''
+        type_person= ''
+        priority = ''
+        session = ''
+        level = ''
+        # Check all values if none
+        if all_person.person_id.person_id is not None:
+            id = all_person.person_id.person_id
+        if all_person.person_id.first_name is not None:
+            fname = all_person.person_id.first_name
+        if all_person.person_id.last_name is not None:
+            lname = all_person.person_id.last_name
+        if all_person.person_id.type_id is not None:
+            type_person = all_person.person_id.type_id
+        if all_person.person_id.priority_id is not None:
+            priority = all_person.person_id.priority_id
+        if all_person.session_id.session_number is not None:
+            session = all_person.session_id.session_number
+        if all_person.session_id.level_id is not None:
+            level = str(all_person.session_id.level_id)
+        # Enter values
+        value = [id, fname, lname, type_person, priority, session, level]
+        for st in status_attendance:
+            status = str(False)
+            if st.status is not None:
+                status = str(st.status)
+            value.append(status)
         rows.append(value)
+    ###        
     for row in rows:
         row_num += 1
         for col_num in range(len(row)):
