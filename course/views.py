@@ -77,3 +77,15 @@ def select_course(request):
     context = {'course': course,
                 }
     return render(request, 'course/select_course.html', context)
+
+def chk_request_session_course_id(request):
+    # Check request session
+    if not request.session.get('get_course_id', False):
+        return False
+    else:
+        return True
+
+def get_request_session_course_id(request):
+    get_course_id = request.session['get_course_id']
+    get_course_id = Course.objects.get(pk=get_course_id)
+    return get_course_id

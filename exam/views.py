@@ -23,13 +23,14 @@ from exam.models import Exam
 from result.models import Result
 from attendance.models import Attendance
 
-from home.views import update_attendance, chk_request_session_course_id
+from home.views import update_attendance
+from course.views import get_request_session_course_id
 
 # Create your views here.
 
 @login_required(login_url='login')
 def exam(request):
-    get_course_id = chk_request_session_course_id(request)
+    get_course_id = get_request_session_course_id(request)
     in_session = Session.objects.filter(course_id=get_course_id).values_list('session_id', flat=True)
     get_exam = Exam.objects.filter(session_id__in=in_session)
     student_exam = get_exam.values_list('student_id', flat=True).distinct()
@@ -46,7 +47,7 @@ def exam(request):
 # Generate exam for all students
 @login_required(login_url='login')
 def generate_exam(request):
-    get_course_id = chk_request_session_course_id(request)
+    get_course_id = get_request_session_course_id(request)
     # get all students on session in this course and generate 3 type_time and 2 type_exam for each students
     session = Session.objects.all().filter(course_id=get_course_id)
     session_list = session.values_list('session_id', flat=True)

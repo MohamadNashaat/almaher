@@ -23,13 +23,14 @@ from exam.models import Exam
 from result.models import Result
 from attendance.models import Attendance
 
-from home.views import update_attendance, chk_request_session_course_id
+from home.views import update_attendance
+from course.views import get_request_session_course_id
 
 # Create your views here.
 
 @login_required(login_url='login')
 def session(request):
-    get_course_id = chk_request_session_course_id(request)
+    get_course_id = get_request_session_course_id(request)
     session = Session.objects.all().filter(course_id=get_course_id)
     session_list_students = session.values_list('session_id', flat=True)
     session_list = session.filter(~Q(teacher_id=None)).values_list('session_id', flat=True)
@@ -56,7 +57,7 @@ def session(request):
 
 @login_required(login_url='login')
 def generate_session(request):
-    get_course_id = chk_request_session_course_id(request)
+    get_course_id = get_request_session_course_id(request)
     level = Level.objects.all()
     student_count = []
     level_list = level.values_list('level_name', flat=True)
@@ -322,7 +323,7 @@ def generate_session(request):
 
 @login_required(login_url='login')
 def add_session(request):
-    get_course_id = chk_request_session_course_id(request)
+    get_course_id = get_request_session_course_id(request)
     count_index = Session.objects.all().count()
     if count_index == 0:
         count_index = 1
@@ -348,7 +349,7 @@ def add_session(request):
 
 @login_required(login_url='login')
 def edit_session(request, pk):
-    get_course_id = chk_request_session_course_id(request)
+    get_course_id = get_request_session_course_id(request)
     session = Session.objects.get(pk=pk)
     if request.method =='POST':
         get_snumber = request.POST['snumber']
@@ -387,7 +388,7 @@ def del_session(request, pk):
 
 @login_required(login_url='login')
 def session_student(request, pk):
-    get_course_id = chk_request_session_course_id(request)
+    get_course_id = get_request_session_course_id(request)
     session = Session.objects.filter(course_id=get_course_id)
     c_session = session.count()
     if request.method =='POST':
@@ -462,7 +463,7 @@ def del_session_student(request, pk, num):
 
 @login_required(login_url='login')
 def view_session_student(request):
-    get_course_id = chk_request_session_course_id(request)
+    get_course_id = get_request_session_course_id(request)
     session = Session.objects.all().filter(course_id=get_course_id).values_list('session_id', flat=True)
     session_student = Session_Student.objects.all().filter(session_id__in=session)
     context = {'session_student': session_student,
@@ -471,7 +472,7 @@ def view_session_student(request):
 
 @login_required(login_url='login')
 def wait_list_session(request):
-    get_course_id = chk_request_session_course_id(request)
+    get_course_id = get_request_session_course_id(request)
     session = Session.objects.all().filter(course_id=get_course_id)
     get_session = session.values_list('session_id', flat=True)
     in_session = Session_Student.objects.all().filter(session_id__in=get_session).values_list('student_id', flat=True)
@@ -523,7 +524,7 @@ def export_session_pdf(request):
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = 'attachment; filename="sessions.pdf"'
     response['Content-Transform-Encoding'] = 'binary'
-    get_course_id = chk_request_session_course_id(request)
+    get_course_id = get_request_session_course_id(request)
     num_of_session = get_course_id.num_of_session
     num_of_session_list = []
     for i in range(num_of_session):
@@ -574,7 +575,7 @@ def export_students_session_pdf(request):
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = 'attachment; filename="students_session.pdf"'
     response['Content-Transform-Encoding'] = 'binary'
-    get_course_id = chk_request_session_course_id(request)
+    get_course_id = get_request_session_course_id(request)
     session = Session.objects.filter(course_id=get_course_id).order_by('session_id')
     session_list = session.values_list('session_id', flat=True)
     student = Session_Student.objects.filter(session_id__in=session_list).order_by('student_id__first_name')
@@ -601,7 +602,7 @@ def export_teacher_session_pdf(request):
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = 'attachment; filename="teachers_session.pdf"'
     response['Content-Transform-Encoding'] = 'binary'
-    get_course_id = chk_request_session_course_id(request)
+    get_course_id = get_request_session_course_id(request)
     session = Session.objects.filter(course_id=get_course_id).order_by('session_id')
     c_session = int(session.count())
     c_session += 1
@@ -626,7 +627,7 @@ def export_teacher_student_session_pdf(request):
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = 'attachment; filename="sessions_data.pdf"'
     response['Content-Transform-Encoding'] = 'binary'
-    get_course_id = chk_request_session_course_id(request)
+    get_course_id = get_request_session_course_id(request)
     session = Session.objects.filter(course_id=get_course_id).order_by('session_id')
     # Get previous course
     previous_course = Course.objects.all()
@@ -686,7 +687,7 @@ def export_sessions_excel(request):
     # Sheet body, remaining rows
     font_style = xlwt.XFStyle()
     rows = []
-    get_course_id = chk_request_session_course_id(request)
+    get_course_id = get_request_session_course_id(request)
     session = Session.objects.filter(course_id=get_course_id).order_by('session_id')
     session_list = session.values_list('session_id', flat=True)
     student = Session_Student.objects.filter(session_id__in=session_list)

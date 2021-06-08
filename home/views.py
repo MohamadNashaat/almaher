@@ -23,6 +23,8 @@ from exam.models import Exam
 from result.models import Result
 from attendance.models import Attendance
 
+from course.views import chk_request_session_course_id, get_request_session_course_id
+
 # Create your views here.
 
 # Login
@@ -59,7 +61,11 @@ def pg_404(request):
 # Index
 @login_required(login_url='login')
 def index(request):
-    get_course_id = chk_request_session_course_id(request)
+    get_course_id = 0
+    if chk_request_session_course_id(request):
+        get_course_id = get_request_session_course_id(request)
+    else:
+        return redirect('select_course')
     c_teacher = Person.objects.all().filter(type_id='Teacher').count()
     c_student = Person.objects.all().filter(type_id='Student').count()
     c_graduate = Person.objects.all().filter(type_id='Graduate').count()
@@ -87,11 +93,3 @@ def update_attendance(request, std_id, session_id):
         get_attendance = Attendance.objects.get(pk=attendance.attendance_id)
         get_attendance.session_id = session_id
         get_attendance.save()
-
-def chk_request_session_course_id(request):
-    # Check request session
-    if not request.session.get('get_course_id', False):
-        return redirect('select_course')
-    get_course_id = request.session['get_course_id']
-    get_course_id = Course.objects.get(pk=get_course_id)
-    return get_course_id
