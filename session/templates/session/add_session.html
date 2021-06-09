@@ -15,7 +15,7 @@
 {% endblock %}
 
 {% block pg_head %}
-    Add Session
+    اضافة جلسة
 {% endblock %}
 
 {% block card_body %}
@@ -23,15 +23,15 @@
         {% csrf_token %}
         <div class="form-group row">
             <div class="col-sm-6 mb-3 mb-sm-0">
-                <label for="exampleInputEmail1" class="form-label">Session Number</label>
-                <input type="text" class="form-control form-control-user" id="snumber" name="snumber"
-                    placeholder="Session Number" required>
+                <label class="form-label">رقم الجلسة</label>
+                <input type="text" class="form-control" id="snumber" name="snumber"
+                    placeholder="رقم الجلسة" required>
             </div>
             <div class="col-sm-6">
-                <label for="exampleInputEmail1" class="form-label">Teacher</label>
-                <select class="form-control form-select rounded-pill" aria-label="Default select example" name="teacher" id="teacher" required>
-                    {% for item in teacher %}
-                    <option value="{{item.person_id}}">{{item.first_name}} {{item.last_name}}</option>
+                <label class="form-label">المستوى</label>
+                <select class="form-control form-select" aria-label="Default select example" name="level" id="level">
+                    {% for item in level %}
+                        <option value="{{item.level_name}}">{{item.level_name}}</option>
                     {% endfor %}
                 </select>
             </div>
@@ -39,42 +39,28 @@
 
         <div class="form-group row">
             <div class="col-sm-6 mb-3 mb-sm-0">
-                <label for="exampleInputEmail1" class="form-label">Level</label>
-                <select class="form-control form-select rounded-pill" aria-label="Default select example" name="level" id="level">
-                    <option value="مبتدئ أ">مبتدئ أ</option>
-                    <option value="مبتدئ ب">مبتدئ ب</option>
-                    <option value="متوسط أ">متوسط أ</option>
-                    <option value="متوسط ب">متوسط ب</option>
-                    <option value="متقدم أ">متقدم أ</option>
-                    <option value="متقدم ب">متقدم ب</option>
+                <label class="form-label">المكان</label>
+                <select class="form-control form-select" aria-label="Default select example" name="position" id="position" required>
+                    {% for item in position %}
+                        <option value="{{item.position_name}}">{{item.position_name}}</option>
+                    {% endfor %}
                 </select>
             </div>
-            <div class="col-sm-6">
-                <label for="exampleInputEmail1" class="form-label">Position</label>
-                <select class="form-control form-select rounded-pill" aria-label="Default select example" name="position" id="position" required>
-                    <option value="توسعة مكتبة">توسعة مكتبة</option>
-                    <option value="قبو">قبو</option>
-                    <option value="توسعة حرم رئيسي">توسعة حرم رئيسي</option>
-                    <option value="حرم رئيسي">حرم رئيسي</option>
-                    <option value="تحت السدة">تحت السدة</option>
-                </select>
-            </div>
-        </div>
-        
-        <div class="form-group row">
-            <div class="col-sm-6 mb-3 mb-sm-0">
-                <labelclass="form-label">Time</label>
-                <select class="form-control form-select rounded-pill" aria-label="Default select example" name="time" id="time" required>
-                    <option value="بعد جلسة الصفا">بعد جلسة الصفا</option>
+            <div class="col-sm-6 mb-4">
+                <labelclass="form-label">التوقيت</label>
+                <select class="form-control form-select" aria-label="Default select example" name="time" id="time" required>
+                    {% for item in time %}
+                        <option value="{{item.time_name}}">{{item.time_name}}</option>
+                    {% endfor %}
                 </select>
             </div>
         </div>
 
         <div class="d-flex justify-content-center">
             <a type="button" class="btn btn-secondary w-25 mr-4" href="{% url 'session'%}">
-                <span>Back</span>
+                <span>الغاء</span>
             </a>
-            <input type="submit" value="Add" class="btn btn-primary w-25">
+            <input type="submit" value="اضافة" class="btn btn-primary w-25">
         </div>
     </form>
 {% endblock %}

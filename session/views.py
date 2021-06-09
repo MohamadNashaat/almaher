@@ -323,6 +323,9 @@ def generate_session(request):
 
 @login_required(login_url='login')
 def add_session(request):
+    level = Level.objects.all()
+    position = Position.objects.all()
+    time = Time.objects.all()
     get_course_id = get_request_session_course_id(request)
     count_index = Session.objects.all().count()
     if count_index == 0:
@@ -330,20 +333,18 @@ def add_session(request):
     else:
         count_index = Session.objects.all().aggregate(Max('session_id'))['session_id__max']
         count_index += 1
-    in_session = Session.objects.all().filter(course_id=get_course_id).values_list('teacher_id', flat=True)
-    teacher = Person.objects.all().filter(type_id__in=('Teacher', 'Graduate'))
-    teacher = teacher.filter(~Q(pk__in=in_session))
     if request.method == 'POST':
-        snumber = request.POST['snumber']
-        teacher = Person.objects.get(pk=request.POST['teacher'])
-        level = request.POST['level']
-        position = request.POST['position']
-        time = request.POST['time']
-        Session.objects.create(session_id=count_index, level_id=level, course_id=get_course_id,
-                             position_id=position, time_id=time, session_number=snumber, teacher_id=teacher)
+        get_snumber = request.POST['snumber']
+        get_level = level.get(pk=request.POST['level'])
+        get_position = position.get(pk=request.POST['position'])
+        get_time = time.get(pk=request.POST['time'])
+        Session.objects.create(session_id=count_index, level_id=get_level, course_id=get_course_id,
+                             position_id=get_position, time_id=get_time, session_number=get_snumber)
         messages.success(request, 'تم الاضافة بنجاح')
         return HttpResponseRedirect(reverse('add_session'))
-    context = {'teacher': teacher,
+    context = {'level': level,
+                'position': position,
+                'time': time,
                 }
     return render(request, 'session/add_session.html', context)
 
@@ -680,8 +681,8 @@ def export_sessions_excel(request):
     row_num = 0
     font_style = xlwt.XFStyle()
     font_style.font.bold = True
-    columns = ['id', 'First name', 'Last name', 'Home number',
-                'Phone number', 'Course', 'Session', 'Level', 'Position', 'Teacher']
+    columns = ['id', 'First name', 'Last name', 'BDate', 'Home number',
+                'Phone number', 'Course', 'Session', 'Level', 'Position', 'Teacher', 'Add date']
     for col_num in range(len(columns)):
         ws.write(row_num, col_num, columns[col_num], font_style)
     # Sheet body, remaining rows
@@ -695,6 +696,7 @@ def export_sessions_excel(request):
         id = ''
         fname = ''
         lname = ''
+        bdate = ''
         hnumber = ''
         pnumber = ''
         level = ''
@@ -702,6 +704,7 @@ def export_sessions_excel(request):
         position = ''
         course = ''
         teacher = ''
+        add_date = ''
         # Check all values if none
         if s.student_id.person_id is not None:
             id = s.student_id.person_id
@@ -709,6 +712,9 @@ def export_sessions_excel(request):
             fname = s.student_id.first_name
         if s.student_id.last_name is not None:
             lname = s.student_id.last_name
+        if s.student_id.bdate is not None:
+            bdate = s.student_id.bdate
+            bdate = bdate.strftime('%m/%d/%Y')
         if s.student_id.home_number is not None:
             hnumber = s.student_id.home_number
         if s.student_id.phone_number is not None:
@@ -723,8 +729,11 @@ def export_sessions_excel(request):
             course = str(s.session_id.course_id)
         if s.session_id.teacher_id is not None:
             teacher = str(s.session_id.teacher_id)
-        vlues = [id, fname, lname, hnumber, pnumber,
-                course, session, level, position, teacher]
+        if s.create_date is not None:
+            add_date = s.create_date
+            add_date = add_date.strftime('%m/%d/%Y')
+        vlues = [id, fname, lname, bdate, hnumber, pnumber,
+                course, session, level, position, teacher, add_date]
         rows.append(vlues)
     for row in rows:
         row_num += 1
