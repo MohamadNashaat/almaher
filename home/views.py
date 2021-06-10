@@ -85,7 +85,7 @@ def index(request):
 
 # Base def
 def update_attendance(request, std_id, session_id):
-    get_course_id = chk_request_session_course_id(request)
+    get_course_id = get_request_session_course_id(request)
     # Update attendance
     session_list = Session.objects.all().filter(course_id=get_course_id).values_list('session_id', flat=True)
     all_attendance = Attendance.objects.filter(person_id=std_id, session_id__in=session_list)
