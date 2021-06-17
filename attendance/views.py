@@ -166,7 +166,7 @@ def export_excel_attendance(request):
     get_course_id = get_request_session_course_id(request)
     session_list = Session.objects.filter(course_id=get_course_id).values_list('session_id', flat=True)
     day_attendance = Attendance.objects.all().filter(session_id__in=session_list).order_by('day').distinct('day')
-    columns = ['id', 'First name', 'Last name', 'Type', 'Priority', 'Session', 'Level']
+    columns = ['id', 'First name', 'Last name', 'BDate', 'Phone number', 'Type', 'Priority', 'Session', 'Level']
     for day in day_attendance:
         get_day = day.day
         get_day = get_day.strftime('%m/%d/%Y')
@@ -183,6 +183,8 @@ def export_excel_attendance(request):
         id = ''
         fname = ''
         lname = ''
+        bdate = ''
+        phone_number = ''
         type_person= ''
         priority = ''
         session = ''
@@ -194,6 +196,11 @@ def export_excel_attendance(request):
             fname = all_person.person_id.first_name
         if all_person.person_id.last_name is not None:
             lname = all_person.person_id.last_name
+        if all_person.person_id.bdate is not None:
+            bdate = all_person.person_id.bdate
+            bdate = bdate.strftime('%Y')
+        if all_person.person_id.phone_number is not None:
+            phone_number = all_person.person_id.phone_number    
         if all_person.person_id.type_id is not None:
             type_person = all_person.person_id.type_id
         if all_person.person_id.priority_id is not None:
@@ -203,7 +210,7 @@ def export_excel_attendance(request):
         if all_person.session_id.level_id is not None:
             level = str(all_person.session_id.level_id)
         # Enter values
-        value = [id, fname, lname, type_person, priority, session, level]
+        value = [id, fname, lname, bdate, phone_number, type_person, priority, session, level]
         for st in status_attendance:
             status = str(False)
             if st.status is not None:
