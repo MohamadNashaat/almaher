@@ -728,7 +728,7 @@ def export_sessions_excel(request):
             lname = s.student_id.last_name
         if s.student_id.bdate is not None:
             bdate = s.student_id.bdate
-            bdate = bdate.strftime('%m/%d/%Y')
+            bdate = bdate.strftime('%Y')
         if s.student_id.home_number is not None:
             hnumber = s.student_id.home_number
         if s.student_id.phone_number is not None:
@@ -745,7 +745,7 @@ def export_sessions_excel(request):
             teacher = str(s.session_id.teacher_id)
         if s.create_date is not None:
             add_date = s.create_date
-            add_date = add_date.strftime('%m/%d/%Y')
+            add_date = add_date.strftime('%Y')
         vlues = [id, fname, lname, bdate, hnumber, pnumber,
                 course, session, level, position, teacher, add_date]
         rows.append(vlues)

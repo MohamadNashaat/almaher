@@ -248,7 +248,7 @@ def export_excel_person(request):
             level = str(person.level_id)
         if person.bdate is not None:
             bdate = person.bdate
-            bdate = bdate.strftime('%m/%d/%Y')
+            bdate = bdate.strftime('%Y')
         if person.job is not None:
             job = person.job
         if person.address is not None:
@@ -314,7 +314,7 @@ def export_excel_student(request):
             level = str(person.level_id)
         if person.bdate is not None:
             bdate = person.bdate
-            bdate = bdate.strftime('%m/%d/%Y')
+            bdate = bdate.strftime('%Y')
         if person.job is not None:
             job = person.job
         if person.address is not None:
@@ -380,7 +380,7 @@ def export_excel_teacher(request):
             level = str(person.level_id)
         if person.bdate is not None:
             bdate = person.bdate
-            bdate = bdate.strftime('%m/%d/%Y')
+            bdate = bdate.strftime('%Y')
         if person.job is not None:
             job = person.job
         if person.address is not None:
@@ -446,7 +446,7 @@ def export_excel_graduate(request):
             level = str(person.level_id)
         if person.bdate is not None:
             bdate = person.bdate
-            bdate = bdate.strftime('%m/%d/%Y')
+            bdate = bdate.strftime('%Y')
         if person.job is not None:
             job = person.job
         if person.address is not None:

@@ -53,7 +53,7 @@
         <td>{{item.first_name}}</td>
         <td>{{item.last_name}}</td>
         <td>{{item.father_name}}</td>
-        <td>{{item.bdate}}</td>
+        <td>{{item.bdate|date:'Y'}}</td>
         <td>{{item.level_id}}</td>
         <td>
             <select class="form-control form-select" onchange="set_priority({{item.person_id}})" id="{{item.person_id}}">
