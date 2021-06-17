@@ -557,7 +557,17 @@ def export_session_pdf(request):
         list_stud = []
         for stud in get_session_students:
             get_attendance = Attendance.objects.filter(session_id__in=session_list, person_id=stud.student_id).order_by('day')                
-            dic_stud = {'student': stud, 'attendance': get_attendance}
+            new_attend = []
+            for atend in get_attendance:
+                new_attend.append(atend)
+                if len(new_attend) == 3:
+                    new_attend.append('')
+                elif len(new_attend) == 8:
+                    new_attend.append('')
+                elif len(new_attend) == 14:
+                    new_attend.append('')
+            #dic_stud = {'student': stud, 'attendance': get_attendance}
+            dic_stud = {'student': stud, 'attendance': new_attend}
             list_stud.append(dic_stud)
         dic_stud_teach = {'teach': s, 'stud': list_stud}
         last_session.append(dic_stud_teach)

@@ -49,6 +49,20 @@
         .w-2{
             width: 2%;
         }
+        .checkbox{
+            text-align: center;
+        }
+        .checkbox_box{
+            border: 1px solid black;
+            height: 16px;
+            width: 16px;
+            display: inline-block;
+        }
+        p{
+            margin: 0px;
+            padding: 1px;
+            font-weight: 900;
+        }
         @page {
         size: "A4";
         margin: 2cm 1.5cm 1.5cm 1.5cm;
@@ -88,11 +102,19 @@
                     <tr>
                         <td>{{item2.student.student_id}}</td>
                         {% for item3 in item2.attendance %}
-                            <!--<td>{{item3.status}}</td>-->
-                            <td></td>
-                        {% endfor %}
-                        {% for i in '123'|make_list %}
-                            <td class="td-p"></td> 
+                            <!--{% if item3|length %}
+                            {% endif %}-->
+                            {% if item3.status == True %}
+                                <td class="checkbox">
+                                    <p class="checkbox_box">&#10003;</p>
+                                </td>
+                            {% elif item3.status == False %}
+                                <td class="checkbox">
+                                    <p class="checkbox_box"></p>
+                                </td>
+                            {% else %}
+                                <td></td> 
+                            {% endif %}
                         {% endfor %}
                     </tr>
                 {% endfor %}
@@ -101,7 +123,7 @@
                 <tr>
                     {% for i in num_of_session_list %}
                         <td class="td-p"></td>
-                    {% endfor %}  
+                    {% endfor %}
                     {% for i in '1234'|make_list %}
                         <td class="td-p"></td> 
                     {% endfor %}
