@@ -69,8 +69,8 @@
     <th>المستوى</th>
     <th>المكان</th>
     <th>الوقت</th>
-    <th>متوسط العمر</th>
     <th>عدد الطلاب</th>
+    <th>متوسط العمر</th>
     <th>عرض الطلاب</th>
     <!--<th></th>
     <th></th>-->
@@ -98,8 +98,8 @@
         <td>{{item.level_id}}</td>
         <td>{{item.position_id}}</td>
         <td>{{item.time_id}}</td>
-        <td></td>
         <td>{{item.count}}</td>
+        <td>{{item.avg_date}}</td>
         <td>
             <div class="d-flex justify-content-center">
                 <a href="{% url 'session_student' item.session_id %}" class="btn btn-success btn-circle btn-sm">

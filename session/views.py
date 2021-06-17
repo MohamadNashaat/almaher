@@ -40,6 +40,14 @@ def session(request):
     for s_loop in session_list_students:
             get_session = Session.objects.all().get(pk=s_loop)
             c_student = Session_Student.objects.filter(session_id=get_session).count()
+            get_person_id = Session_Student.objects.filter(session_id=get_session).values_list('student_id__bdate', flat=True)
+            avg_date = 0
+            for per in get_person_id:
+                if per is not None:
+                    bdate = per
+                    bdate = bdate.year
+                    avg_date += int(bdate)
+            avg_date = int(avg_date / c_student)
             dic_session = {
                 'session_id': get_session.session_id,
                 'session_number': get_session.session_number,
@@ -48,7 +56,9 @@ def session(request):
                 'position_id': get_session.position_id,
                 'time_id': get_session.time_id,
                 'teacher_id': get_session.teacher_id,
-                'count': c_student,}
+                'count': c_student,
+                'avg_date': avg_date,
+                }
             end_session.append(dic_session)
     context = {'end_session': end_session,
                 'teacher': teacher,
