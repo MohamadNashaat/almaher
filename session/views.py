@@ -528,75 +528,7 @@ def set_student(request):
     context = {}
     return JsonResponse(context)
 
-
-
-
-def export_session_pdf(request):
-    response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'attachment; filename="sessions.pdf"'
-    response['Content-Transform-Encoding'] = 'binary'
-    get_course_id = get_request_session_course_id(request)
-    session = Session.objects.filter(course_id=get_course_id).order_by('session_id')
-    session_list = session.values_list('session_id', flat=True)
-    # Check if any student is not in attendance
-    chk_attendance = Attendance.objects.filter(session_id__in=session_list).distinct('person_id').count()
-    if chk_attendance == 0:
-        messages.error(request, 'الرجاء انشاء الحضور اولا')
-        return HttpResponseRedirect(reverse('session'))
-    c_session = session.count()
-    day = Attendance.objects.filter(session_id__in=session_list).order_by('day').distinct('day').values_list('day', flat=True)
-    new_day = []
-    for d in day:
-        new_day.append(d)
-        if len(new_day) == 3:
-            new_day.append('تقييم 1')
-        elif len(new_day) == 8:
-            new_day.append('تقييم 2')
-        elif len(new_day) == 14:
-            new_day.append('تقييم 3')
-    day = new_day
-    # End check
-    num_of_session = get_course_id.num_of_session
-    num_of_session_list = []
-    for i in range(num_of_session):
-        num_of_session_list.append(i)
-    ###
-    last_session = []
-    for s in session:
-        get_session_students = Session_Student.objects.filter(session_id=s.session_id)
-        list_stud = []
-        for stud in get_session_students:
-            get_attendance = Attendance.objects.filter(session_id__in=session_list, person_id=stud.student_id).order_by('day')                
-            new_attend = []
-            for atend in get_attendance:
-                new_attend.append(atend)
-                if len(new_attend) == 3:
-                    new_attend.append('')
-                elif len(new_attend) == 8:
-                    new_attend.append('')
-                elif len(new_attend) == 14:
-                    new_attend.append('')
-            #dic_stud = {'student': stud, 'attendance': get_attendance}
-            dic_stud = {'student': stud, 'attendance': new_attend}
-            list_stud.append(dic_stud)
-        dic_stud_teach = {'teach': s, 'stud': list_stud}
-        last_session.append(dic_stud_teach)
-    ###
-    context = {'last_session': last_session,
-                'num_of_session_list': num_of_session_list,
-                'course_name': get_course_id.course_name,
-                'day': day,
-                }
-    html_string = render_to_string('session/pdf_sessions.html', context)
-    html = HTML(string=html_string)
-    result = html.write_pdf()
-    with tempfile.NamedTemporaryFile(delete=True) as output:
-        output.write(result)
-        output.flush()
-        output = open(output.name, 'rb')
-        response.write(output.read())
-    return response
-
+# Export to *
 def export_teacher_student_session_pdf(request):
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = 'attachment; filename="sessions_data.pdf"'

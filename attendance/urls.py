@@ -11,4 +11,6 @@ urlpatterns = [
     path('change_status_false', views.change_status_false, name='change_status_false'),
 
     path('export/excel/attendance', views.export_excel_attendance, name='export_excel_attendance'),
+    path('export/pdf/attendance/student', views.export_attendance_student_pdf, name='export_attendance_student_pdf'),
+
 ]

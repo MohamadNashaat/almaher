@@ -16,7 +16,6 @@ urlpatterns = [
     path('set_teacher', views.set_teacher, name='set_teacher'),
     path('set_student', views.set_student, name='set_student'),
 
-    path('export/pdf/session', views.export_session_pdf, name='export_session_pdf'),
     path('export/pdf/session/student', views.export_students_session_pdf, name='export_students_session_pdf'),
     path('export/pdf/session/teacher', views.export_teacher_session_pdf, name='export_teacher_session_pdf'),
     path('export/pdf/session/teacher/student', views.export_teacher_student_session_pdf, name='export_teacher_student_session_pdf'),
