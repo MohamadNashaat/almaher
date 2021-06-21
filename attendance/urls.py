@@ -12,5 +12,6 @@ urlpatterns = [
 
     path('export/excel/attendance', views.export_excel_attendance, name='export_excel_attendance'),
     path('export/pdf/attendance/student', views.export_attendance_student_pdf, name='export_attendance_student_pdf'),
+    path('export/pdf/attendance/teacher', views.export_attendance_teacher_pdf, name='export_attendance_teacher_pdf'),
 
 ]

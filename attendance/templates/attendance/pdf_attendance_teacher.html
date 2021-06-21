@@ -4,7 +4,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>session pdf</title>
+    <title>Attendance teacher pdf</title>
     <style>
         body{
             font-size: 16px;
@@ -40,6 +40,12 @@
         .w-25{
             width: 25%;
         }
+        .w-15{
+            width: 15%;
+        }
+        .w-10{
+            width: 10%;
+        }
         .w-5{
             width: 5%;
         }
@@ -69,7 +75,7 @@
         size: landscape;
             @top-center {
                 font-size: 20px;
-                content: "{{course_name}}";
+                content: "قائمة حضور المدرسين في {{course_name}}";
             }
             @bottom-right {
                 font-size: 12px;
@@ -79,34 +85,29 @@
     </style>
   </head>
   <body>
-        {% for item in last_session %}
-        <div class="clear">
-            <div id="col1">رقم الدرس: {{item.teach.session_number}}</div>
-            <div id="col1">المدرس: {{item.teach.teacher_id}}</div>
-            <div id="col1">المستوى: {{item.teach.level_id}}</div>
-            <div id="col1">المكان: {{item.teach.position_id}}</div>
-            <div id="col1">التوقيت: {{item.teach.time_id}}</div>
-        </div>
-
         <table>
             <thead>
                 <tr>
                     <td>الاسم</td>
+                    <td class="w-10">المستوى</td>
+                    <td class="w-5">رقم الدرس</td>
                     {% for att_day in day %}
                         <td class="w-4" style="font-size: 12px;">{{att_day}}</td>
                     {% endfor %}
                 </tr>
             </thead>
             <tbody>
-                {% for item2 in item.stud %}
+                {% for item in last_attendance %}
                     <tr>
-                        <td>{{item2.student.student_id}}</td>
-                        {% for item3 in item2.attendance %}
-                            {% if item3.status == True %}
+                        <td>{{item.teacher.person_id}}</td>
+                        <td>{{item.teacher.session_id.level_id}}</td>
+                        <td>{{item.teacher.session_id.session_number}}</td>
+                        {% for item2 in item.attendance %}
+                            {% if item2.status == True %}
                                 <td class="checkbox">
                                     <p class="checkbox_box">&#10003;</p>
                                 </td>
-                            {% elif item3.status == False %}
+                            {% elif item2.status == False %}
                                 <td class="checkbox">
                                     <p class="checkbox_box"></p>
                                 </td>
@@ -116,37 +117,8 @@
                         {% endfor %}
                     </tr>
                 {% endfor %}
-
-                {% for i in '1234'|make_list %}
-                <tr>
-                    {% for i in num_of_session_list %}
-                        <td class="td-p"></td>
-                    {% endfor %}
-                    {% for i in '1234'|make_list %}
-                        <td class="td-p"></td> 
-                    {% endfor %}
-                </tr>
-                {% endfor %}
             </tbody>
         </table>
-
-        <table class="table-2">
-            <thead>
-                <tr>
-                    <td class="w-25">التاريخ</td>
-                    <td>الملاحظات</td>
-                </tr>
-            </thead>
-            <tbody>
-                {% for i in '012'|make_list %}
-                <tr>
-                    <td class="td-p"></td>
-                    <td class="td-p"></td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        <p style="page-break-after: always" ></p>
-        {% endfor %}
+        <!--p style="page-break-after: always" ></p-->
   </body>
 </html>

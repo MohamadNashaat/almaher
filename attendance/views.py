@@ -226,7 +226,6 @@ def export_excel_attendance(request):
     wb.save(response)
     return response
 
-
 def export_attendance_student_pdf(request):
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = 'attachment; filename="attendance_student.pdf"'
@@ -284,6 +283,43 @@ def export_attendance_student_pdf(request):
                 'day': day,
                 }
     html_string = render_to_string('attendance/pdf_attendance_student.html', context)
+    html = HTML(string=html_string)
+    result = html.write_pdf()
+    with tempfile.NamedTemporaryFile(delete=True) as output:
+        output.write(result)
+        output.flush()
+        output = open(output.name, 'rb')
+        response.write(output.read())
+    return response
+
+def export_attendance_teacher_pdf(request):
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="attendance_teacher.pdf"'
+    response['Content-Transform-Encoding'] = 'binary'
+    get_course_id = get_request_session_course_id(request)
+    session = Session.objects.filter(course_id=get_course_id).order_by('session_id')
+    session_list = session.values_list('session_id', flat=True)
+    # Check if any student is not in attendance
+    chk_attendance = Attendance.objects.filter(session_id__in=session_list).distinct('person_id').count()
+    if chk_attendance == 0:
+        messages.error(request, 'الرجاء انشاء الحضور اولا')
+        return HttpResponseRedirect(reverse('session'))
+    c_session = session.count()
+    # End check
+    day = Attendance.objects.filter(session_id__in=session_list).order_by('day').distinct('day').values_list('day', flat=True)
+    teacher = Session.objects.filter(session_id__in=session_list).order_by('teacher_id').values_list('teacher_id', flat=True)
+    get_attendance = Attendance.objects.filter(session_id__in=session_list, person_id__in=teacher).order_by('session_id').distinct('session_id')
+    last_attendance = []
+    for all_person in get_attendance:
+        status_attendance = Attendance.objects.filter(person_id=all_person.person_id, session_id__in=session_list).order_by('day')
+        dic_teacher = {'teacher': all_person, 'attendance': status_attendance}
+        last_attendance.append(dic_teacher)
+    ###
+    context = {'day': day,
+                'last_attendance': last_attendance,
+                'course_name': get_course_id.course_name,
+                }
+    html_string = render_to_string('attendance/pdf_attendance_teacher.html', context)
     html = HTML(string=html_string)
     result = html.write_pdf()
     with tempfile.NamedTemporaryFile(delete=True) as output:
