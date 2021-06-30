@@ -237,7 +237,7 @@ def export_attendance_student_pdf(request):
     chk_attendance = Attendance.objects.filter(session_id__in=session_list).distinct('person_id').count()
     if chk_attendance == 0:
         messages.error(request, 'الرجاء انشاء الحضور اولا')
-        return HttpResponseRedirect(reverse('session'))
+        return HttpResponseRedirect(reverse('attendance'))
     c_session = session.count()
     day = Attendance.objects.filter(session_id__in=session_list).order_by('day').distinct('day').values_list('day', flat=True)
     new_day = []
@@ -303,7 +303,7 @@ def export_attendance_teacher_pdf(request):
     chk_attendance = Attendance.objects.filter(session_id__in=session_list).distinct('person_id').count()
     if chk_attendance == 0:
         messages.error(request, 'الرجاء انشاء الحضور اولا')
-        return HttpResponseRedirect(reverse('session'))
+        return HttpResponseRedirect(reverse('attendance'))
     c_session = session.count()
     # End check
     day = Attendance.objects.filter(session_id__in=session_list).order_by('day').distinct('day').values_list('day', flat=True)
