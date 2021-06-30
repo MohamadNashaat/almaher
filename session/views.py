@@ -80,13 +80,34 @@ def generate_sessions(request, count_student, new_session, priority):
     in_session = Session_Student.objects.all().filter(session_id__in=get_session).values_list('student_id', flat=True)
     student = Person.objects.filter(~Q(pk__in=in_session)).filter(type_id='Student', status=True, level_id=new_session.level_id, priority_id=priority).order_by('bdate').values_list('person_id', flat=True)
     var_num = 0
-    for s_loop in range(1, count_student):
-        if var_num < len(student):
-            get_student = int(student[var_num])
-            new_student = Person.objects.get(pk=get_student)
-            Session_Student.objects.create(id=count_index_s_student, session_id=new_session, student_id=new_student)
-            var_num += 1
-            count_index_s_student += 1
+    for std in student:
+        if var_num < count_student:
+            # Check birth date
+            c_student = Session_Student.objects.filter(session_id=new_session).count()
+            get_person_id = Session_Student.objects.filter(session_id=new_session).values_list('student_id__bdate', flat=True)
+            avg_date = 0
+            for per in get_person_id:
+                if per is not None:
+                    bdate = per
+                    bdate = bdate.year
+                    avg_date += int(bdate)
+            if c_student != 0:
+                avg_date = int(avg_date / c_student)
+            # Get student
+            get_student = Person.objects.get(pk=std)
+            get_student_bdate = 0
+            if get_student.bdate is not None:
+                get_student_bdate = get_student.bdate
+                get_student_bdate = get_student_bdate.year
+                get_student_bdate = int(get_student_bdate)
+                if get_student_bdate >= (avg_date - 10) and get_student_bdate <= (avg_date + 10):
+                    Session_Student.objects.create(id=count_index_s_student, session_id=new_session, student_id=get_student)
+                    count_index_s_student += 1
+                    var_num += 1
+                elif avg_date == 0:
+                    Session_Student.objects.create(id=count_index_s_student, session_id=new_session, student_id=get_student)
+                    count_index_s_student += 1
+                    var_num += 1                
         else:
             break
 
@@ -120,8 +141,6 @@ def generate_session(request):
                 # Get count of sutdents
                 count_student_1 = int(request.POST.get(f'count_student_1_{level_loop}'))
                 count_student_2 = int(request.POST.get(f'count_student_2_{level_loop}'))
-                count_student_1 += 1
-                count_student_2 += 1
                 # Get last session number
                 get_last_session_number = Session.objects.filter(course_id=get_course_id).count()
                 if get_last_session_number == 0:
@@ -142,10 +161,8 @@ def generate_session(request):
                     new_session = Session(session_id=count_index, level_id=get_level,course_id=get_course_id,session_number=l1, time_id=get_time, position_id=get_position)
                     new_session.save()
                     count_index += 1
-                    # Add students
                     generate_sessions(request, count_student_1, new_session, 'مستمر')
                     generate_sessions(request, count_student_2, new_session, 'غير معروف')
-
         return redirect('session')
     context = {'level': level,
                 'time': time,

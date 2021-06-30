@@ -65,8 +65,8 @@
     <th>عدد الطلاب</th>
     <th>متوسط العمر</th>
     <th>عرض الطلاب</th>
-    <th></th>
-    <th></th>
+    <!--<th></th>
+    <th></th>-->
 {% endblock %}
 
 {% block tr_table %}
@@ -100,7 +100,7 @@
                 </a>
             </div>
         </td>
-        <td>
+        <!--<td>
             <a href="{% url 'edit_session' item.session_id %}" class="btn btn-info btn-circle btn-sm">
                 <i class="fas fa-edit"></i>
             </a>
@@ -109,7 +109,7 @@
             <a href="{% url 'del_session' item.session_id %}" class="btn btn-danger btn-circle btn-sm">
                 <i class="fas fa-times"></i>
             </a>
-        </td>
+        </td>-->
     </tr>
     {% endfor %}
 {% endblock %}
