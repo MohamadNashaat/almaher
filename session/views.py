@@ -66,7 +66,7 @@ def session(request):
                 }
     return render(request, 'session/session.html', context)
 
-def generate_sessions(request, count_student_1, count_student_2, new_session):
+def generate_sessions(request, count_student, new_session, priority):
     get_course_id = get_request_session_course_id(request)
     # Get index id session_student
     count_index_s_student = Session_Student.objects.all().count()
@@ -75,26 +75,12 @@ def generate_sessions(request, count_student_1, count_student_2, new_session):
     else:
         count_index_s_student = Session_Student.objects.all().aggregate(Max('id'))['id__max']
         count_index_s_student += 1
-    # Add students => "مستمر" to sessions
+    # Add students => to sessions
     get_session = Session.objects.all().filter(course_id=get_course_id).values_list('session_id', flat=True)
     in_session = Session_Student.objects.all().filter(session_id__in=get_session).values_list('student_id', flat=True)
-    student = Person.objects.filter(~Q(pk__in=in_session)).filter(type_id='Student', status=True, level_id=new_session.level_id, priority_id="مستمر").order_by('bdate').values_list('person_id', flat=True)
+    student = Person.objects.filter(~Q(pk__in=in_session)).filter(type_id='Student', status=True, level_id=new_session.level_id, priority_id=priority).order_by('bdate').values_list('person_id', flat=True)
     var_num = 0
-    for s_loop in range(1, count_student_1): 
-        if var_num < len(student):
-            get_student = int(student[var_num])
-            new_student = Person.objects.get(pk=get_student)
-            Session_Student.objects.create(id=count_index_s_student, session_id=new_session, student_id=new_student)
-            var_num += 1
-            count_index_s_student += 1
-        else:
-            break
-    # Add students => "غير معروف" to sessions
-    get_session = Session.objects.all().filter(course_id=get_course_id).values_list('session_id', flat=True)
-    in_session = Session_Student.objects.all().filter(session_id__in=get_session).values_list('student_id', flat=True)
-    student = Person.objects.filter(~Q(pk__in=in_session)).filter(type_id='Student', status=True, level_id=new_session.level_id, priority_id="غير معروف").order_by('bdate').values_list('person_id', flat=True)
-    var_num = 0
-    for s_loop in range(1, count_student_2): 
+    for s_loop in range(1, count_student):
         if var_num < len(student):
             get_student = int(student[var_num])
             new_student = Person.objects.get(pk=get_student)
@@ -108,6 +94,8 @@ def generate_sessions(request, count_student_1, count_student_2, new_session):
 def generate_session(request):
     get_course_id = get_request_session_course_id(request)
     level = Level.objects.all()
+    time = Time.objects.all()
+    position = Position.objects.all()
     student_count = []
     level_list = level.values_list('level_name', flat=True)
     for level_loop in level_list:
@@ -125,85 +113,43 @@ def generate_session(request):
         # Check session
         ch_session = Session.objects.filter(course_id=get_course_id).count()
         if ch_session == 0:
-            # Times
-            time = Time.objects.get(pk='بعد جلسة الصفا')
-            # Levels
-            advanced_b = Level.objects.get(pk='متقدم ب')
-            advanced_a = Level.objects.get(pk='متقدم أ')
-            intermediate_b = Level.objects.get(pk='متوسط ب')
-            intermediate_a = Level.objects.get(pk='متوسط أ')
-            beginner_b = Level.objects.get(pk='مبتدئ ب')
-            beginner_a = Level.objects.get(pk='مبتدئ أ')
-            # Get request
-            count_student_1 = int(request.POST.get('count_student_1_متقدم ب'))
-            count_student_1 += 1
-            count_student_2 = int(request.POST.get('count_student_2_متقدم ب'))
-            count_student_2 += 1
-            #
-            count_advanced_b = int(request.POST.get('متقدم ب'))
-            count_advanced_a = int(request.POST.get('متقدم أ'))
-            count_intermediate_b = int(request.POST.get('متوسط ب'))
-            count_intermediate_a = int(request.POST.get('متوسط أ'))
-            count_beginner_b = int(request.POST.get('مبتدئ ب'))
-            count_beginner_a = int(request.POST.get('مبتدئ أ'))
-            # Add number 1
-            count_advanced_b += 1
-            count_advanced_a += count_advanced_b
-            count_intermediate_b += count_advanced_a
-            count_intermediate_a += count_intermediate_b
-            count_beginner_b += count_intermediate_a
-            count_beginner_a += count_beginner_b
-            # Positions
-            p1 = Position.objects.get(pk='توسعة مكتبة')
-            p2 = Position.objects.get(pk='قبو')
-            p3 = Position.objects.get(pk='توسعة حرم رئيسي')
-            p4 = Position.objects.get(pk='حرم رئيسي')
-            p5 = Position.objects.get(pk='تحت السدة')
             # Loop to create sessons
-            for l1 in range(1, count_advanced_b):
-                new_session = Session(session_id=count_index, level_id=advanced_b,course_id=get_course_id,session_number=l1, time_id=time, position_id=p1)
-                new_session.save()
-                count_index += 1
-                # Add students
-                generate_sessions(request, count_student_1, count_student_2, new_session)
-                
-            for l1 in range(count_advanced_b, count_advanced_a):
-                new_session = Session(session_id=count_index, level_id=advanced_a,course_id=get_course_id,session_number=l1, time_id=time, position_id=p2)
-                new_session.save()
-                count_index += 1
-                # Add students
-                generate_sessions(request, count_student_1, count_student_2, new_session)  
+            for level_loop in level_list:
+                get_level = Level.objects.get(pk=level_loop)
+                # Get requests
+                # Get count of sutdents
+                count_student_1 = int(request.POST.get(f'count_student_1_{level_loop}'))
+                count_student_2 = int(request.POST.get(f'count_student_2_{level_loop}'))
+                count_student_1 += 1
+                count_student_2 += 1
+                # Get last session number
+                get_last_session_number = Session.objects.filter(course_id=get_course_id).count()
+                if get_last_session_number == 0:
+                    get_last_session_number = 1
+                else:
+                    get_last_session_number = Session.objects.filter(course_id=get_course_id).aggregate(Max('session_number'))['session_number__max']
+                    get_last_session_number += 1
+                # Get count of session for curent level
+                get_count_session = int(request.POST.get(f'count_session_{level_loop}'))
+                get_count_session += get_last_session_number
+                # Get postion
+                get_position = request.POST.get(f'position_{level_loop}')
+                get_position = Position.objects.get(pk=get_position)
+                # Get time
+                get_time = request.POST.get(f'time_{level_loop}')
+                get_time = Time.objects.get(pk=get_time)
+                for l1 in range(get_last_session_number, get_count_session):
+                    new_session = Session(session_id=count_index, level_id=get_level,course_id=get_course_id,session_number=l1, time_id=get_time, position_id=get_position)
+                    new_session.save()
+                    count_index += 1
+                    # Add students
+                    generate_sessions(request, count_student_1, new_session, 'مستمر')
+                    generate_sessions(request, count_student_2, new_session, 'غير معروف')
 
-            for l1 in range(count_advanced_a, count_intermediate_b):
-                new_session = Session(session_id=count_index, level_id=intermediate_b,course_id=get_course_id,session_number=l1, time_id=time, position_id=p4)
-                new_session.save()
-                count_index += 1
-                # Add students
-                generate_sessions(request, count_student_1, count_student_2, new_session)
-                
-            for l1 in range(count_intermediate_b, count_intermediate_a):
-                new_session = Session(session_id=count_index, level_id=intermediate_a,course_id=get_course_id,session_number=l1, time_id=time, position_id=p3)
-                new_session.save()
-                count_index += 1
-                # Add students
-                generate_sessions(request, count_student_1, count_student_2, new_session)
-                
-            for l1 in range(count_intermediate_a, count_beginner_b):
-                new_session = Session(session_id=count_index, level_id=beginner_b,course_id=get_course_id,session_number=l1, time_id=time, position_id=p5)
-                new_session.save()
-                count_index += 1
-                # Add students
-                generate_sessions(request, count_student_1, count_student_2, new_session)
-                
-            for l1 in range(count_beginner_b, count_beginner_a):
-                new_session = Session(session_id=count_index, level_id=beginner_a,course_id=get_course_id,session_number=l1, time_id=time, position_id=p1)
-                new_session.save()
-                count_index += 1
-                # Add students
-                generate_sessions(request, count_student_1, count_student_2, new_session)
-                
         return redirect('session')
     context = {'level': level,
+                'time': time,
+                'position': position,
                 'zip_list': zip_list,
                 }
     return render(request, 'session/generate_session.html', context)

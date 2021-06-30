@@ -6,7 +6,7 @@
 
 {% block card_body %}
     <div class="row">
-        <h4 class="text-dark">مجموع الطلاب "لمستمرين" في كل مستوى</h4>
+        <h4 class="text-dark">مجموع الطلاب "المستمرين" في كل مستوى</h4>
         {% for item, count in zip_list %}
             <div class="col-xl-2 col-md-6 mt-2 mb-4">
                 <div class="card border-left-success shadow h-100 py-2">
@@ -51,22 +51,39 @@
         {% csrf_token %}
         <h4 class="text-dark my-4">اختر العدد المطلوب لكل مستوى</h4>
 
-            {% for item in level %}
-            <div class="form-group row my-4">
-                <div class="col-sm-4 mb-3">
-                    <label  class="form-label">عدد الجلسات للمستوى <span class="font-weight-bold">{{item.level_name}}</span></label>
-                    <input type="number" min="1" value="1" class="form-control" name="{{item.level_name}}" id="{{item.level_name}}" required>
-                </div>
-                <div class="col-sm-4 mb-3">
-                    <label  class="form-label">عدد الطلاب "المستمرين"</label>
-                    <input type="number" min="1" value="4" class="form-control"  name="count_student_1_{{item.level_name}}" required>
-                </div>
-                <div class="col-sm-4 mb-3">
-                    <label  class="form-label">عدد الطلاب "غير معروف"</label>
-                    <input type="number" min="1" value="2" class="form-control" name="count_student_2_{{item.level_name}}" required>
-                </div>
+        {% for item in level %}
+        <div class="form-group row my-4">
+            <div class="col-md-4 col-sm-6 mb-3">
+                <label  class="form-label">عدد الجلسات للمستوى <span class="font-weight-bold">{{item.level_name}}</span></label>
+                <input type="number" min="1" value="1" class="form-control" name="count_session_{{item.level_name}}" required>
             </div>
-            {% endfor %}
+            <div class="col-md-4 col-sm-6 mb-3">
+                <label  class="form-label">عدد الطلاب "المستمرين"</label>
+                <input type="number" min="1" value="4" class="form-control"  name="count_student_1_{{item.level_name}}" required>
+            </div>
+            <div class="col-md-4 col-sm-6 mb-3">
+                <label  class="form-label">عدد الطلاب "غير معروف"</label>
+                <input type="number" min="1" value="2" class="form-control" name="count_student_2_{{item.level_name}}" required>
+            </div>
+            <div class="col-md-6 col-sm-6 mb-3">
+                <label  class="form-label">المكان</label>
+                <select class="form-control form-select" aria-label="Default select example" name="position_{{item.level_name}}">
+                    {% for item in position %}
+                        <option value="{{item.position_name}}">{{item.position_name}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-6 col-sm-12 mb-3">
+                <label  class="form-label">الوقت</label>
+                <select class="form-control form-select" aria-label="Default select example" name="time_{{item.level_name}}">
+                    {% for item in time %}
+                        <option value="{{item.time_name}}">{{item.time_name}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <hr class="my-4">
+        {% endfor %}
 
         <div class="d-flex justify-content-center my-4">
             <a type="button" class="m-0  btn btn-secondary w-25 mr-4" href="{% url 'session'%}">
