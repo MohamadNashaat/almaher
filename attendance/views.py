@@ -23,7 +23,6 @@ from exam.models import Exam
 from result.models import Result
 from attendance.models import Attendance
 
-from attendance.tests import update_attendance
 from course.tests import get_request_session_course_id
 
 # Create your views here.

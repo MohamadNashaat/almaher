@@ -25,8 +25,7 @@ from exam.models import Exam
 from result.models import Result
 from attendance.models import Attendance
 
-from home.views import update_attendance
-from course.views import get_request_session_course_id
+from course.tests import get_request_session_course_id
 
 # Create your tests here.
 
