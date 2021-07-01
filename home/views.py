@@ -23,7 +23,7 @@ from exam.models import Exam
 from result.models import Result
 from attendance.models import Attendance
 
-from course.views import chk_request_session_course_id, get_request_session_course_id
+from course.tests import chk_request_session_course_id, get_request_session_course_id
 
 # Create your views here.
 
@@ -82,14 +82,3 @@ def index(request):
                 'get_course_id': get_course_id,            
                 }
     return render(request, 'home/index.html', context)
-
-# Base def
-def update_attendance(request, std_id, session_id):
-    get_course_id = get_request_session_course_id(request)
-    # Update attendance
-    session_list = Session.objects.all().filter(course_id=get_course_id).values_list('session_id', flat=True)
-    all_attendance = Attendance.objects.filter(person_id=std_id, session_id__in=session_list)
-    for attendance in all_attendance:
-        get_attendance = Attendance.objects.get(pk=attendance.attendance_id)
-        get_attendance.session_id = session_id
-        get_attendance.save()

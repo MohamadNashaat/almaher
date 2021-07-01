@@ -23,8 +23,9 @@ from exam.models import Exam
 from result.models import Result
 from attendance.models import Attendance
 
-from home.views import update_attendance
-from course.views import get_request_session_course_id
+from session.tests import generate_sessions
+from attendance.tests import update_attendance
+from course.tests import get_request_session_course_id
 
 # Create your views here.
 
@@ -65,51 +66,6 @@ def session(request):
                 'teacher': teacher,
                 }
     return render(request, 'session/session.html', context)
-
-def generate_sessions(request, count_student, new_session, priority):
-    get_course_id = get_request_session_course_id(request)
-    # Get index id session_student
-    count_index_s_student = Session_Student.objects.all().count()
-    if count_index_s_student == 0:
-        count_index_s_student = 1
-    else:
-        count_index_s_student = Session_Student.objects.all().aggregate(Max('id'))['id__max']
-        count_index_s_student += 1
-    # Add students => to sessions
-    get_session = Session.objects.all().filter(course_id=get_course_id).values_list('session_id', flat=True)
-    in_session = Session_Student.objects.all().filter(session_id__in=get_session).values_list('student_id', flat=True)
-    student = Person.objects.filter(~Q(pk__in=in_session)).filter(type_id='Student', status=True, level_id=new_session.level_id, priority_id=priority).order_by('bdate').values_list('person_id', flat=True)
-    var_num = 0
-    for std in student:
-        if var_num < count_student:
-            # Check birth date
-            c_student = Session_Student.objects.filter(session_id=new_session).count()
-            get_person_id = Session_Student.objects.filter(session_id=new_session).values_list('student_id__bdate', flat=True)
-            avg_date = 0
-            for per in get_person_id:
-                if per is not None:
-                    bdate = per
-                    bdate = bdate.year
-                    avg_date += int(bdate)
-            if c_student != 0:
-                avg_date = int(avg_date / c_student)
-            # Get student
-            get_student = Person.objects.get(pk=std)
-            get_student_bdate = 0
-            if get_student.bdate is not None:
-                get_student_bdate = get_student.bdate
-                get_student_bdate = get_student_bdate.year
-                get_student_bdate = int(get_student_bdate)
-                if get_student_bdate >= (avg_date - 10) and get_student_bdate <= (avg_date + 10):
-                    Session_Student.objects.create(id=count_index_s_student, session_id=new_session, student_id=get_student)
-                    count_index_s_student += 1
-                    var_num += 1
-                elif avg_date == 0:
-                    Session_Student.objects.create(id=count_index_s_student, session_id=new_session, student_id=get_student)
-                    count_index_s_student += 1
-                    var_num += 1                
-        else:
-            break
 
 @login_required(login_url='login')
 def generate_session(request):
