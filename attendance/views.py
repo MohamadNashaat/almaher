@@ -39,7 +39,7 @@ def select_attendance(request):
         else:
             return redirect('attendance_student')
     context = {'course': course,
-                
+                'get_course_id': get_course_id,
                 }
     return render(request, 'attendance/attendance_select_course.html', context)
 
@@ -111,6 +111,7 @@ def attendance_teacher(request):
         attendance.append(dic_attendance)
     context = {'day_attendance': day_attendance,
                 'attendance': attendance,
+                'get_course_id': get_course_id,
                 }
     return render(request, 'attendance/attendance_teacher.html', context)
 
@@ -131,6 +132,7 @@ def attendance_student(request):
         attendance.append(dic_attendance)
     context = {'day_attendance': day_attendance,
                 'attendance': attendance,
+                'get_course_id': get_course_id,
                 }
     return render(request, 'attendance/attendance_student.html', context)
 

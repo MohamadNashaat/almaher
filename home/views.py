@@ -79,6 +79,6 @@ def index(request):
                 'c_course': c_course,
                 'c_session': c_session,
                 'c_session_student': c_session_student,
-                'get_course_id': get_course_id,            
+                'get_course_id': get_course_id,
                 }
     return render(request, 'home/index.html', context)

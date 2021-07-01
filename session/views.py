@@ -64,6 +64,7 @@ def session(request):
             end_session.append(dic_session)
     context = {'end_session': end_session,
                 'teacher': teacher,
+                'get_course_id': get_course_id,
                 }
     return render(request, 'session/session.html', context)
 
@@ -124,6 +125,7 @@ def generate_session(request):
                 'time': time,
                 'position': position,
                 'zip_list': zip_list,
+                'get_course_id': get_course_id,
                 }
     return render(request, 'session/generate_session.html', context)
 
@@ -151,6 +153,7 @@ def add_session(request):
     context = {'level': level,
                 'position': position,
                 'time': time,
+                'get_course_id': get_course_id,
                 }
     return render(request, 'session/add_session.html', context)
 
@@ -184,6 +187,7 @@ def edit_session(request, pk):
     context = {'session': session,
                 'teacher': teacher,
                 'course': course,
+                'get_course_id': get_course_id,
                 }
     return render(request, 'session/edit_session.html', context)
 
@@ -241,6 +245,7 @@ def session_student(request, pk):
                 'to_previous': to_previous,
                 'teacher': teacher,
                 'c_session': c_session,
+                'get_course_id': get_course_id,
                 }
         return render(request, 'session/session_student.html', context)
     else:
@@ -274,6 +279,7 @@ def view_session_student(request):
     session = Session.objects.all().filter(course_id=get_course_id).values_list('session_id', flat=True)
     session_student = Session_Student.objects.all().filter(session_id__in=session)
     context = {'session_student': session_student,
+                'get_course_id': get_course_id,
                 }
     return render(request, 'session/view_session_student.html', context)
 
@@ -286,6 +292,7 @@ def wait_list_session(request):
     student = Person.objects.filter(type_id='Student', status=True).filter(~Q(pk__in=in_session))
     context = {'student': student,
                 'session': session,
+                'get_course_id': get_course_id,
                 }
     return render(request, 'session/wait_list_session.html', context)
 

@@ -40,6 +40,7 @@ def exam(request):
         dic_exam = {'student_id': first_exam.student_id, 'session_id':first_exam.session_id , 'exams': all_exam}
         exam.append(dic_exam)    
     context = {'exam': exam,
+                'get_course_id': get_course_id,
                 }
     return render(request, 'exam/exam.html', context)
 

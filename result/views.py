@@ -33,6 +33,7 @@ def result(request):
     in_session = Session.objects.filter(course_id=get_course_id).values_list('session_id', flat=True)
     result = Result.objects.filter(session_id__in=in_session)
     context = {'result': result,
+                'get_course_id': get_course_id,
                 }
     return render(request, 'result/result.html', context)
 
@@ -157,7 +158,6 @@ def student_pass(request):
                 get_student.type_id = 'Graduate'
                 get_student.level_id = beginner_a
                 get_student.save()
-            
         elif get_result_id.result_type == 'نجاح شرطي':
             get_student.priority_id = 'مستمر'
             if this_level == 'مبتدئ أ':
@@ -179,7 +179,6 @@ def student_pass(request):
                 get_student.type_id = 'Graduate'
                 get_student.level_id = beginner_a
                 get_student.save()
-
         elif get_result_id.result_type == 'إعادة':
             get_student = Person.objects.get(pk=item)
             get_theoretical_mark = exam.filter(student_id=get_student, type_id='نظري').aggregate(Max('mark'))['mark__max']
@@ -192,7 +191,6 @@ def student_pass(request):
                 get_student.priority_id = 'مستمر'
                 get_student.level_id = get_result_id.session_id.level_id
                 get_student.save()
-
     messages.success(request, 'تم الترحيل بنجاح')
     return HttpResponseRedirect(reverse('result'))
 
