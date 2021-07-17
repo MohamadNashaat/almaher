@@ -8,4 +8,3 @@ class Level(models.Model):
     create_date = models.DateField(auto_now_add=True, null=True)
     def __str__(self):
         return self.level_name
-
