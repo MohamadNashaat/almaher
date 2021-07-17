@@ -329,3 +329,4 @@ def export_attendance_teacher_pdf(request):
         output = open(output.name, 'rb')
         response.write(output.read())
     return response
+ 
