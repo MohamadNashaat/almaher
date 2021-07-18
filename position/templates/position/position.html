@@ -27,12 +27,20 @@
 {% block th_table %}
     <th>المكان</th>
     <th></th>
+    <th></th>
 {% endblock %}
 
 {% block tr_table%}
     {% for item in position%}
     <tr>
         <td>{{item.position_name}}</td>
+        <td>
+            <div class="d-flex justify-content-center">
+                <a href="" class="btn btn-info btn-circle btn-sm">
+                    <i class="fas fa-edit"></i>
+                </a>
+            </div>
+        </td>
         <td>
             <div class="d-flex justify-content-center">
                 <a href="{% url 'del_position' item.position_name %}" class="btn btn-danger btn-circle btn-sm">
