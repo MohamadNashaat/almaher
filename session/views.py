@@ -71,7 +71,7 @@ def session(request):
 @login_required(login_url='login')
 def generate_session(request):
     get_course_id = get_request_session_course_id(request)
-    level = Level.objects.all()
+    level = Level.objects.all().order_by('level_id').reverse()
     time = Time.objects.all()
     position = Position.objects.all()
     student_count = []

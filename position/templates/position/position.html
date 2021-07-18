@@ -15,30 +15,27 @@
 {% endblock %}
 
 {% block pg_head %}
-    المستويات
+    الأماكن
 {% endblock %}
 {% block url_1 %}
-    <a type="button" class="m-0 btn btn-success mr-4" href="{% url 'add_level' %}">
+    <a type="button" class="m-0 btn btn-success mr-4" href="{% url 'add_position' %}">
         <i class="fas fa-fw fa-plus-circle"></i>
-        <span>اضافة مستوى</span>
+        <span>اضافة مكان</span>
     </a>
-    <h5 class="text-danger p-2">* يرجى البدء بإضافة المستويات من الستوى الأدنى إلى المستوى الأعلى</h5>
 {% endblock %}
 
 {% block th_table %}
-    <th>#</th>
-    <th>المستوى</th>
+    <th>المكان</th>
     <th></th>
 {% endblock %}
 
 {% block tr_table%}
-    {% for item in level%}
+    {% for item in position%}
     <tr>
-        <td>{{item.level_id}}</td>
-        <td>{{item.level_name}}</td>
+        <td>{{item.position_name}}</td>
         <td>
             <div class="d-flex justify-content-center">
-                <a href="{% url 'del_level' item.level_name %}" class="btn btn-danger btn-circle btn-sm">
+                <a href="{% url 'del_position' item.position_name %}" class="btn btn-danger btn-circle btn-sm">
                     <i class="fas fa-times"></i>
                 </a>
             </div>
