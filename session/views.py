@@ -75,11 +75,16 @@ def generate_session(request):
     time = Time.objects.all()
     position = Position.objects.all()
     student_count = []
+    student_count2 = []
     level_list = level.values_list('level_name', flat=True)
     for level_loop in level_list:
-        l_count = Person.objects.filter(type_id='Student' ,level_id=level_loop, status=True).count()
+        l_count = Person.objects.filter(type_id='Student' ,level_id=level_loop, status=True, priority_id='مستمر').count()
         student_count.append(l_count)
     zip_list = zip(level_list, student_count)
+    for level_loop in level_list:
+        l_count = Person.objects.filter(type_id='Student' ,level_id=level_loop, status=True, priority_id='غير معروف').count()
+        student_count2.append(l_count)
+    zip_list2 = zip(level_list, student_count2)
     if request.method == 'POST':
         # Get index id session
         count_index = Session.objects.all().count()
@@ -125,6 +130,7 @@ def generate_session(request):
                 'time': time,
                 'position': position,
                 'zip_list': zip_list,
+                'zip_list2': zip_list2,
                 'get_course_id': get_course_id,
                 }
     return render(request, 'session/generate_session.html', context)
