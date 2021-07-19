@@ -169,26 +169,26 @@ def edit_session(request, pk):
     session = Session.objects.get(pk=pk)
     if request.method =='POST':
         get_snumber = request.POST['snumber']
-        get_course = request.POST['course']
         get_teacher = request.POST['teacher']
         level = request.POST['level']
         position = request.POST['position']
         time = request.POST['time']
-        # 
-        course = Course.objects.get(pk=get_course)
+        # Get models
         teacher = Person.objects.get(pk=get_teacher)
+        level = Level.objects.get(pk=level)
+        position = Position.objects.get(pk=position)
+        time = Time.objects.get(pk=time)
         # 
         session.session_number = get_snumber
-        session.course_id = course
         session.teacher_id = teacher
-        session.level_id = level
+        session.level_name = level
         session.time_id = time
         session.posistion = position
         session.save()
-        messages.success(request, 'Edit success!')
+        messages.success(request, 'تم التعديل بنجاح')
         return HttpResponseRedirect(reverse('session'))
     in_session = Session.objects.all().filter(course_id=get_course_id).filter(~Q(teacher_id=session.teacher_id)).values_list('teacher_id', flat=True)
-    teacher = Person.objects.all().filter(type_id__in=('Teacher', 'Graduate')).filter(~Q(pk__in=in_session)).order_by('first_name') #.filter(level_id=session.level_id)
+    teacher = Person.objects.all().filter(type_id__in=('Teacher', 'Graduate')).filter(~Q(pk__in=in_session)).order_by('first_name')
     course = Course.objects.all()
     context = {'session': session,
                 'teacher': teacher,
