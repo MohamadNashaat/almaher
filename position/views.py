@@ -37,6 +37,10 @@ def add_position(request):
 
 @login_required(login_url='login')
 def del_position(request, pk):
-    get_position = Position.objects.get(pk=pk)
-    get_position.delete()
+    if request.user.is_staff:
+        get_position = Position.objects.get(pk=pk)
+        get_position.delete()
+        messages.success(request, 'تم الحذف بنجاح')
+        return redirect('position')
+    messages.warning(request, 'ليس لديك صلاحية للقيام بهذه العملية')
     return redirect('position')

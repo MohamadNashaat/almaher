@@ -57,8 +57,12 @@ def add_course(request):
 
 @login_required(login_url='login')
 def del_course(request, pk):
-    get_course = Course.objects.get(pk=pk)
-    get_course.delete()
+    if request.user.is_staff:
+        get_course = Course.objects.get(pk=pk)
+        get_course.delete()
+        messages.success(request, 'تم الحذف بنجاح')
+        return redirect('course')
+    messages.warning(request, 'ليس لديك صلاحية للقيام بهذه العملية')
     return redirect('course')
 
 @login_required(login_url='login')

@@ -37,6 +37,10 @@ def add_period(request):
 
 @login_required(login_url='login')
 def del_period(request, pk):
-    get_period = Time.objects.get(pk=pk)
-    get_period.delete()
+    if request.user.is_staff:
+        get_period = Time.objects.get(pk=pk)
+        get_period.delete()
+        messages.success(request, 'تم الحذف بنجاح')
+        return redirect('period')
+    messages.warning(request, 'ليس لديك صلاحية للقيام بهذه العملية')
     return redirect('period')

@@ -2,9 +2,30 @@
 
 {% block body%}
 
-    {% block mess %}
+    {% if messages %}
+        {% for message in messages %}
+            {% if message.tags == 'success'%}
+                <div class="d-flex justify-content-center">
+                    <div class="alert alert-success my-2 text-center w-25" role="alert">
+                        {{message}}
+                    </div>
+                </div>
+            {% elif message.tags == 'info'%}
+                <div class="d-flex justify-content-center">
+                    <div class="alert alert-info my-2 text-center w-25" role="alert">
+                        {{message}}
+                    </div>
+                </div>
+            {% elif message.tags == 'error' or message.tags == 'warning' %}
+                <div class="d-flex justify-content-center">
+                    <div class="alert alert-danger my-2 text-center w-25" role="alert">
+                        {{message}}
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
 
-    {% endblock %}
 
     <!-- Page Heading -->
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
@@ -17,11 +38,9 @@
     <!-- DataTales Example -->
     <div class="card shadow mb-4">
         <div class="card-header py-3">
-            {% block url_1 %}
-            {% endblock %}  
+            {% block url_1 %}{% endblock %}  
             
-            {% block url_2 %}
-            {% endblock %}          
+            {% block url_2 %}{% endblock %}          
         </div>
         <div class="card-body">
             <div class="table-responsive">

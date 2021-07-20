@@ -199,8 +199,12 @@ def edit_session(request, pk):
 
 @login_required(login_url='login')
 def del_session(request, pk):
-    get_session = Session.objects.get(pk=pk)
-    get_session.delete()
+    if request.user.is_staff:
+        get_session = Session.objects.get(pk=pk)
+        get_session.delete()
+        messages.success(request, 'تم الحذف بنجاح')
+        return redirect('session')
+    messages.warning(request, 'ليس لديك صلاحية للقيام بهذه العملية')
     return redirect('session')
 
 @login_required(login_url='login')
