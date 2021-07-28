@@ -63,13 +63,13 @@ def generate_sessions(request, count_student, new_session, priority):
                 get_student_bdate = get_student.bdate
                 get_student_bdate = get_student_bdate.year
                 get_student_bdate = int(get_student_bdate)
-                if get_student_bdate >= (avg_date - 10) and get_student_bdate <= (avg_date + 10):
+                if (avg_date - 4) <= get_student_bdate <= (avg_date + 4):
                     Session_Student.objects.create(id=count_index_s_student, session_id=new_session, student_id=get_student)
                     count_index_s_student += 1
                     var_num += 1
                 elif avg_date == 0:
                     Session_Student.objects.create(id=count_index_s_student, session_id=new_session, student_id=get_student)
                     count_index_s_student += 1
-                    var_num += 1                
+                    var_num += 1
         else:
             break
