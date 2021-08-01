@@ -114,6 +114,9 @@ def generate_result(request):
 @login_required(login_url='login')
 def student_pass(request):
     if request.user.is_staff:
+        level = Level.objects.all().order_by('level_id')
+        level_list = Level.objects.all().order_by('level_id').values_list('level_id' ,flat=True)
+        last_level = Level.objects.all().order_by('level_id').last()
         get_course_id = get_request_session_course_id(request)
         session = Session.objects.all().filter(course_id=get_course_id)
         session_list = session.values_list('session_id', flat=True)
@@ -126,62 +129,48 @@ def student_pass(request):
         if result_count == 0:
             messages.error(request, 'الرجاء انشاء النتائج اولا')
             return HttpResponseRedirect(reverse('result'))
-        # Get all students and pass them to next level
-        advanced_b = Level.objects.get(pk='متقدم ب')
-        advanced_a = Level.objects.get(pk='متقدم أ')
-        intermediate_b = Level.objects.get(pk='متوسط ب')
-        intermediate_a = Level.objects.get(pk='متوسط أ')
-        beginner_b = Level.objects.get(pk='مبتدئ ب')
-        beginner_a = Level.objects.get(pk='مبتدئ أ')
         for item in person_in_result:
             get_student = Person.objects.get(pk=item)
             get_result_id = result.get(student_id=get_student)
-            this_level = str(get_result_id.session_id.level_id)
+            get_level_id = get_result_id.session_id.level_id.level_id
             # Check result
             if get_result_id.result_type == 'ناجح':
                 get_student.priority_id = 'مستمر'
-                if this_level == 'مبتدئ أ':
-                    get_student.level_id = beginner_b
-                    get_student.save()
-                elif this_level == 'مبتدئ ب':
-                    get_student.level_id = intermediate_a
-                    get_student.save()
-                elif this_level == 'متوسط أ':
-                    get_student.level_id = intermediate_b
-                    get_student.save()
-                elif this_level == 'متوسط ب':
-                    get_student.level_id = advanced_a
-                    get_student.save()
-                elif this_level == 'متقدم أ':
-                    get_student.level_id = advanced_b
-                    get_student.save()
-                elif this_level == 'متقدم ب':
+                next_level_id = 0
+                index = 0
+                if get_level_id == last_level.level_id:
                     get_student.type_id = 'Graduate'
-                    get_student.level_id = beginner_a
+                    get_student.level_id = level.first()
+                    get_student.save()
+                else:
+                    for loop_level in level_list:
+                        if index == 1:
+                            next_level_id = loop_level
+                            break
+                        elif loop_level == get_level_id:
+                            index = 1
+                    next_level = Level.objects.get(level_id=next_level_id)
+                    get_student.level_id = next_level
                     get_student.save()
             elif get_result_id.result_type == 'نجاح شرطي':
                 get_student.priority_id = 'مستمر'
-                if this_level == 'مبتدئ أ':
-                    get_student.level_id = beginner_b
-                    get_student.save()
-                elif this_level == 'مبتدئ ب':
-                    get_student.level_id = intermediate_a
-                    get_student.save()
-                elif this_level == 'متوسط أ':
-                    get_student.level_id = intermediate_b
-                    get_student.save()
-                elif this_level == 'متوسط ب':
-                    get_student.level_id = advanced_a
-                    get_student.save()
-                elif this_level == 'متقدم أ':
-                    get_student.level_id = advanced_b
-                    get_student.save()
-                elif this_level == 'متقدم ب':
+                next_level_id = 0
+                index = 0
+                if get_level_id == last_level.level_id:
                     get_student.type_id = 'Graduate'
-                    get_student.level_id = beginner_a
+                    get_student.level_id = level.first()
+                    get_student.save()
+                else:
+                    for loop_level in level_list:
+                        if index == 1:
+                            next_level_id = loop_level
+                            break
+                        elif loop_level == get_level_id:
+                            index = 1
+                    next_level = Level.objects.get(level_id=next_level_id)
+                    get_student.level_id = next_level
                     get_student.save()
             elif get_result_id.result_type == 'إعادة':
-                get_student = Person.objects.get(pk=item)
                 get_theoretical_mark = exam.filter(student_id=get_student, type_id='نظري').aggregate(Max('mark'))['mark__max']
                 get_practical_mark = exam.filter(student_id=get_student, type_id='عملي').aggregate(Max('mark'))['mark__max']
                 if get_practical_mark == 0 and get_theoretical_mark == 0:
