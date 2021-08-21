@@ -197,3 +197,44 @@ def set_result_type(request):
     print(result_type)
     context = {}
     return JsonResponse(context)
+
+def export_result_excel(request):
+    response = HttpResponse(content_type='application/ms-excel')
+    response['Content-Disposition'] = 'attachment; filename="result.xls"'
+    wb = xlwt.Workbook(encoding='utf-8')
+    ws = wb.add_sheet('Results')
+    # Sheet header, first row
+    row_num = 0
+    font_style = xlwt.XFStyle()
+    font_style.font.bold = True
+    columns = ['id', 'First name', 'Last name', 'Course', 'Level',
+                'Session', 'Attendance', 'Theoretical', 'Practical', 'Average', 'Result']
+    for col_num in range(len(columns)):
+        ws.write(row_num, col_num, columns[col_num], font_style)
+    # Sheet body, remaining rows
+    font_style = xlwt.XFStyle()
+    rows = []
+    get_course_id = get_request_session_course_id(request)
+    in_session = Session.objects.filter(course_id=get_course_id).values_list('session_id', flat=True)
+    result = Result.objects.filter(session_id__in=in_session)
+    for l_result in result:
+        id = str(l_result.student_id.person_id)
+        fname = str(l_result.student_id.first_name)
+        lname = str(l_result.student_id.last_name)
+        course = str(l_result.session_id.course_id)
+        level = str(l_result.session_id.level_id)
+        session = str(l_result.session_id)
+        attendance = str(l_result.attendance)
+        theoretical = str(l_result.theoretical_mark)
+        practical = str(l_result.practical_mark)
+        avrage = str(l_result.result)
+        result = str(l_result.result_type)
+        vlues = [id, fname, lname, course, level, session,
+                 attendance, theoretical, practical, avrage, result]
+        rows.append(vlues)
+    for row in rows:
+        row_num += 1
+        for col_num in range(len(row)):
+            ws.write(row_num, col_num, row[col_num], font_style)
+    wb.save(response)
+    return response
