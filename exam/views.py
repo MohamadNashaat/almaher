@@ -38,7 +38,7 @@ def exam(request):
         first_exam = get_exam.filter(student_id=all_person).first()
         all_exam = get_exam.filter(student_id=all_person).values('exam_id', 'type_id', 'time_id', 'mark').order_by('exam_id')
         dic_exam = {'student_id': first_exam.student_id, 'session_id':first_exam.session_id , 'exams': all_exam}
-        exam.append(dic_exam)    
+        exam.append(dic_exam)
     context = {'exam': exam,
                 'get_course_id': get_course_id,
                 }
@@ -90,3 +90,51 @@ def set_exam_mark(request):
     exam.save()
     context = {}
     return JsonResponse(context)
+
+def export_exam_excel(request):
+    response = HttpResponse(content_type='application/ms-excel')
+    response['Content-Disposition'] = 'attachment; filename="exam.xls"'
+    wb = xlwt.Workbook(encoding='utf-8')
+    ws = wb.add_sheet('Exam')
+    # Sheet header, first row
+    row_num = 0
+    font_style = xlwt.XFStyle()
+    font_style.font.bold = True
+    columns = ['id', 'First name', 'Last name', 'Course', 'Level',
+                'Session',
+                'نظري الامتحان الأول', 'نظري الإعادة' , 'نظري التكميلي' ,
+                'عملي الامتحان الأول', 'عملي الإعادة' , 'عملي التكميلي'
+                ]
+    for col_num in range(len(columns)):
+        ws.write(row_num, col_num, columns[col_num], font_style)
+    # Sheet body, remaining rows
+    font_style = xlwt.XFStyle()
+    rows = []
+    get_course_id = get_request_session_course_id(request)
+    in_session = Session.objects.filter(course_id=get_course_id).values_list('session_id', flat=True)
+    get_exam = Exam.objects.filter(session_id__in=in_session)
+    student_exam = get_exam.values_list('student_id', flat=True).distinct()
+    exam = []
+    for all_person in student_exam:
+        first_exam = get_exam.filter(student_id=all_person).first()
+        all_exam = get_exam.filter(student_id=all_person).values_list('mark', flat=True).order_by('exam_id')
+        dic_exam = {'student_id': first_exam.student_id, 'session_id':first_exam.session_id , 'exams': all_exam}
+        exam.append(dic_exam)
+    print(exam)
+    for l_exam in exam:
+        id = str(l_exam['student_id'].person_id)
+        fname = str(l_exam['student_id'].first_name)
+        lname = str(l_exam['student_id'].last_name)
+        course = str(l_exam['session_id'].course_id)
+        level = str(l_exam['session_id'].level_id)
+        session = str(l_exam['session_id'].session_number)
+        vlues = [id, fname, lname, course, level, session]
+        for mark in l_exam['exams']:
+            vlues.append(str(mark))
+        rows.append(vlues)
+    for row in rows:
+        row_num += 1
+        for col_num in range(len(row)):
+            ws.write(row_num, col_num, row[col_num], font_style)
+    wb.save(response)
+    return response
